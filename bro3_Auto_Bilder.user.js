@@ -3687,107 +3687,80 @@ function addInifacHtml(vId) {
     tr611.appendChild(td611);
 
     // ==== 自動兵産設定 ====
-
+    var makeSoldierRow = function(name, soldier_id){
+        var td = d.createElement("td");
+        td.style.padding = "3px";
+        td.style.verticalAlign = "top";
+        td.style.textAlign = "center";
+        
+        ccreateText(td, "dummy", name, 0);
+        ccreateTextBox(td, "OPT_SOL_MAX" + soldier_id, OPT_SOL_MAX[soldier_id], "", name + "兵数上限", 7, 0);
+        ccreateTextBox(td, "OPT_SOL_ADD" + soldier_id, OPT_SOL_ADD[soldier_id], "", name + "作成単位", 7, 0);
+        
+        return td;
+    };
+    
     var Soldier_Box = d.createElement("table");
     Soldier_Box.style.border ="solid 2px black";
     Soldier_Box.style.marginBottom = "4px";
     Soldier_Box.style.width = "100%";
-
+    
     var tr800 = d.createElement("tr");
     tr800.style.border = "solid 1px black";
-    tr800.style.backgroundColor =COLOR_TITLE;
-
+    tr800.style.backgroundColor = COLOR_TITLE;
+    
     var td800 = d.createElement("td");
     ccreateCheckBox(td800, "OPT_BLD_SOL", OPT_BLD_SOL, " 自動造兵", "この都市で自動的に造兵します。", 0);
-
+    
     var tr81 = d.createElement("tr");
     tr81.style.border = "solid 1px black";
-    tr81.style.backgroundColor =COLOR_BACK;
+    tr81.style.backgroundColor = COLOR_BACK;
     var td81 = d.createElement("td");
-    td81.style.padding = "3px";//       td81.style.border = "solid 1px black";
+    td81.style.padding = "3px";
 
     var tr811 = d.createElement("tr");
-    var td811 = d.createElement("td");      td811.style.padding = "3px";    td811.style.verticalAlign = "bottom";
-    var td812 = d.createElement("td");      td812.style.padding = "3px";    td812.style.verticalAlign = "top"; td812.style.textAlign = "center";
-    var td813 = d.createElement("td");      td813.style.padding = "3px";    td813.style.verticalAlign = "top"; td813.style.textAlign = "center";
-    var td814 = d.createElement("td");      td814.style.padding = "3px";    td814.style.verticalAlign = "top"; td814.style.textAlign = "center";
-    var td815 = d.createElement("td");      td815.style.padding = "3px";    td815.style.verticalAlign = "top"; td815.style.textAlign = "center";
-    var td816 = d.createElement("td");      td816.style.padding = "3px";    td816.style.verticalAlign = "top"; td816.style.textAlign = "center";
-    var td817 = d.createElement("td");      td817.style.padding = "3px";    td817.style.verticalAlign = "top"; td817.style.textAlign = "center";
-    var td818 = d.createElement("td");      td818.style.padding = "3px";    td818.style.verticalAlign = "top"; td818.style.textAlign = "center";
-    var td819 = d.createElement("td");      td819.style.padding = "3px";    td819.style.verticalAlign = "top"; td819.style.textAlign = "center";
-    var td820 = d.createElement("td");      td820.style.padding = "3px";    td820.style.verticalAlign = "top"; td820.style.textAlign = "center";
-    var td821 = d.createElement("td");      td821.style.padding = "3px";    td821.style.verticalAlign = "top"; td821.style.textAlign = "center";
-    var td822 = d.createElement("td");      td822.style.padding = "3px";    td822.style.verticalAlign = "top"; td822.style.textAlign = "center";
 
-    var td823 = d.createElement("td");      td823.style.padding = "3px";    td823.style.verticalAlign = "bottom";
-
+    var td811 = d.createElement("td");
+    td811.style.padding = "3px";
+    td811.style.verticalAlign = "bottom";
+    
+    var td823 = d.createElement("td");
+    td823.style.padding = "3px";
+    td823.style.verticalAlign = "bottom";
+    
     Soldier_Box.appendChild(tr800);
     tr800.appendChild(td800);
-
     Soldier_Box.appendChild(tr81);
     tr81.appendChild(td81);
     td81.appendChild(tr811);
-
+    
+    var soldier_rows = [
+        makeSoldierRow("矛槍兵", 4),
+        makeSoldierRow("弩兵", 9),
+        makeSoldierRow("近衛騎兵", 7),
+        makeSoldierRow("斥候騎兵", 11),
+        makeSoldierRow("投石機", 13),
+        makeSoldierRow("剣兵", 1),
+        makeSoldierRow("槍兵", 3),
+        makeSoldierRow("弓兵", 8),
+        makeSoldierRow("騎兵", 5),
+        makeSoldierRow("斥候", 10),
+        makeSoldierRow("衝車", 12)
+     ];
+    
     tr811.appendChild(td811);
-    tr811.appendChild(td812);
-    tr811.appendChild(td813);
-    tr811.appendChild(td814);
-    tr811.appendChild(td815);
-    tr811.appendChild(td816);
-    tr811.appendChild(td817);
-    tr811.appendChild(td818);
-    tr811.appendChild(td819);
-    tr811.appendChild(td820);
-    tr811.appendChild(td821);
-    tr811.appendChild(td822);
+    for(var i = 0; i < soldier_rows.length; i++) {
+        tr811.appendChild(soldier_rows[i]);
+    }
     tr811.appendChild(td823);
-
-    //  ABfacContainer.appendChild(Soldier_Box);
-
-    ccreateText(td812, "dummy", "剣兵", 0 );
-    ccreateText(td813, "dummy", "槍兵", 0 );
-    ccreateText(td814, "dummy", "弓兵", 0 );
-    ccreateText(td815, "dummy", "騎兵", 0 );
-    ccreateText(td816, "dummy", "矛槍兵", 0 );
-    ccreateText(td817, "dummy", "弩兵", 0 );
-    ccreateText(td818, "dummy", "近衛騎兵", 0 );
-    ccreateText(td819, "dummy", "斥候", 0 );
-    ccreateText(td820, "dummy", "斥候騎兵", 0 );
-    ccreateText(td821, "dummy", "衝車", 0 );
-    ccreateText(td822, "dummy", "投石機", 0 );
     ccreateText(td823, "dummy", "　", 0 );
-
+    
     ccreateText(td811, "dummy", "　", 0 );
     ccreateText(td811, "dummy", "　兵数上限", 0 );
     ccreateText(td811, "dummy", "　作成単位", 0 );
-
-    ccreateTextBox(td812,"OPT_SOL_MAX1", OPT_SOL_MAX[1],"","剣兵の兵数上限",7,0);
-    ccreateTextBox(td813,"OPT_SOL_MAX3", OPT_SOL_MAX[3],"","槍兵の兵数上限",7,0);
-    ccreateTextBox(td814,"OPT_SOL_MAX8", OPT_SOL_MAX[8],"","弓兵の兵数上限",7,0);
-    ccreateTextBox(td815,"OPT_SOL_MAX5", OPT_SOL_MAX[5],"","騎兵の兵数上限",7,0);
-    ccreateTextBox(td816,"OPT_SOL_MAX4", OPT_SOL_MAX[4],"","矛槍兵の兵数上限",7,0);
-    ccreateTextBox(td817,"OPT_SOL_MAX9", OPT_SOL_MAX[9],"","弩兵の兵数上限",7,0);
-    ccreateTextBox(td818,"OPT_SOL_MAX7", OPT_SOL_MAX[7],"","近衛騎兵の兵数上限",7,0);
-    ccreateTextBox(td819,"OPT_SOL_MAX10", OPT_SOL_MAX[10],"","斥候の兵数上限",7,0);
-    ccreateTextBox(td820,"OPT_SOL_MAX11", OPT_SOL_MAX[11],"","斥候騎兵の兵数上限",7,0);
-    ccreateTextBox(td821,"OPT_SOL_MAX12", OPT_SOL_MAX[12],"","衝車の兵数上限",7,0);
-    ccreateTextBox(td822,"OPT_SOL_MAX13", OPT_SOL_MAX[13],"","投石機の兵数上限",7,0);
-
-    ccreateTextBox(td812,"OPT_SOL_ADD1", OPT_SOL_ADD[1],"","剣兵の作成単位",7,0);
-    ccreateTextBox(td813,"OPT_SOL_ADD3", OPT_SOL_ADD[3],"","槍兵の作成単位",7,0);
-    ccreateTextBox(td814,"OPT_SOL_ADD8", OPT_SOL_ADD[8],"","弓兵の作成単位",7,0);
-    ccreateTextBox(td815,"OPT_SOL_ADD5", OPT_SOL_ADD[5],"","騎兵の作成単位",7,0);
-    ccreateTextBox(td816,"OPT_SOL_ADD4", OPT_SOL_ADD[4],"","矛槍兵の作成単位",7,0);
-    ccreateTextBox(td817,"OPT_SOL_ADD9", OPT_SOL_ADD[9],"","弩兵の作成単位",7,0);
-    ccreateTextBox(td818,"OPT_SOL_ADD7", OPT_SOL_ADD[7],"","近衛騎兵の作成単位",7,0);
-    ccreateTextBox(td819,"OPT_SOL_ADD10", OPT_SOL_ADD[10],"","斥候の作成単位",7,0);
-    ccreateTextBox(td820,"OPT_SOL_ADD11", OPT_SOL_ADD[11],"","斥候騎兵の作成単位",7,0);
-    ccreateTextBox(td821,"OPT_SOL_ADD12", OPT_SOL_ADD[12],"","衝車の作成単位",7,0);
-    ccreateTextBox(td822,"OPT_SOL_ADD13", OPT_SOL_ADD[13],"","投石機の作成単位",7,0);
-
-    ccreateButton(td823, "作成中止", "兵士の作成単位を初期化します。", function() {clearInitSoldier()});
-
+    ccreateButton(td823, "作成中止", "兵士の作成単位を初期化します。", function() {
+                      clearInitSoldier();
+                  });
 
     // ===== 自動 武器・防具強化 ====
 
