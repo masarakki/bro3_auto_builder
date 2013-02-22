@@ -89,6 +89,10 @@ make_no["斥候騎兵"] = ["斥候騎兵",311,     0,           0,         8,   
 make_no["衝車"]     = ["衝車"    ,312,     0,           0,         9,       0,          0,0,0];
 make_no["投石機"]   = ["投石機"  ,313,     0,           0,        10,       0,          0,0,0];
 
+var __soldiers = init_soldiers();
+var soldiers = __soldiers[0];
+var high_soldiers = __soldiers[1];
+
 OPT_BK_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 OPT_BG_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
@@ -3676,181 +3680,11 @@ function addInifacHtml(vId) {
     tr611.appendChild(td611);
 
     // ==== 自動兵産設定 ====
-    var makeSoldierRow = function(name, soldier_id){
-        var td = d.createElement("td");
-        td.style.padding = "3px";
-        td.style.verticalAlign = "top";
-        td.style.textAlign = "center";
-        
-        ccreateText(td, "dummy", name, 0);
-        ccreateTextBox(td, "OPT_SOL_MAX" + soldier_id, OPT_SOL_MAX[soldier_id], "", name + "兵数上限", 7, 0);
-        ccreateTextBox(td, "OPT_SOL_ADD" + soldier_id, OPT_SOL_ADD[soldier_id], "", name + "作成単位", 7, 0);
-        
-        return td;
-    };
-    
-    var Soldier_Box = d.createElement("table");
-    Soldier_Box.style.border ="solid 2px black";
-    Soldier_Box.style.marginBottom = "4px";
-    Soldier_Box.style.width = "100%";
-    
-    var tr800 = d.createElement("tr");
-    tr800.style.border = "solid 1px black";
-    tr800.style.backgroundColor = COLOR_TITLE;
-    
-    var td800 = d.createElement("td");
-    ccreateCheckBox(td800, "OPT_BLD_SOL", OPT_BLD_SOL, " 自動造兵", "この都市で自動的に造兵します。", 0);
-    
-    var tr81 = d.createElement("tr");
-    tr81.style.border = "solid 1px black";
-    tr81.style.backgroundColor = COLOR_BACK;
-    var td81 = d.createElement("td");
-    td81.style.padding = "3px";
-
-    var tr811 = d.createElement("tr");
-
-    var td811 = d.createElement("td");
-    td811.style.padding = "3px";
-    td811.style.verticalAlign = "bottom";
-    
-    var td823 = d.createElement("td");
-    td823.style.padding = "3px";
-    td823.style.verticalAlign = "bottom";
-    
-    Soldier_Box.appendChild(tr800);
-    tr800.appendChild(td800);
-    Soldier_Box.appendChild(tr81);
-    tr81.appendChild(td81);
-    td81.appendChild(tr811);
-    
-    var soldier_rows = [
-        makeSoldierRow("矛槍兵", 4),
-        makeSoldierRow("弩兵", 9),
-        makeSoldierRow("近衛騎兵", 7),
-        makeSoldierRow("斥候騎兵", 11),
-        makeSoldierRow("投石機", 13),
-        makeSoldierRow("衝車", 12)
-     ];
-    
-    tr811.appendChild(td811);
-    for(var i = 0; i < soldier_rows.length; i++) {
-        tr811.appendChild(soldier_rows[i]);
-    }
-    tr811.appendChild(td823);
-    ccreateText(td823, "dummy", "　", 0 );
-    
-    ccreateText(td811, "dummy", "　", 0 );
-    ccreateText(td811, "dummy", "　兵数上限", 0 );
-    ccreateText(td811, "dummy", "　作成単位", 0 );
-    ccreateButton(td823, "作成中止", "兵士の作成単位を初期化します。", function() {
-                      clearInitSoldier();
-                  });
+    var soldier_box = create_soldier_box(high_soldiers);
 
     // ===== 自動 武器・防具強化 ====
 
-    var Blacksmith_Box = d.createElement("table");
-    Blacksmith_Box.style.border ="solid 2px black";
-    Blacksmith_Box.style.marginBottom = "4px";
-    Blacksmith_Box.style.width = "100%";
-
-    var tr900 = d.createElement("tr");
-    tr900.style.border = "solid 1px black";
-    tr900.style.backgroundColor =COLOR_TITLE;
-
-    var td900 = d.createElement("td");
-    ccreateCheckBox(td900, "OPT_BKBG_CHK", OPT_BKBG_CHK, " 自動武器・防具強化", "この都市で自動的に武器・防具の強化をします。", 0);
-
-    var tr91 = d.createElement("tr");
-    tr91.style.border = "solid 1px black";
-    tr91.style.backgroundColor =COLOR_BACK;
-    var td91 = d.createElement("td");
-    td91.style.padding = "3px";
-
-    var tr911 = d.createElement("tr");
-    var td911 = d.createElement("td");      td911.style.padding = "3px";        td911.style.verticalAlign = "bottom";
-    var td912 = d.createElement("td");      td912.style.padding = "3px";        td912.style.verticalAlign = "top";  td912.style.textAlign = "center";
-    var td913 = d.createElement("td");      td913.style.padding = "3px";        td913.style.verticalAlign = "top";  td913.style.textAlign = "center";
-    var td914 = d.createElement("td");      td914.style.padding = "3px";        td914.style.verticalAlign = "top";  td914.style.textAlign = "center";
-    var td915 = d.createElement("td");      td915.style.padding = "3px";        td915.style.verticalAlign = "top";  td915.style.textAlign = "center";
-    var td916 = d.createElement("td");      td916.style.padding = "3px";        td916.style.verticalAlign = "top";  td916.style.textAlign = "center";
-    var td917 = d.createElement("td");      td917.style.padding = "3px";        td917.style.verticalAlign = "top";  td917.style.textAlign = "center";
-    var td918 = d.createElement("td");      td918.style.padding = "3px";        td918.style.verticalAlign = "top";  td918.style.textAlign = "center";
-    var td919 = d.createElement("td");      td919.style.padding = "3px";        td919.style.verticalAlign = "top";  td919.style.textAlign = "center";
-    var td920 = d.createElement("td");      td920.style.padding = "3px";        td920.style.verticalAlign = "top";  td920.style.textAlign = "center";
-    var td921 = d.createElement("td");      td921.style.padding = "3px";        td921.style.verticalAlign = "top";  td921.style.textAlign = "center";
-    var td922 = d.createElement("td");      td922.style.padding = "3px";        td922.style.verticalAlign = "top";  td922.style.textAlign = "center";
-    var td923 = d.createElement("td");      td911.style.padding = "3px";        td911.style.verticalAlign = "bottom";
-    var td924 = d.createElement("td");      td912.style.padding = "3px";        td912.style.verticalAlign = "top";  td912.style.textAlign = "center";
-    var td925 = d.createElement("td");      td913.style.padding = "3px";        td913.style.verticalAlign = "top";  td913.style.textAlign = "center";
-
-    Blacksmith_Box.appendChild(tr900);
-    tr900.appendChild(td900);
-    Blacksmith_Box.appendChild(tr91);
-    tr91.appendChild(td91);
-    td91.appendChild(tr911);
-
-    tr911.appendChild(td911);
-    tr911.appendChild(td912);
-    tr911.appendChild(td913);
-    tr911.appendChild(td914);
-    tr911.appendChild(td915);
-    tr911.appendChild(td916);
-    tr911.appendChild(td917);
-    tr911.appendChild(td918);
-    tr911.appendChild(td919);
-    tr911.appendChild(td920);
-    tr911.appendChild(td921);
-    tr911.appendChild(td922);
-    tr911.appendChild(td923);
-    tr911.appendChild(td924);
-    tr911.appendChild(td925);
-
-    //  ABfacContainer.appendChild(Blacksmith_Box);
-
-    ccreateText(td912, "dummy", "剣兵", 0 );
-    ccreateText(td913, "dummy", "槍兵", 0 );
-    ccreateText(td914, "dummy", "弓兵", 0 );
-    ccreateText(td915, "dummy", "騎兵", 0 );
-    ccreateText(td916, "dummy", "矛槍兵", 0 );
-    ccreateText(td917, "dummy", "弩兵", 0 );
-    ccreateText(td918, "dummy", "近衛騎兵", 0 );
-    ccreateText(td919, "dummy", "斥候", 0 );
-    ccreateText(td920, "dummy", "斥候騎兵", 0 );
-    ccreateText(td921, "dummy", "衝車", 0 );
-    ccreateText(td922, "dummy", "投石機", 0 );
-    ccreateText(td923, "dummy", "　", 0 );
-    ccreateText(td923, "dummy", "　", 0 );
-
-    ccreateText(td911, "dummy", "　", 0 );
-    ccreateText(td911, "dummy", "武器レベル", 0 );
-    ccreateText(td911, "dummy", "防具レベル", 0 );
-
-    ccreateTextBox(td912,"OPT_BK_LV1", OPT_BK_LV[1],"","剣兵の武器レベル",7,0);
-    ccreateTextBox(td913,"OPT_BK_LV3", OPT_BK_LV[3],"","槍兵の武器レベル",7,0);
-    ccreateTextBox(td914,"OPT_BK_LV8", OPT_BK_LV[8],"","弓兵の武器レベル",7,0);
-    ccreateTextBox(td916,"OPT_BK_LV4", OPT_BK_LV[4],"","矛槍兵の武器レベル",7,0);
-    ccreateTextBox(td915,"OPT_BK_LV5", OPT_BK_LV[5],"","騎兵の武器レベル",7,0);
-    ccreateTextBox(td917,"OPT_BK_LV9", OPT_BK_LV[9],"","弩兵の武器レベル",7,0);
-    ccreateTextBox(td918,"OPT_BK_LV7", OPT_BK_LV[7],"","近衛騎兵の武器レベル",7,0);
-    ccreateText(td919, "dummy", "　", 0 );
-    ccreateText(td920, "dummy", "　", 0 );
-    ccreateTextBox(td921,"OPT_BK_LV12", OPT_BK_LV[12],"","衝車の武器レベル",7,0);
-    ccreateTextBox(td922,"OPT_BK_LV13", OPT_BK_LV[13],"","投石機の武器レベル",7,0);
-
-    ccreateTextBox(td912,"OPT_BG_LV1", OPT_BG_LV[1],"","剣兵の防具レベル",7,0);
-    ccreateTextBox(td913,"OPT_BG_LV3", OPT_BG_LV[3],"","槍兵の防具レベル",7,0);
-    ccreateTextBox(td914,"OPT_BG_LV8", OPT_BG_LV[8],"","弓兵の防具レベル",7,0);
-    ccreateTextBox(td916,"OPT_BG_LV4", OPT_BG_LV[4],"","矛槍兵の防具レベル",7,0);
-    ccreateTextBox(td915,"OPT_BG_LV5", OPT_BG_LV[5],"","騎兵の防具レベル",7,0);
-    ccreateTextBox(td917,"OPT_BG_LV9", OPT_BG_LV[9],"","弩兵の防具レベル",7,0);
-    ccreateTextBox(td918,"OPT_BG_LV7", OPT_BG_LV[7],"","近衛騎兵の防具レベル",7,0);
-    ccreateTextBox(td919,"OPT_BG_LV10", OPT_BG_LV[10],"","斥候の防具レベル",7,0);
-    ccreateTextBox(td920,"OPT_BG_LV11", OPT_BG_LV[11],"","斥候騎兵の防具レベル",7,0);
-    ccreateTextBox(td921,"OPT_BG_LV12", OPT_BG_LV[12],"","衝車の防具レベル",7,0);
-    ccreateTextBox(td922,"OPT_BG_LV13", OPT_BG_LV[13],"","投石機の防具レベル",7,0);
-
-    ccreateButton(td923, "初期化", "武器・防具の設定レベルを消去します。", function() {clearInitArmsArmor()});
-
+    var blacksmith_box = create_blacksmith_box(high_soldiers);
 
     // ===== 残す資源量 ====
 
@@ -4014,9 +3848,8 @@ function addInifacHtml(vId) {
     tr010.appendChild(td011);
     tr010.appendChild(td012);
     tr010.appendChild(td013);
-
-    ABfacContainer.appendChild(Soldier_Box);
-    ABfacContainer.appendChild(Blacksmith_Box);
+    ABfacContainer.appendChild(soldier_box);
+    ABfacContainer.appendChild(blacksmith_box);
     ABfacContainer.appendChild(Operation_Box);
 
 }
