@@ -3740,11 +3740,6 @@ function addInifacHtml(vId) {
         makeSoldierRow("近衛騎兵", 7),
         makeSoldierRow("斥候騎兵", 11),
         makeSoldierRow("投石機", 13),
-        makeSoldierRow("剣兵", 1),
-        makeSoldierRow("槍兵", 3),
-        makeSoldierRow("弓兵", 8),
-        makeSoldierRow("騎兵", 5),
-        makeSoldierRow("斥候", 10),
         makeSoldierRow("衝車", 12)
      ];
     
