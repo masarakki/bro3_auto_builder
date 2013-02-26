@@ -37,7 +37,7 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
                     enable_soldier_count = parseInt(sumMaxSoldier(make_no[key][1]));
                     if enable_soldier_count > request_num
                         console.log "request to create #{soldier.name} #{request_num}"
-                        j$.ajax {
+                        return j$.ajax {
                             url: "http://#{HOST}/facility/facility.php"
                             type: "POST"
                             data: { x: builder.x, y: builder.y, unit_id: soldier.unit_id(), count: request_num }
@@ -47,7 +47,13 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
                     else
                         return callback()
 
-try_create_soldiers = (soldiers, village, current_soldier_counts, using_skill, capacity) ->
+try_create_soldiers = (soldiers, village, current_soldier_counts, using_skill, capacity, succeeded = false) ->
+    next_tick = (soldiers, current_soldier_counts, capacity, succeeded) ->
+        if soldiers.length > 0
+            try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity, succeeded
+        else if succeeded
+            make_all_soldiers current_soldier_counts
+
     soldier = soldiers.pop()
     builder = village.hash[soldier.builder]
 
@@ -61,11 +67,10 @@ try_create_soldiers = (soldiers, village, current_soldier_counts, using_skill, c
             if html
                 capacity -= request_count
                 current_soldier_counts[soldier.name] -= request_count
-            if soldiers.length > 0
-                try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity
+                succeeded = true
+            next_tick soldiers, current_soldier_counts, capacity, succeeded
     else
-        if soldiers.length > 0
-            try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity
+        next_tick soldiers, current_soldier_counts, capacity, succeeded
 
 make_all_soldiers = (current_soldier_counts) ->
     soldiers = get_soldiers()
@@ -79,4 +84,4 @@ make_all_soldiers = (current_soldier_counts) ->
     return unless capacity > 0
 
     village = new Village
-    try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity
+    try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity, false
