@@ -243,189 +243,13 @@ var ShopFlg = false;
 
 var DBG_Flg = false;
 
-var global_status;
-
-
 var reopen = function() {
     closeIniBilderBox();
     openIniBilderBox();
 };
 
 //Main
-(function(){
-     global_status = new Status();
-     
-     // zIndex(重なり順序）の修正
-     j$("div#status div#status_left").css({"z-index":"0"});
-     j$("#menu_container").css({"z-index":"980"});
-     j$("div#map-scroll").css({"z-index":"150"});
-     j$("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"});
-
-     initUrlParams();
-     
-     j$("#mixi_ad_head").hide();
-     j$("#mixi_ad_groups").hide();
-     j$(".brNews").hide();
-
-     addOpenLinkHtml();
-     if ( is_stay_mode() ) {
-         reopen();
-     }
-     // =============================================================================================
-
-     //領地画面なら拠点建設データ取得
-     if( location.pathname == "/land.php" && URL_PARAM.x && URL_PARAM.y ) {
-         getAddingVillage(document.body);
-     }
-
-     //拠点画面なら拠点削除データ取得
-     if( location.pathname == "/facility/castle.php" ) {
-         getDeletingVillage(document.body);
-     }
-
-     //バグ回避 600000=5*60*1000
-     // 領地画面や建築画面で停止した場合の処理
-     // ５分間止まっていた場合拠点画面に移動する
-     if(location.pathname == "/land.php" || location.pathname == "/facility/facility.php") {
-         $w(function(){
-                location.href = "http://"+HOST+"/village.php";
-            },300000);
-     }
-     // =============================================================================================
-     //君主プロフィール画面なら都市画面URLを取得
-     if ((location.pathname == "/user/" || location.pathname == "/user/index.php") &&
-         getParameter("user_id") == "") {
-         getUserProf(document);
-         if ( is_stay_mode() ) {
-             reopen();
-         }
-     }
-     OPT_BUILD_VID = GM_getValue(HOST+PGNAME+"OPT_BUILD_VID" , "" );
-
-     if (location.pathname == "/village.php") {
-
-         var vID = "";
-         //座標を取得
-         var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-         vId = trim(xyElem.snapshotItem(0).innerHTML);
-         Load_OPT(vId);
-         if (OPT_BUILD_VID != getVillageID(vId)) {
-             GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , "" );
-             OPT_BUILD_VID = "";
-         }
-         getVillageActions();            // 建築情報の取得
-         checkVillageLength();           // 拠点数チェック 2012.04.09
-         settleVillages(0);              // 自動拠点作成 2012.04.09
-
-         //拠点画面なら対象建築物の建築チェック
-         var villages = loadVillages(HOST+PGNAME);
-         for(var i=0; i<villages.length;i++){
-             var tChk1 = GM_getValue(HOST+PGNAME+"OPT_CHKBOX_AVC_"+i, true);
-             if ( getVillageID(vId) == getParameter2(villages[i][IDX_URL], "village_id") ){
-                 break;
-             }
-         }
-
-         // 拠点にチェックがある場合建設処理を行う
-         if (tChk1){
-             Auto_Domestic();            // 自動内政処理 by nottisan
-         } else {
-             ichibaChange(vId);          // 市場処理
-             autoDonate();               // 自動寄付処理
-         }
-         // 研究所情報取得
-         var area = new Array();
-         area = get_area();
-
-         var _x = -1;
-         var _y = -1;
-         var _lv = -1;
-         for (var i=0;i<area.length;i++){
-             if (area[i].name == "研究所") {
-                 var Temp = area[i].xy.split(",");
-                 _x = Temp[0];
-                 _y = Temp[1];
-                 _lv = area[i].lv;
-             }
-         }
-         if ( _x < 0 ) {
-             // 内政スキルチェック
-             var nText = document.evaluate('//*[@class="base-skill"]/span/a', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-             var nName = nText.snapshotItem(0).innerHTML.split(":");
-             if (nName[0].length != 12) {
-                 // 内政武将がセットされている場合
-                 // alert("内政武将は " + nName[0].trim() + " です");
-                 j$.get("http://"+HOST+"/card/domestic_setting.php#ptop",function(x){
-                            var htmldoc = document.createElement("html");
-                            htmldoc.innerHTML = x;
-                            getDomesticSkill(htmldoc);      // 内政スキル使用チェック
-                            forwardNextVillage();           // 次の拠点へ移動
-                        });
-             } else {
-                 // 内政武将がセットされていない場合
-                 var data = getMyVillage();
-                 data[IDX_ACTIONS] = new Array();
-                 saveVillage(data, TYPE_DOMESTIC);
-                 if ( is_stay_mode() ) {
-                     reopen();
-                 }
-                 forwardNextVillage();                       // 次の拠点へ移動
-             }
-         } else {
-             try {
-                 // 研究所チェック
-                 j$.get("http://"+HOST+"/facility/facility.php?x=" + _x + "&y=" + _y ,function(x){
-                            var htmldoc = document.createElement("html");
-                            htmldoc.innerHTML = x;
-                            getTrainingSoldier(htmldoc);
-
-                            // 内政スキルチェック
-                            var nText = document.evaluate('//*[@class="base-skill"]/span/a', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                            var nName = nText.snapshotItem(0).innerHTML.split(":");
-                            if (nName[0].length != 12) {
-                                // 内政武将がセットされている場合
-                                // alert("内政武将は " + nName[0].trim() + " です");
-                                j$.get("http://"+HOST+"/card/domestic_setting.php#ptop",function(x){
-                                           var htmldoc = document.createElement("html");
-                                           htmldoc.innerHTML = x;
-                                           getDomesticSkill(htmldoc);      // 内政スキル使用チェック
-                                           forwardNextVillage();           // 次の拠点へ移動
-                                       });
-                            } else {
-                                // 内政武将がセットされていない場合
-                                var data = getMyVillage();
-                                data[IDX_ACTIONS] = new Array();
-                                saveVillage(data, TYPE_DOMESTIC);
-                                if ( is_stay_mode() ) {
-                                    reopen();
-                                }
-                                forwardNextVillage();                       // 次の拠点へ移動
-                            }
-                        });
-             }catch(e) {
-                 // エラーが発生した場合次の拠点へ移動
-                 forwardNextVillage();                       // 次の拠点へ移動
-             }
-         }
-     }
-
-     //兵士作成画面なら作成中兵士を取得
-     if (location.pathname == "/facility/facility.php") {
-
-         //var actionType = TYPE_FACILITY + getParameter("x") + getParameter("y");
-
-         j$.get("http://"+HOST+"/facility/facility.php?x=" + getParameter("x") + "&y=" + getParameter("y") + "#ptop",function(x){
-                    var htmldoc = document.createElement("html");
-                    htmldoc.innerHTML = x;
-                    getTrainingSoldier(htmldoc);
-                    if ( is_stay_mode() ) {
-                        reopen();
-                    }
-                });
-
-     }
-
- })();
+main();
 
 function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments)) };
 
@@ -460,6 +284,33 @@ function initUrlParams() {
 
 //拠点作成開始
 function settleVillages(z){
+    //名声チェック
+    var is_village_buildable = function () {
+        var max_famous = global_status.max_famous;
+        
+        //拠点作成に必要な名声
+        var bldtbl = [17, 35, 54, 80, 112, 150, 195, 248, 310, 999];
+        var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length; //拠点数-1になる
+
+        //作成中の拠点の数
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
+        var x = 0;
+        for (var i = 0; i < lists.length; i++) {
+            if(lists[i].status == 2){
+                x++;
+            }
+        }
+        return (max_famous >= bldtbl[villageLength + x]);
+    };
+
+    var failSettleVillage = function(z) {
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
+        if (lists[z].status == 1) {
+            lists[z].status = 0;
+        }
+        csaveData(HOST + "ReserveList", lists, true, true );
+    };
+
     //新規拠点作成に必要な名声があれば拠点作成
     if (is_village_buildable()){
         //予約データ取得
@@ -477,33 +328,6 @@ function settleVillages(z){
                                  });
                });
         }
-    }
-    
-    //名声チェック
-    function is_village_buildable() {
-        var max_famous = global_status.max_famous;
-        
-        //拠点作成に必要な名声
-        var bldtbl = [17, 35, 54, 80, 112, 150, 195, 248, 310, 999];
-        var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length; //拠点数-1になる
-
-        //作成中の拠点の数
-        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
-        var x = 0;
-        for (var i = 0; i < lists.length; i++) {
-            if(lists[i].status == 2){
-                x++;
-            }
-        }
-        return (max_famous >= bldtbl[villageLength + x]);
-    }
-
-    function failSettleVillage(z) {
-        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
-        if (lists[z].status == 1) {
-            lists[z].status = 0;
-        }
-        csaveData(HOST + "ReserveList", lists, true, true );
     }
 }
 
@@ -1933,7 +1757,7 @@ function cmp_areas(a,b){
 }
 
 // 次拠点移動
-function forwardNextVillage(){
+function forwardNextVillage(vId){
     // 巡回停止中ならスキップ 2012.01.24
     if (GM_getValue(HOST+PGNAME+"AutoFlg", true) == false) { return; }
 
@@ -5420,12 +5244,27 @@ function getMyXY() {
     }
 }
 
+function get_using_skill_all() {
+    var text = j$("div.base-skill span a").text();
+    var matches = text.match(/(.+)\s*(.+)\((.+)\)/);
+    
+    var chara = matches[1] === '--' ? null : matches[1];
+    var skill = matches[2] === '--' ? null : matches[2];
+    var time = matches[3] === '--:--:--' ? null : matches[3];
+
+    return {
+        chara: chara,
+        skill: skill,
+        time: time
+    };
+}
+
 function get_using_skill() {
-    var use_skill = j$("div.base-skill span a").text()
-    if (!use_skill.match("--:--:--")) {
-        return trim(use_skill.split(":")[1].split("LV")[0]);
-    } else {
+    var skill = get_using_skill_all();
+    if (skill.skill == null) {
         return null;
+    } else {
+        return skill.name;
     }
 }
 
@@ -5434,24 +5273,23 @@ function getDomesticSkill(htmldoc) {
     var data = getMyVillage();
     data[IDX_ACTIONS] = new Array();
     var i = -1;
-    // 使用中
-    var useSkill = document.evaluate('//div[@class="base-skill"]/span/a', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    if (!useSkill.snapshotItem(0).innerHTML.match("--:--:--")) {
-        console.log(useSkill.snapshotItem(0).innerHTML);
+
+    var skill = get_using_skill_all();
+    if (skill.skill) {     
         i += 1;
+        var status = "内政:使用(" + skill.name + ")";
         data[IDX_ACTIONS][i] = new Array();
-        var SkillName = useSkill.snapshotItem(0).innerHTML.split(":")[1].split("(")[0];
-        var status = "内政:使用(" + trim(useSkill.snapshotItem(0).innerHTML.split(":")[0]) + ":" + SkillName + ")";
         data[IDX_ACTIONS][i][IDX2_STATUS] = status;
-        data[IDX_ACTIONS][i][IDX2_TIME] = generateDateString(computeTime(useSkill.snapshotItem(0).innerHTML.split(">")[1].substr(0,8)));
+        data[IDX_ACTIONS][i][IDX2_TIME] = generateDateString(computeTime(skill.time));
         data[IDX_ACTIONS][i][IDX2_TYPE] = TYPE_DOMESTIC;
         data[IDX_ACTIONS][i][IDX2_DELETE] = false;
         data[IDX_ACTIONS][i][IDX2_ROTATION] = 0;
     }
+    
     // 回復中
     var dom = document.createElement("html");
     var RecoveryCheck = document.evaluate('//table[@class="general"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (var z=0;z<RecoveryCheck.snapshotLength;z++){
+    for (var z = 0; z < RecoveryCheck.snapshotLength; z++){
         if (RecoveryCheck.snapshotItem(z).innerHTML.match("内政中")) {
             dom.innerHTML = "<table>" + RecoveryCheck.snapshotItem(z).innerHTML + "</table>";
             // 内政武将名

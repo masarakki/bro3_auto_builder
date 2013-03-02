@@ -9,7 +9,7 @@ class Village
                 headers: { "Content-type": "text/html" }
                 overrideMimeType: 'text/html; charset=utf-8'
                 success: (res) ->
-                    callback(j$(res))
+                    callback j$(res)
             }
 
     constructor: ->
@@ -29,3 +29,9 @@ class Village
                 building = new Building name, x, y, level
                 @hash[name] = building
                 building
+
+update_creating_soldiers = (res) ->
+    htmldoc = document.createElement "html"
+    htmldoc.innerHTML = res
+    getTrainingSoldier htmldoc
+    reopen() if is_stay_mode()
