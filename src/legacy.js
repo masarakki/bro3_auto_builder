@@ -169,7 +169,7 @@ var OPT_BUILD_VID;
 
 var INTERVAL  = 1000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
 var INTERVAL2 = 2000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
-var HOST = location.hostname; //アクセスURLホスト
+var HOST = location.hostname;
 var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524"; //グリモン領域への保存時のPGの名前
 var TIMEOUT_URL ="/false/login_sessionout.php"; //タイムアウト時のURLの一部
 var g_MD="";
@@ -269,17 +269,14 @@ var URL_viID = "viID";
 var URL_viSSID = "ssid_val";
 
 //新規作成リンク
-var CREATELINK = "http://SITE/facility/build.php?id=fID&x=urlX&y=urlY&village_id=viID&ssid=ssid_val";
 var URL_fID = "fID"; //建物のID
 var HATAKE = 215;
 var SOUKO = 233;
 var SUZUME = 216;
 
-var FACLINK = "http://SITE/facility/facility.php?x=urlX&y=urlY";
-var VILLAGELINK = "http://SITE/village.php#ptop";
-// 2012.04.10
-var LANDLINK = "http://SITE/land.php?x=urlX&y=urlY";
-var SETTLELINK = "http://SITE/facility/select_type.php?x=urlX&y=urlY&mode=build&type=fID";
+var FACLINK = function(host, x, y) {
+    return "http://" + host + "/facility/facility.php?x=" + x + "&y=" + y;
+}
 
 var VillageData = new Array();
 var OPT_VILLAGE = new Array();
@@ -538,72 +535,28 @@ function initUrlParams() {
 //拠点作成開始
 function settleVillages(z){
     //新規拠点作成に必要な名声があれば拠点作成
-    if ( checkFame() ){
+    if (is_village_buildable()){
         //予約データ取得
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
-        if( lists.length == 0 || z >= lists.length) {return;}
-        if( lists[z].status != 1 && lists[z].status != 0) {settleVillages(z+1);return;}
-        var mURL = LANDLINK;
-        mURL = mURL.replace(URL_SITE,HOST);
-        mURL = mURL.replace(URL_X,lists[z].x);
-        mURL = mURL.replace(URL_Y,lists[z].y);
-        var tid=unsafeWindow.setTimeout(function(){
-                                            GM_xmlhttpRequest({
-                                                                  method:"GET", 
-                                                                  url:mURL,
-                                                                  headers:{"Content-type":"text/html"},
-                                                                  overrideMimeType:'text/html; charset=utf-8',
-                                                                  onload:function(x){
-                                                                      var htmldoc = document.createElement("html");
-                                                                      htmldoc.innerHTML = x.responseText;
-                                                                      //拠点を作成できるかチェック
-                                                                      var rmtime = htmldoc.innerHTML.match(/この領地を拠点にする/);
-                                                                      if ( rmtime ) { //拠点を作成できる場合作成開始
-                                                                          var mURL = SETTLELINK;
-                                                                          mURL = mURL.replace(URL_SITE,HOST);
-                                                                          mURL = mURL.replace(URL_X,lists[z].x);
-                                                                          mURL = mURL.replace(URL_Y,lists[z].y);
-                                                                          mURL = mURL.replace(URL_fID,lists[z].kind);
-                                                                          var tid=unsafeWindow.setTimeout(function(){
-                                                                                                              GM_xmlhttpRequest({
-                                                                                                                                    method:"GET", 
-                                                                                                                                    url:mURL,
-                                                                                                                                    headers:{"Content-type":"text/html"},
-                                                                                                                                    overrideMimeType:'text/html; charset=utf-8',
-                                                                                                                                    onload:function(x){
-                                                                                                                                        var htmldoc = document.createElement("html");
-                                                                                                                                        htmldoc.innerHTML = x.responseText;
-                                                                                                                                        //拠点が作成開始できているか確認
-                                                                                                                                        if (!htmldoc.innerHTML.match(/名声が不足しています/)) {
-                                                                                                                                            getAddingVillage(htmldoc);
-                                                                                                                                            if ( getStayMode() ) {
-                                                                                                                                                closeIniBilderBox()
-                                                                                                                                                openIniBilderBox()
-                                                                                                                                            }
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                });
-                                                                                                          }, INTERVAL);
-                                                                      } else {
-                                                                          failSettleVillage(z);
-                                                                          settleVillages(z+1);
-                                                                      }
-                                                                  }
-                                                              });
-                                        }, INTERVAL);
-    }
-
-    //名声チェック
-    function checkFame() {
-
-        //現在の名声MAX取得
-        var fameMAX;
-        var fameText = $x('id("status_left")/img[contains(@src,"ico_fame.gif")]').nextSibling;
-        if( fameText ) {
-            var tmp = fameText.nodeValue.match(/\s*(\d+)\s*\/\s*(\d+)/);
-            fameMAX = parseInt(tmp[2],10);
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
+        if( lists.length == 0 || z >= lists.length) {
+            return;
         }
-
+        if( lists[z].status != 1 && lists[z].status != 0) {
+            settleVillages(z+1);
+        } else {
+            var tid = unsafeWindow.setTimeout(function(){
+                                                  build_village(list[z].x, list[z].y, list[z].kind, function() {
+                                                                    failSettleVillage(z);
+                                                                    settleVillages(z+1);
+                                                                });
+                                              }, INTERVAL);
+        }
+    }
+    
+    //名声チェック
+    function is_village_buildable() {
+        var max_famous = global_status.max_famous;
+        
         //拠点作成に必要な名声
         var bldtbl = [17, 35, 54, 80, 112, 150, 195, 248, 310, 999];
         //現在の拠点の数
@@ -1102,10 +1055,7 @@ function getDeletingVillage(htmldoc) {
 
 function DeleteFacility(_x,_y){
     var tid=unsafeWindow.setTimeout(function(){
-                                        var mURL = FACLINK;
-                                        mURL = mURL.replace(URL_SITE,HOST);
-                                        mURL = mURL.replace(URL_X,_x);
-                                        mURL = mURL.replace(URL_Y,_y);
+                                        var mURL = FACLINK(HOST, _x, _y);
                                         GM_xmlhttpRequest({
                                                               method:"GET", 
                                                               url: mURL,
@@ -1485,11 +1435,7 @@ function autoLvup() {
             }
             var tid=unsafeWindow.setTimeout(function(){
 
-                                                var mURL = FACLINK;
-                                                mURL = mURL.replace(URL_SITE,HOST);
-                                                mURL = mURL.replace(URL_X,_x);
-                                                mURL = mURL.replace(URL_Y,_y);
-
+                                                var mURL = FACLINK(HOST, _x, _y);
                                                 GM_xmlhttpRequest({
                                                                       method:"GET", 
                                                                       url: mURL,
@@ -2068,16 +2014,6 @@ function createFacility(f, area){
     for(var i=0;i<area.length;i++){
         if(area[i].name == "平地"){ //一番最初に見つかった平地に建設
             var Temp = area[i].xy.split(",");
-            /*
-             var mURL = CREATELINK;
-             mURL = mURL.replace(URL_SITE,HOST);
-             mURL = mURL.replace(URL_X,Temp[0]);
-             mURL = mURL.replace(URL_Y,Temp[1]);
-             mURL = mURL.replace(URL_viID,getVillageID(vId));
-             mURL = mURL.replace(URL_fID,f);
-             mURL = mURL.replace(URL_viSSID,j$.cookie('SSID'));                          // 2012.04.24 ssid 追加
-             var tid=unsafeWindow.setTimeout(function(){location.href = mURL;},INTERVAL);
-             */
             var c = {};
             c['x']=parseInt(Temp[0]);
             c['y']=parseInt(Temp[1]);
