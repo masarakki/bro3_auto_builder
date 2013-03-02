@@ -322,6 +322,11 @@ var DBG_Flg = false;
 var global_status;
 
 
+var reopen = function() {
+    closeIniBilderBox();
+    openIniBilderBox();
+};
+
 //Main
 (function(){
      global_status = new Status();
@@ -333,25 +338,14 @@ var global_status;
      j$("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"});
 
      initUrlParams();
-
-     var mixi_ad_head = xpath('//div[@ID="mixi_ad_head"]', document);
-     if (mixi_ad_head.snapshotLength) {
-         mixi_ad_head.snapshotItem(0).style.display = "none";
-     }
-
-     var mixi_ad_groups = xpath('//div[@ID="mixi_ad_groups"]', document);
-     if (mixi_ad_groups.snapshotLength) {
-         mixi_ad_groups.snapshotItem(0).style.display = "none";
-     }
-     var mixi_ad_news = xpath('//div[@class="brNews"]', document);
-     if (mixi_ad_news.snapshotLength) {
-         mixi_ad_news.snapshotItem(0).style.display = "none";
-     }
+     
+     j$("#mixi_ad_head").hide();
+     j$("#mixi_ad_groups").hide();
+     j$(".brNews").hide();
 
      addOpenLinkHtml();
-     if ( getStayMode() ) {
-         closeIniBilderBox();
-         openIniBilderBox();
+     if ( is_stay_mode() ) {
+         reopen();
      }
      // =============================================================================================
 
@@ -378,9 +372,8 @@ var global_status;
      if ((location.pathname == "/user/" || location.pathname == "/user/index.php") &&
          getParameter("user_id") == "") {
          getUserProf(document);
-         if ( getStayMode() ) {
-             closeIniBilderBox();
-             openIniBilderBox();
+         if ( is_stay_mode() ) {
+             reopen();
          }
      }
      OPT_BUILD_VID = GM_getValue(HOST+PGNAME+"OPT_BUILD_VID" , "" );
@@ -449,9 +442,8 @@ var global_status;
                  var data = getMyVillage();
                  data[IDX_ACTIONS] = new Array();
                  saveVillage(data, TYPE_DOMESTIC);
-                 if ( getStayMode() ) {
-                     closeIniBilderBox()
-                     openIniBilderBox()
+                 if ( is_stay_mode() ) {
+                     reopen();
                  }
                  forwardNextVillage();                       // 次の拠点へ移動
              }
@@ -480,9 +472,8 @@ var global_status;
                                 var data = getMyVillage();
                                 data[IDX_ACTIONS] = new Array();
                                 saveVillage(data, TYPE_DOMESTIC);
-                                if ( getStayMode() ) {
-                                    closeIniBilderBox()
-                                    openIniBilderBox()
+                                if ( is_stay_mode() ) {
+                                    reopen();
                                 }
                                 forwardNextVillage();                       // 次の拠点へ移動
                             }
@@ -503,9 +494,8 @@ var global_status;
                     var htmldoc = document.createElement("html");
                     htmldoc.innerHTML = x;
                     getTrainingSoldier(htmldoc);
-                    if ( getStayMode() ) {
-                        closeIniBilderBox()
-                        openIniBilderBox()
+                    if ( is_stay_mode() ) {
+                        reopen();
                     }
                 });
 
@@ -642,9 +632,8 @@ function checkVillageLength() {
                                          htmldoc.innerHTML = x.responseText;
                                          //拠点リストを更新
                                          getUserProf(htmldoc);
-                                         if ( getStayMode() ) {
-                                             closeIniBilderBox();
-                                             openIniBilderBox();
+                                         if ( is_stay_mode() ) {
+                                             reopen();
                                          }
                                          //本拠地に強制ジャンプ
                                          var villages = loadVillages(HOST+PGNAME);
@@ -679,9 +668,8 @@ function checkVillageLength() {
                                              var htmldoc = document.createElement("html");
                                              htmldoc.innerHTML = x.responseText;
                                              getUserProf(htmldoc);
-                                             if ( getStayMode() ) {
-                                                 closeIniBilderBox()
-                                                 openIniBilderBox()
+                                             if ( is_stay_mode() ) {
+                                                 reopen();
                                              }
                                              $w(function(){
                                                     location.reload();
@@ -853,9 +841,8 @@ function getAddingVillage(htmldoc) {
             msg += "(" + URL_PARAM.x + "," + URL_PARAM.y + ")には、すでに建設予約があります。";
         }
         alert(msg);
-        if ( getStayMode() ) {
-            closeIniBilderBox()
-            openIniBilderBox()
+        if ( is_stay_mode() ) {
+            reopen();
         }
     }
 
@@ -948,9 +935,8 @@ function addLinkTondenVillage() {
             msg += "(" + x + "," + y + ")には、すでに建設予約があります。";
         }
         alert(msg);
-        if ( getStayMode() ) {
-            closeIniBilderBox()
-            openIniBilderBox()
+        if ( is_stay_mode() ) {
+            reopen();
         }
     }
 
@@ -1001,9 +987,8 @@ function getDeletingVillage(htmldoc) {
     }else{
         delList(1, x, y);
     }
-    if ( getStayMode() ) {
-        closeIniBilderBox()
-        openIniBilderBox()
+    if ( is_stay_mode() ) {
+        reopen();
     }
 
     function addList(tim, kind, status, x, y) 
@@ -1445,9 +1430,8 @@ function autoLvup() {
                                htmldoc.innerHTML = x.responseText;
                                // 鍛冶場・防具工場情報の取得
                                getTrainingSoldier(htmldoc);
-                               if ( getStayMode() ) {
-                                   closeIniBilderBox()
-                                   openIniBilderBox()
+                               if ( is_stay_mode() ) {
+                                   reopen();
                                }
                                
                                var actionsElem  = document.evaluate('//th[@class="mainTtl6"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -2268,8 +2252,7 @@ function addOpenLinkHtml() {
     openLink.style.cursor = "pointer";
 
     openLink.addEventListener("click", function() {
-                                  closeIniBilderBox();
-                                  openIniBilderBox();
+                                  reopen();
                               }, true);
     if (location.hostname[0] == "s" || location.hostname[0] == "h") {
         sidebar.snapshotItem(1).appendChild(openLink);
@@ -2803,14 +2786,16 @@ function addIniBilderHtml() {
 
     // 確認済みボタン
     var Button2 = d.createElement("span");
-    ccreateButton(Button2, "確認済", "完了済の作業を削除します",
-                  function() { confirmTimer() });
+    ccreateButton(Button2, "確認済", "完了済の作業を削除します", function() {
+                      confirmTimer();
+                  });
     ButtonBox.appendChild(Button2);
 
     // 閉じるボタン
     var Button3 = d.createElement("span");
-    ccreateButton(Button3, "閉じる", "ウインドウを閉じます",
-                  function() {closeIniBilderBox()});
+    ccreateButton(Button3, "閉じる", "ウインドウを閉じます", function() {
+                      closeIniBilderBox();
+                  });
     ButtonBox.appendChild(Button3);
 
     // 常駐チェックボックス
@@ -2821,9 +2806,10 @@ function addIniBilderHtml() {
     var stayBox =  document.createElement("input");
     stayBox.type = "checkbox";
     stayBox.style.verticalAlign = "middle";
-    stayBox.checked = getStayMode();
-    stayBox.addEventListener("change", 
-                             function() {changeStayMode(this.checked)}, true);
+    stayBox.checked = is_stay_mode();
+    stayBox.addEventListener("change", function() {
+                                 changeStayMode(this.checked);
+                             }, true);
     ButtonBox.appendChild(stayBox);
 
     var stayCap = document.createElement("span");
@@ -2841,8 +2827,9 @@ function addIniBilderHtml() {
     reverseBox.type = "checkbox";
     reverseBox.style.verticalAlign = "middle";
     reverseBox.checked = getReverseMode();
-    reverseBox.addEventListener("change", 
-                                function() {changeReverseMode(this.checked)}, true);
+    reverseBox.addEventListener("change", function() {
+                                    changeReverseMode(this.checked);
+                                }, true);
     ButtonBox.appendChild(reverseBox);
 
     var reverseCap = document.createElement("span");
@@ -2864,16 +2851,13 @@ function addIniBilderHtml() {
 
     var selectBox = document.createElement("select");
     selectBox.id = "dispMode";
-    selectBox.addEventListener("change", 
-                               function() {
+    selectBox.addEventListener("change", function() {
                                    GM_setValue(HOST+PGNAME+"OPT_ROUND_TIME1" , document.getElementById("dispMode").value );
-                                   OPT_ROUND_TIME1 = document.getElementById("dispMode").value
+                                   OPT_ROUND_TIME1 = document.getElementById("dispMode").value;
                                }, true);
     typeDiv.appendChild(selectBox);
-
+    
     var options = new Array(
-        //      new Array("10sec" , LOAD_ROUND_TIME_10), 
-        //      new Array("20sec" , LOAD_ROUND_TIME_20), 
         new Array("30sec" , LOAD_ROUND_TIME_30), 
         new Array("40sec" , LOAD_ROUND_TIME_40), 
         new Array("50sec" , LOAD_ROUND_TIME_50), 
@@ -2899,7 +2883,7 @@ function addIniBilderHtml() {
     }
     selectBox.value = GM_getValue(HOST+PGNAME+"OPT_ROUND_TIME1", LOAD_ROUND_TIME_60);
     OPT_ROUND_TIME1 = GM_getValue(HOST+PGNAME+"OPT_ROUND_TIME1", LOAD_ROUND_TIME_60);
-
+    
     // 2012.01.11 巡回時間に 1 ~ 10sec 追加
     OPT_ROUND_TIME1 = parseInt(OPT_ROUND_TIME1) + Math.floor( Math.random() * 10 );
 
@@ -3161,8 +3145,7 @@ function addIniBilderHtml() {
                 csaveData(HOST+"ReserveList", lists, true, true );
 
                 //更新後内容で表示
-                closeIniBilderBox()
-                openIniBilderBox()
+                reopen();
 
                 break;
             }
@@ -3699,7 +3682,7 @@ function addInifacHtml(vId) {
     tr711.appendChild(td711);
 
     ccreateButton(td711, "保存", "設定内容を保存します", function() {
-                      SaveInifacBox(ABfacContainer.getAttribute('vId'))
+                      SaveInifacBox(ABfacContainer.getAttribute('vId'));
                       alert("保存しました");
                   });
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
@@ -3715,8 +3698,7 @@ function addInifacHtml(vId) {
         ccreateButton(td711, "市場情報初期化", "市場情報を初期化します", function() {
 
                           csaveData(HOST+"ShopList",[],true,true);
-                          closeIniBilderBox()
-                          openIniBilderBox()
+                          reopen();
                           alert("市場情報を初期化しました");
                       },90);
     }
@@ -4852,9 +4834,8 @@ function ichibaChange(vId) {
         }
         csaveData(HOST+"ShopList",shoplist,true,true);
         // 市場情報が更新されたら表示しなおし
-        if ( getStayMode() ) {
-            closeIniBilderBox()
-            openIniBilderBox()
+        if ( is_stay_mode() ) {
+            reopen();
         }
     }
 
@@ -4867,9 +4848,8 @@ function ichibaChange(vId) {
             }
         }
         // 市場情報が更新されたら表示しなおし
-        if ( getStayMode() ) {
-            closeIniBilderBox()
-            openIniBilderBox()
+        if ( is_stay_mode() ) {
+            reopen();
         }
     }
 }
@@ -5236,9 +5216,8 @@ function getVillageActions() {
     //行軍情報を永続保存
     data[IDX_ACTIONS] = actions2;
     saveVillage(data, TYPE_MARCH);
-    if ( getStayMode() ) {
-        closeIniBilderBox()
-        openIniBilderBox()
+    if ( is_stay_mode() ) {
+        reopen();
     }
 }
 
@@ -5345,9 +5324,8 @@ function confirmTimer() {
     }
     
     //更新後内容で表示　2013.01.10 ???
-    if ( getStayMode() ) {
-        closeIniBilderBox()
-        openIniBilderBox()
+    if ( is_stay_mode() ) {
+        reopen();
     }
 
 }
@@ -5386,9 +5364,8 @@ function deleteAction(key) {
         //見つかったら更新
         if (exists) {
             saveVillages(hosts[ii] + PGNAME, villages);
-            if ( getStayMode() ) {
-                closeIniBilderBox()
-                openIniBilderBox()
+            if ( is_stay_mode() ) {
+                reopen();
             }
             return;
         }
@@ -5582,14 +5559,14 @@ function getDomesticSkill(htmldoc) {
         }
     }
     saveVillage(data, TYPE_DOMESTIC);
-    if ( getStayMode() ) {
-        closeIniBilderBox()
-        openIniBilderBox()
+    if ( is_stay_mode() ) {
+        reopen();
     }
 }
+
 //常駐モード取得
-function getStayMode() {
-    var result = GM_getValue(location.hostname + "_stay_mode" + PGNAME, true);
+function is_stay_mode() {
+    var result = GM_getValue(HOST + "_stay_mode" + PGNAME, true);
     return result;
 }
 
