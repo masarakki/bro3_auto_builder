@@ -312,9 +312,13 @@ var ShopFlg = false;
 
 var DBG_Flg = false;
 
+var global_status;
+
+
 //Main
 (function(){
-
+     global_status = new Status();
+     
      // zIndex(重なり順序）の修正
      j$("div#status div#status_left").css({"z-index":"0"});
      j$("#menu_container").css({"z-index":"980"});
@@ -544,12 +548,12 @@ function settleVillages(z){
         if( lists[z].status != 1 && lists[z].status != 0) {
             settleVillages(z+1);
         } else {
-            var tid = unsafeWindow.setTimeout(function(){
-                                                  build_village(list[z].x, list[z].y, list[z].kind, function() {
-                                                                    failSettleVillage(z);
-                                                                    settleVillages(z+1);
-                                                                });
-                                              }, INTERVAL);
+            $w(function(){
+                   build_village(list[z].x, list[z].y, list[z].kind, function() {
+                                     failSettleVillage(z);
+                                     settleVillages(z+1);
+                                 });
+               });
         }
     }
     
@@ -559,27 +563,25 @@ function settleVillages(z){
         
         //拠点作成に必要な名声
         var bldtbl = [17, 35, 54, 80, 112, 150, 195, 248, 310, 999];
-        //現在の拠点の数
-        //var villages = loadVillages(HOST);
-        //var villageLength = document.evaluate('//div[@id="lodgment"]/div/ul/li/a', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); //拠点数-1になる
-
-        // 2012.04.25 本鯖対応
         var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length; //拠点数-1になる
 
         //作成中の拠点の数
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
         var x = 0;
-        for (var i=0 ; i<lists.length ; i++) {
-            if(lists[i].status == 2){x++;}
+        for (var i = 0; i < lists.length; i++) {
+            if(lists[i].status == 2){
+                x++;
+            }
         }
-        //      return (fameMAX >= bldtbl[villageLength.snapshotLength + x]);
-        return (fameMAX >= bldtbl[villageLength + x]);
+        return (max_famous >= bldtbl[villageLength + x]);
     }
 
     function failSettleVillage(z) {
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
-        if (lists[z].status == 1) { lists[z].status = 0;}
-        csaveData(HOST+"ReserveList", lists, true, true );
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
+        if (lists[z].status == 1) {
+            lists[z].status = 0;
+        }
+        csaveData(HOST + "ReserveList", lists, true, true );
     }
 }
 
