@@ -12,9 +12,8 @@ build_village = (x, y, type, funcs) ->
                             htmldoc = document.createElement 'html'
                             htmldoc.innerHTML = res2
                             getAddingVillage htmldoc
-                            if getStayMode()
-                                closeIniBilderBox()
-                                openIniBilderBox()
+                            if is_stay_mode()
+                                reopen()
                 }
             else
                 funcs()
