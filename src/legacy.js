@@ -260,6 +260,13 @@ var $x = function(xp,dc) { return d.evaluate(xp, dc||d, null, XPathResult.FIRST_
 var $a = function(xp,dc) { var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); var a=[]; for(var i=0; i<r.snapshotLength; i++){ a.push(r.snapshotItem(i)); } return a; };
 var $e = function(e,t,f) { if (!e) return; e.addEventListener(t, f, false); };
 
+var $w = function(func, interval) {
+    if (interval == undefined) {
+        interval = INTERVAL;
+    }
+    return unsafeWindow.setTimeout(func, interval);
+};
+
 //LvUPリンク
 var LVUPLINK = "http://SITE/facility/build.php?x=urlX&y=urlY&village_id=viID&ssid=ssid_val#ptop";
 var URL_SITE = "SITE";
@@ -325,7 +332,6 @@ var global_status;
      j$("div#map-scroll").css({"z-index":"150"});
      j$("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"});
 
-
      initUrlParams();
 
      var mixi_ad_head = xpath('//div[@ID="mixi_ad_head"]', document);
@@ -342,10 +348,10 @@ var global_status;
          mixi_ad_news.snapshotItem(0).style.display = "none";
      }
 
-     addOpenLinkHtml()
+     addOpenLinkHtml();
      if ( getStayMode() ) {
-         closeIniBilderBox()
-         openIniBilderBox()
+         closeIniBilderBox();
+         openIniBilderBox();
      }
      // =============================================================================================
 
@@ -363,7 +369,9 @@ var global_status;
      // 領地画面や建築画面で停止した場合の処理
      // ５分間止まっていた場合拠点画面に移動する
      if(location.pathname == "/land.php" || location.pathname == "/facility/facility.php") {
-         unsafeWindow.setTimeout(function(){location.href = "http://"+HOST+"/village.php";},300000);
+         $w(function(){
+                location.href = "http://"+HOST+"/village.php";
+            },300000);
      }
      // =============================================================================================
      //君主プロフィール画面なら都市画面URLを取得
@@ -371,8 +379,8 @@ var global_status;
          getParameter("user_id") == "") {
          getUserProf(document);
          if ( getStayMode() ) {
-             closeIniBilderBox()
-             openIniBilderBox()
+             closeIniBilderBox();
+             openIniBilderBox();
          }
      }
      OPT_BUILD_VID = GM_getValue(HOST+PGNAME+"OPT_BUILD_VID" , "" );
@@ -623,50 +631,34 @@ function checkVillageLength() {
     }
 
     function getUserProfJumpNewVillage(){
-        var tid=unsafeWindow.setTimeout(function(){
-                                            GM_xmlhttpRequest({
-                                                                  method:"GET", 
-                                                                  url:"http://" + HOST + "/user/",
-                                                                  headers:{"Content-type":"text/html"},
-                                                                  overrideMimeType:'text/html; charset=utf-8',
-                                                                  onload:function(x){
-                                                                      var htmldoc = document.createElement("html");
-                                                                      htmldoc.innerHTML = x.responseText;
-                                                                      //拠点リストを更新
-                                                                      getUserProf(htmldoc);
-                                                                      if ( getStayMode() ) {
-                                                                          closeIniBilderBox()
-                                                                          openIniBilderBox()
-                                                                      }
-                                                                      //本拠地に強制ジャンプ
-                                                                      var villages = loadVillages(HOST+PGNAME);
-                                                                      var tid=unsafeWindow.setTimeout(function(){
-                                                                                                          location.href = villages[0][IDX_URL];},INTERVAL);
-                                                                      //新規拠点に移動
-                                                                      //jumpNewVillage();
-                                                                  }
-                                                              });
-                                        }, INTERVAL);
-
-        //新規拠点画面へ移動
-        /*
-         function jumpNewVillage(){
-         var villages = loadVillages(HOST+PGNAME);
-         for (var j = villages.length-1; j >= 0; j--) {
-         //新規と名のつく拠点へ移動
-         if(villages[j][IDX_BASE_NAME].match(/新規/)){
-         var tid=unsafeWindow.setTimeout(function(){
-         location.href = villages[j][IDX_URL];},INTERVAL);
-         return;
-         }
-         }
-         }
-         */
+        $w(function(){
+               GM_xmlhttpRequest({
+                                     method:"GET", 
+                                     url:"http://" + HOST + "/user/",
+                                     headers:{"Content-type":"text/html"},
+                                     overrideMimeType:'text/html; charset=utf-8',
+                                     onload:function(x){
+                                         var htmldoc = document.createElement("html");
+                                         htmldoc.innerHTML = x.responseText;
+                                         //拠点リストを更新
+                                         getUserProf(htmldoc);
+                                         if ( getStayMode() ) {
+                                             closeIniBilderBox();
+                                             openIniBilderBox();
+                                         }
+                                         //本拠地に強制ジャンプ
+                                         var villages = loadVillages(HOST+PGNAME);
+                                         var tid = $w(function(){
+                                                          location.href = villages[0][IDX_URL];
+                                                      });
+                                     }
+                                 });
+           });
     }
-
+    
     //拠点数が変わっていたら情報取得 @@1@@
     function checkVillageLengthDiff() {
-
+        
         debugLog("=== Start checkVillageLengthDiff ===");
 
         var villages = loadVillages(HOST+PGNAME);
@@ -677,24 +669,26 @@ function checkVillageLength() {
 
         //if (villages.length != villageLength.snapshotLength) {
         if (villages.length != villageLength) {
-            unsafeWindow.setTimeout(function(){
-                                        GM_xmlhttpRequest({
-                                                              method:"GET", 
-                                                              url:"http://" + HOST + "/user/",
-                                                              headers:{"Content-type":"text/html"},
-                                                              overrideMimeType:'text/html; charset=utf-8',
-                                                              onload:function(x){
-                                                                  var htmldoc = document.createElement("html");
-                                                                  htmldoc.innerHTML = x.responseText;
-                                                                  getUserProf(htmldoc);
-                                                                  if ( getStayMode() ) {
-                                                                      closeIniBilderBox()
-                                                                      openIniBilderBox()
-                                                                  }
-                                                                  var tid=unsafeWindow.setTimeout(function(){location.reload();},INTERVAL);
-                                                              }
-                                                          });
-                                    }, INTERVAL);
+            $w(function(){
+                   GM_xmlhttpRequest({
+                                         method:"GET", 
+                                         url:"http://" + HOST + "/user/",
+                                         headers:{"Content-type":"text/html"},
+                                         overrideMimeType:'text/html; charset=utf-8',
+                                         onload:function(x){
+                                             var htmldoc = document.createElement("html");
+                                             htmldoc.innerHTML = x.responseText;
+                                             getUserProf(htmldoc);
+                                             if ( getStayMode() ) {
+                                                 closeIniBilderBox()
+                                                 openIniBilderBox()
+                                             }
+                                             $w(function(){
+                                                    location.reload();
+                                                });
+                                         }
+                                     });
+               });
         }
     }
 }
@@ -1056,35 +1050,38 @@ function getDeletingVillage(htmldoc) {
 // =================================================================================================
 
 function DeleteFacility(_x,_y){
-    var tid=unsafeWindow.setTimeout(function(){
-                                        var mURL = FACLINK(HOST, _x, _y);
-                                        GM_xmlhttpRequest({
-                                                              method:"GET", 
-                                                              url: mURL,
-                                                              headers:{"Content-type":"text/html"},
-                                                              overrideMimeType:'text/html; charset=utf-8',
-                                                              onload:function(x){
-                                                                  var htmldoc = document.createElement("html");
-                                                                  htmldoc.innerHTML = x.responseText;
-                                                                  var tables = document.evaluate('//*[@name="ssid"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                  var ssid=tables.snapshotItem(0).value;
-
-                                                                  var c={};
-                                                                  c['x'] = parseInt(_x);
-                                                                  c['y'] = parseInt(_y);
-                                                                  c['ssid']=tables.snapshotItem(0).value;
-                                                                  c['remove']="%E5%BB%BA%E7%89%A9%E3%82%92%E5%A3%8A%E3%81%99";
-                                                                  j$.post("http://"+HOST+"/facility/facility.php?x=" + _x + "&y=" + _y + "#ptop",c,function(){});
-                                                                  var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
-
-                                                              }
-                                                          });
-                                    },0);
-
+    $w(function(){
+           var mURL = FACLINK(HOST, _x, _y);
+           GM_xmlhttpRequest(
+               {
+                   method: "GET", 
+                   url: mURL,
+                   headers: {"Content-type":"text/html"},
+                   overrideMimeType: 'text/html; charset=utf-8',
+                   onload: function(x){
+                       var htmldoc = document.createElement("html");
+                       htmldoc.innerHTML = x.responseText;
+                       var tables = document.evaluate('//*[@name="ssid"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                       var ssid = tables.snapshotItem(0).value;
+                       
+                       var c = {};
+                       c['x'] = parseInt(_x);
+                       c['y'] = parseInt(_y);
+                       c['ssid']=tables.snapshotItem(0).value;
+                       c['remove']="%E5%BB%BA%E7%89%A9%E3%82%92%E5%A3%8A%E3%81%99";
+                       j$.post("http://"+HOST+"/facility/facility.php?x=" + _x + "&y=" + _y + "#ptop",c,function(){});
+                       $w(function(){
+                              location.reload(false);
+                          });
+                       
+                   }
+               });
+       });
+    
 }
 
 function autoLvup() {
-
+    
     debugLog("=== Start autoLvup ===");
 
     var cost_bk_ken=[
@@ -1435,117 +1432,93 @@ function autoLvup() {
             if ( _x < 0 ) {
                 return;
             }
-            var tid=unsafeWindow.setTimeout(function(){
-
-                                                var mURL = FACLINK(HOST, _x, _y);
-                                                GM_xmlhttpRequest({
-                                                                      method:"GET", 
-                                                                      url: mURL,
-                                                                      headers:{"Content-type":"text/html"},
-                                                                      overrideMimeType:'text/html; charset=utf-8',
-                                                                      onload:function(x){
-                                                                          var htmldoc = document.createElement("html");
-                                                                          htmldoc.innerHTML = x.responseText;
-                                                                          // 鍛冶場・防具工場情報の取得
-                                                                          getTrainingSoldier(htmldoc);
-                                                                          if ( getStayMode() ) {
-                                                                              closeIniBilderBox()
-                                                                              openIniBilderBox()
-                                                                          }
-
-                                                                          var actionsElem  = document.evaluate('//th[@class="mainTtl6"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                          //                      var actionsElem2 = document.evaluate('//b[@class="f14"]',       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                          var actionsElem2 = document.evaluate('//b[contains(@class,"f14")]',       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                          var actionsElem3 = document.evaluate('//td[@class="center"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                          var actionsElem4 = document.evaluate('//td[@class="cost"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-                                                                          var htmldoc2 = document.createElement("html");
-
-                                                                          var actionsElem7  = document.evaluate('//*[@colspan="4"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-                                                                          var Buki = Array();
-                                                                          var x = -1;
-
-                                                                          if ( htmldoc.innerHTML.lastIndexOf("を強化する") != -1 ) {
-                                                                              for (var i=0;i<actionsElem2.snapshotLength;i++){
-                                                                                  //                              htmldoc2.innerHTML = actionsElem4.snapshotItem(i).innerHTML;
-                                                                                  //                              var actionsElem5 = document.evaluate('//span[@class="normal"]'   ,htmldoc2, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                                  //                              var actionsElem6 = document.evaluate('//span[@class="max90"]'   ,htmldoc2, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                                  var BG_Name = actionsElem.snapshotItem(i+1).innerHTML;
-                                                                                  var BG_LvNm = actionsElem2.snapshotItem(i).innerHTML.substring(actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;&nbsp;")+12);
-                                                                                  var BG_UID  = UnitID[BG_Name];
-                                                                                  var BG_Lv   = actionsElem2.snapshotItem(i).innerHTML.substring(3,actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;")-6);
-
-                                                                                  var BG_WOOD  = costs[type + BG_Name][BG_Lv][0];
-                                                                                  var BG_STONE = costs[type + BG_Name][BG_Lv][1];
-                                                                                  var BG_IRON  = costs[type + BG_Name][BG_Lv][2];
-                                                                                  var BG_RICE  = costs[type + BG_Name][BG_Lv][3];
-                                                                                  var BG_TIME  = costs[type + BG_Name][BG_Lv][4];
-                                                                                  var BG_Go    = (actionsElem3.snapshotItem(i+1).innerHTML.lastIndexOf("を強化する") != -1);
-                                                                                  /*
-                                                                                   if (BG_Lv != 10) {
-                                                                                   var BG_WOOD  = actionsElem5.snapshotItem(0).innerHTML;
-                                                                                   var BG_STONE = actionsElem5.snapshotItem(1).innerHTML;
-                                                                                   var BG_IRON  = actionsElem6.snapshotItem(0).innerHTML;
-                                                                                   var BG_RICE  = actionsElem5.snapshotItem(2).innerHTML;
-                                                                                   var BG_TIME  = actionsElem7.snapshotItem(i).innerHTML;
-                                                                                   var BG_Go    = (actionsElem3.snapshotItem(i+1).innerHTML.lastIndexOf("を強化する") != -1);
-                                                                                   } else {
-                                                                                   var BG_WOOD  = 0;
-                                                                                   var BG_STONE = 0;
-                                                                                   var BG_IRON  = 0;
-                                                                                   var BG_RICE  = 0;
-                                                                                   var BG_TIME  = 0;
-                                                                                   var BG_Go    = false;
-                                                                                   }
-                                                                                   */
-                                                                                  if (type == "鍛冶場") {
-                                                                                      var BG_GoLv  = OPT_BK_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
-                                                                                  } else {
-                                                                                      var BG_GoLv  = OPT_BG_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
-                                                                                  }
-                                                                                  if ( checkBKLvup(BG_WOOD,BG_STONE,BG_IRON,BG_RICE,BG_Go,BG_Lv,BG_GoLv) ){
-                                                                                      x++;
-                                                                                      Buki[x] = [BG_Name,BG_Lv,BG_LvNm,BG_UID,BG_TIME];
-                                                                                  }
-                                                                              }
-                                                                              Buki.sort( function(a, b) { if (a[4] > b[4]) return 1; if (a[4] < b[4]) return -1; return 0;});
-
-                                                                              if (x != -1) {
-                                                                                  // 武器強化処理
-                                                                                  var c={};
-                                                                                  c['x'] = parseInt(_x);
-                                                                                  c['y'] = parseInt(_y);
-                                                                                  c['unit_id'] = parseInt(Buki[0][3]);
-                                                                                  j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function(){});
-                                                                                  //                  var tid=unsafeWindow.setTimeout(function(){location.reload(false);},0);
-
-                                                                              }
-                                                                          }   
-                                                                          make_loop(loop + 1);
-
-                                                                          function checkBKLvup(hwood,hstone,hiron,hrice,hgo,hnlv,hslv) {
-
-                                                                              var wood = parseInt( $("wood").innerHTML, 10 );
-                                                                              var stone = parseInt( $("stone").innerHTML, 10 );
-                                                                              var iron = parseInt( $("iron").innerHTML, 10 );
-                                                                              var rice = parseInt( $("rice").innerHTML, 10 );
-
-                                                                              //                  var temp = (parseInt(hwood) + 99);
-
-                                                                              if (parseInt(hnlv) >= parseInt(hslv)) { return false; }
-                                                                              if ((parseInt(hwood)  + OPT_BLD_WOOD ) > wood ) { return false; }
-                                                                              if ((parseInt(hstone) + OPT_BLD_STONE) > stone) { return false; }
-                                                                              if ((parseInt(hiron)  + OPT_BLD_IRON ) > iron ) { return false; }
-                                                                              if ((parseInt(hrice)  + OPT_BLD_RICE ) > rice ) { return false; }
-                                                                              if (hgo == false) { return false; }
-
-                                                                              return true;
-                                                                          }
-
-                                                                      }
-                                                                  });
-                                            },0);
+            $w(function(){
+                   var mURL = FACLINK(HOST, _x, _y);
+                   GM_xmlhttpRequest(
+                       {
+                           method:"GET", 
+                           url: mURL,
+                           headers: {"Content-type":"text/html"},
+                           overrideMimeType: 'text/html; charset=utf-8',
+                           onload: function(x){
+                               var htmldoc = document.createElement("html");
+                               htmldoc.innerHTML = x.responseText;
+                               // 鍛冶場・防具工場情報の取得
+                               getTrainingSoldier(htmldoc);
+                               if ( getStayMode() ) {
+                                   closeIniBilderBox()
+                                   openIniBilderBox()
+                               }
+                               
+                               var actionsElem  = document.evaluate('//th[@class="mainTtl6"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               var actionsElem2 = document.evaluate('//b[contains(@class,"f14")]',       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               var actionsElem3 = document.evaluate('//td[@class="center"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               var actionsElem4 = document.evaluate('//td[@class="cost"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               
+                               var htmldoc2 = document.createElement("html");
+                               
+                               var actionsElem7  = document.evaluate('//*[@colspan="4"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               
+                               var Buki = Array();
+                               var x = -1;
+                               
+                               if ( htmldoc.innerHTML.lastIndexOf("を強化する") != -1 ) {
+                                   for (var i=0;i<actionsElem2.snapshotLength;i++){
+                                       var BG_Name = actionsElem.snapshotItem(i+1).innerHTML;
+                                       var BG_LvNm = actionsElem2.snapshotItem(i).innerHTML.substring(actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;&nbsp;")+12);
+                                       var BG_UID  = UnitID[BG_Name];
+                                       var BG_Lv   = actionsElem2.snapshotItem(i).innerHTML.substring(3,actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;")-6);
+                                       
+                                       var BG_WOOD  = costs[type + BG_Name][BG_Lv][0];
+                                       var BG_STONE = costs[type + BG_Name][BG_Lv][1];
+                                       var BG_IRON  = costs[type + BG_Name][BG_Lv][2];
+                                       var BG_RICE  = costs[type + BG_Name][BG_Lv][3];
+                                       var BG_TIME  = costs[type + BG_Name][BG_Lv][4];
+                                       var BG_Go    = (actionsElem3.snapshotItem(i+1).innerHTML.lastIndexOf("を強化する") != -1);
+                                       if (type == "鍛冶場") {
+                                           var BG_GoLv  = OPT_BK_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
+                                       } else {
+                                           var BG_GoLv  = OPT_BG_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
+                                       }
+                                       if ( checkBKLvup(BG_WOOD,BG_STONE,BG_IRON,BG_RICE,BG_Go,BG_Lv,BG_GoLv) ){
+                                           x++;
+                                           Buki[x] = [BG_Name,BG_Lv,BG_LvNm,BG_UID,BG_TIME];
+                                       }
+                                   }
+                                   Buki.sort( function(a, b) { if (a[4] > b[4]) return 1; if (a[4] < b[4]) return -1; return 0;});
+                                   
+                                   if (x != -1) {
+                                       // 武器強化処理
+                                       var c={};
+                                       c['x'] = parseInt(_x);
+                                       c['y'] = parseInt(_y);
+                                       c['unit_id'] = parseInt(Buki[0][3]);
+                                       j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function(){});                                    
+                                   }
+                               }   
+                               make_loop(loop + 1);
+                               
+                               function checkBKLvup(hwood,hstone,hiron,hrice,hgo,hnlv,hslv) {
+                                   
+                                   var wood = parseInt( $("wood").innerHTML, 10 );
+                                   var stone = parseInt( $("stone").innerHTML, 10 );
+                                   var iron = parseInt( $("iron").innerHTML, 10 );
+                                   var rice = parseInt( $("rice").innerHTML, 10 );
+                                  
+                                                          
+                                   if (parseInt(hnlv) >= parseInt(hslv)) { return false; }
+                                   if ((parseInt(hwood)  + OPT_BLD_WOOD ) > wood ) { return false; }
+                                   if ((parseInt(hstone) + OPT_BLD_STONE) > stone) { return false; }
+                                   if ((parseInt(hiron)  + OPT_BLD_IRON ) > iron ) { return false; }
+                                   if ((parseInt(hrice)  + OPT_BLD_RICE ) > rice ) { return false; }
+                                   if (hgo == false) { return false; }
+                                   
+                                   return true;
+                               }
+                               
+                           }
+                       });
+               });
         }
     }
     make_loop(0);
@@ -1730,8 +1703,10 @@ function setVillageFacility() {
                                c['village_id']=getVillageID(vId);
                                c['ssid']=j$.cookie('SSID');                        
                                j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                               var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
-
+                               $w(function(){
+                                      location.reload(false);
+                                  });
+                               
                                GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId) );
                                var nowTime = new Date();
                                Reload_Flg = 0;
@@ -1745,7 +1720,9 @@ function setVillageFacility() {
     
     if(Reload_Flg == 1){
         //10分後にリロードし、再度建築できるかチェックする。
-        var tid=unsafeWindow.setTimeout(function(){location.reload();},60000);
+        $w(function(){
+               location.reload();
+           }, 60000);
     }
 
 }
@@ -1948,7 +1925,9 @@ function setVillageFacility2() {
                     c['village_id']=getVillageID(vId);
                     c['ssid']=j$.cookie('SSID');
                     j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                    var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+                    $w(function(){
+                           location.reload(false);
+                       });
                 } else {
                     if( OPT_SorH == "DD" ){
                         c['x']=parseInt(Temp[0]);
@@ -1957,7 +1936,9 @@ function setVillageFacility2() {
                         c['village_id']=getVillageID(vId);
                         c['ssid']=j$.cookie('SSID');
                         j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                        var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+                        $w(function(){
+                               location.reload(false);
+                           });
                     } else {
                         c['x']=parseInt(Temp[0]);
                         c['y']=parseInt(Temp[1]);
@@ -1965,7 +1946,9 @@ function setVillageFacility2() {
                         c['village_id']=getVillageID(vId);
                         c['ssid']=j$.cookie('SSID');                        
                         j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                        var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+                        $w(function(){
+                               location.reload(false);
+                           });
                     }
                 }
                 GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId) );
@@ -1977,7 +1960,7 @@ function setVillageFacility2() {
     
     if(Reload_Flg == 1){
         //30分後にリロードし、再度建築できるかチェックする。
-        var tid=unsafeWindow.setTimeout(function(){location.reload();},1800000);
+        var tid = $w(function(){location.reload();},1800000);
     }
 
     return;
@@ -2023,7 +2006,9 @@ function createFacility(f, area){
             c['id']=f;
             c['ssid']=j$.cookie('SSID');                        
             j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-            var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+            $w(function(){
+                   location.reload(false);
+               });
             return;
         }
     }
@@ -2055,7 +2040,9 @@ function forwardNextVillage(){
 
     if ((ShopFlg == true) && (ShopURL != "")) {
         roundTime = 10 * 1000;
-        tidMain2=unsafeWindow.setTimeout(function(){location.href = ShopURL;},roundTime);
+        tidMain2 = $w(function(){
+                          location.href = ShopURL;
+                      }, roundTime);
     }
 
     // 建築済みで次建築がセットされていない未巡回の拠点への移動(２拠点同時に完了した場合に使う処理)
@@ -2091,7 +2078,9 @@ function forwardNextVillage(){
                         if(vcURL!=undefined){
                             saveVillages(HOST+PGNAME, villages);
                             roundTime = 5 * 1000;
-                            tidMain2=unsafeWindow.setTimeout(function(){location.href = vcURL;},roundTime);
+                            tidMain2 = $w(function(){
+                                              location.href = vcURL;
+                                          }, roundTime);
                         }
                     }
                 }
@@ -2126,19 +2115,21 @@ function forwardNextVillage(){
             if (nextURL == "") {
                 // 次回建築完了予定がない場合は通常巡回処理
                 roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                tidMain2=unsafeWindow.setTimeout(function(){location.href = vcURL;},roundTime);
+                tidMain2 = $w(function(){
+                                  location.href = vcURL;
+                              }, roundTime);
             } else {
                 if (parseInt(OPT_ROUND_TIME1) * 1000 > nTime) {
-                    // 巡回時間より前に建築が終わる拠点がある場合
-                    // 2011.12.06 即時変更をやめて10秒後に修正
-                    //                  tidMain2=unsafeWindow.setTimeout(function(){location.href = nextURL;},(nextTime - nowTime));
-                    //                  tidMain2=unsafeWindow.setTimeout(function(){location.href = nextURL;},10 * 1000);
                     roundTime = (nextTime - nowTime + 10000);
-                    tidMain2=unsafeWindow.setTimeout(function(){location.href = nextURL;},roundTime);
+                    tidMain2 = $w(function(){
+                                      location.href = nextURL;
+                                  }, roundTime);
                 } else {
                     // 通常巡回処理
                     roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                    tidMain2=unsafeWindow.setTimeout(function(){location.href = vcURL;},roundTime);
+                    tidMain2 = $(function(){
+                                     location.href = vcURL;
+                                 }, roundTime);
                 }
             }
         }
@@ -3213,8 +3204,9 @@ function saveAVCBox2(tVID,flg){
     //GM_setValue(HOST+PGNAME+"AVC", OPT_CHKBOX_AVC);
     GM_setValue(HOST+PGNAME+"AVC"+"_"+tVID, flg);
     
-    //var tid=unsafeWindow.setTimeout(function(){location.reload();},INTERVAL);
-    tidMain=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+    tidMain = $w(function(){
+                     location.reload(false);
+                 });
 }
 
 //施設建設必要資源読込
@@ -3713,7 +3705,9 @@ function addInifacHtml(vId) {
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
                       closeInifacBox();
                       clearInterval(tidMain2);
-                      tidMain2=unsafeWindow.setTimeout(function(){location.reload();},INTERVAL);
+                      tidMain2 = $w(function(){
+                                        location.reload();
+                                    });
                   });
 
 
@@ -4543,11 +4537,11 @@ function getSoldier() {
     // 造兵指示がない場合はスキップ
     if (OPT_BLD_SOL == 0) { return; }
 
-    var tid = unsafeWindow.setTimeout(function() { 
-                                          count_soldiers(function(total) {
-                                                             make_all_soldiers(total, high_soldiers);
-                                                         });
-                                      }, 0);
+    var tid = $w(function() { 
+                     count_soldiers(function(total) {
+                                        make_all_soldiers(total, high_soldiers);
+                                    });
+                 });
 }
 
 function sumMaxSoldier(type){
@@ -4751,26 +4745,6 @@ function ichibaChange(vId) {
     CHG_NOW["wood"] = 1;
     CHG_NOW["stone"] = 1;
     CHG_NOW["iron"] = 1;
-    /*
-     var OverFlowLimit  = RES_NOW["storagemax"];     // 限界容量（倉庫の100%）
-
-     if ( (RES_NOW["wood"] = OverFlowLimit) && (RES_NOW["stone"] = OverFlowLimit) && (RES_NOW["iron"] = OverFlowLimit) ) {
-     // 木石鉄が100%の場合
-     if (RES_NOW["rice"] = OverFlowLimit) {
-     // 糧も100%の場合各資源の1%を寄付する
-     var c={};
-     c['contributionForm'] = "";
-     c['wood']  = Math.floor(RES_NOW["wood"]  * 0.01);
-     c['stone'] = Math.floor(RES_NOW["stone"] * 0.01);
-     c['iron']  = Math.floor(RES_NOW["iron"]  * 0.01);
-     c['rice']  = Math.floor(RES_NOW["rice"]  * 0.01);
-     c['contribution'] = 1;
-     j$.post("http://"+HOST+"/alliance/level.php",c,function(){});
-     var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
-     }
-     return;
-     }
-     */
 
     // @@ 2011.06.22 設定上限が0以下の場合倉庫上限に変更
     if (OPT_MAX_WOOD  < 1) { OPT_MAX_WOOD  = RES_NOW["storagemax"]; }
@@ -4841,7 +4815,6 @@ function ichibaChange(vId) {
         } else if((OPT_TO_IRON > 0) && ( RES_NOW["iron"] == min_sigen )) {
             changeResorceToResorce(RICE, OPT_TO_IRON, IRON, ichiba_x, ichiba_y);
         }
-        //      var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
         return;
     }else{
 
@@ -4859,7 +4832,6 @@ function ichibaChange(vId) {
             }
 
         }
-        //      var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
         return;
     }
 
@@ -4915,7 +4887,9 @@ function changeResorceToResorce(from, tc, to, x, y) {
     c['tt_id'] = parseInt(to);
     c['ssid'] = j$.cookie('SSID');
     j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(x) + "&y=" + parseInt(y) + "#ptop",c,function(){});
-    var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+    var tid = $w(function(){
+                     location.reload(false);
+                 });
 
 }
 
@@ -4937,25 +4911,11 @@ function autoDonate() {
 
     sendDonate(OPT_RISE_KIFU);
     //@@@
-    //  var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
 
 }
 
 //寄付処理通信部
 function sendDonate(rice) {
-    /*
-     var data = "contributionForm=&wood=0&stone=0&iron=0&rice=" + rice + "&contribution=1";
-     var tid=unsafeWindow.setTimeout(function(){
-     GM_xmlhttpRequest({
-     method:"POST", 
-     url:"http://" + HOST + "/alliance/level.php",
-     headers:{"Content-type":"application/x-www-form-urlencoded"},
-     data: data,
-     //          onload:function(x){console.log(x.responseText);}
-     onload:function(x){;}
-     });
-     },INTERVAL);
-     */
     var c={};
     c['contributionForm'] = "";
     c['wood'] = 0;
@@ -4964,7 +4924,9 @@ function sendDonate(rice) {
     c['rice'] = parseInt(rice);
     c['contribution'] = 1;
     j$.post("http://"+HOST+"/alliance/level.php",c,function(){});
-    var tid=unsafeWindow.setTimeout(function(){location.reload(false);},INTERVAL);
+    var tid = $w(function(){
+                     location.reload(false);
+                 });
 }
 
 //内政スキルの使用
@@ -4974,65 +4936,74 @@ function Auto_Domestic() {
 
     DomesticFlg = false;
 
-    var tid=unsafeWindow.setTimeout(function(){
-                                        GM_xmlhttpRequest({
-                                                              method:"GET", 
-                                                              url:"http://" + HOST + "/card/domestic_setting.php",
-                                                              headers:{"Content-type":"text/html"},
-                                                              overrideMimeType:'text/html; charset=utf-8',
-                                                              onload:function(x){
-                                                                  
-                                                                  var htmldoc = document.createElement("html");
-                                                                  htmldoc.innerHTML = x.responseText;
-                                                                  
-                                                                  var skillElem = document.evaluate('//td[@class="skill"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                                                  for(i=0;i<skillElem.snapshotLength;i++){
-                                                                      var skillTag = trim(skillElem.snapshotItem(i).innerHTML);
-                                                                      var AutoSkillFlg = 0;
-
-                                                                      for(z=1;z<DASkill.length;z++){
-                                                                          if( (OPT_DOME[z]==1) && ( (skillTag.indexOf(DASkill[z],0) > 1)) ){
-                                                                              var link = skillTag.substring(skillTag.indexOf("href=",0)+6,skillTag.indexOf("\"",skillTag.indexOf("href=",0)+7));
-                                                                              do {
-                                                                                  link = link.replace(/&amp;/,"&");
-                                                                              }while(link.indexOf("&amp;",0) > 1)
-                                                                              DomesticFlg    = true;
-
-                                                                              GM_xmlhttpRequest({ method:"GET", url:"http://" + HOST + link, headers:{"Content-type":"text/html"}, overrideMimeType:'text/html; charset=utf-8',   onload:function(x){
-                                                                                                      debugLog("内政スキル使用");
-                                                                                                      if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
-                                                                                                      if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
-
-                                                                                                      getSoldier();               // 自動造兵処理
-                                                                                                      autoLvup();             // 自動武器・防具強化
-                                                                                                      ichibaChange(vId);          // 市場処理
-                                                                                                      autoDonate();               // 自動寄付処理
-
-                                                                                                      DomesticFlg = false;
-                                                                                                  } });
-                                                                              while(1){
-                                                                                  if (DomesticFlg == false) {
-                                                                                      debugLog("== END Auto_Domestic==");
-                                                                                      break;
-                                                                                  }
-                                                                                  Thread.sleep(100);  // 100ms 停止
-                                                                              }
-                                                                              if (DomesticFlg == false) { break; }
-                                                                          }
-                                                                      }
-                                                                  }
-                                                                  debugLog("内政スキル未使用");
-                                                                  if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
-                                                                  if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
-
-                                                                  getSoldier();               // 自動造兵処理
-                                                                  autoLvup();             // 自動武器・防具強化
-                                                                  ichibaChange(vId);          // 市場処理
-                                                                  autoDonate();               // 自動寄付処理
-
-                                                              }
-                                                          });
-                                    },INTERVAL);
+    var tid = $w(function(){
+                     GM_xmlhttpRequest(
+                         {
+                             method: "GET", 
+                             url: "http://" + HOST + "/card/domestic_setting.php",
+                             headers: {"Content-type":"text/html"},
+                             overrideMimeType: 'text/html; charset=utf-8',
+                             onload: function(x){
+                                 
+                                 var htmldoc = document.createElement("html");
+                                 htmldoc.innerHTML = x.responseText;
+                                 
+                                 var skillElem = document.evaluate('//td[@class="skill"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                                 for(i = 0; i < skillElem.snapshotLength; i++){
+                                     var skillTag = trim(skillElem.snapshotItem(i).innerHTML);
+                                     var AutoSkillFlg = 0;
+                                     
+                                     for(z = 1; z < DASkill.length; z++){
+                                         if( (OPT_DOME[z]==1) && ( (skillTag.indexOf(DASkill[z],0) > 1)) ){
+                                             var link = skillTag.substring(skillTag.indexOf("href=",0)+6,skillTag.indexOf("\"",skillTag.indexOf("href=",0)+7));
+                                             do {
+                                                 link = link.replace(/&amp;/,"&");
+                                             } while(link.indexOf("&amp;",0) > 1)
+                                             
+                                             DomesticFlg    = true;
+                                             
+                                             GM_xmlhttpRequest(
+                                                 {
+                                                     method:"GET",
+                                                     url:"http://" + HOST + link,
+                                                     headers:{"Content-type":"text/html"},
+                                                     overrideMimeType:'text/html; charset=utf-8',
+                                                     onload:function(x){
+                                                         debugLog("内政スキル使用");
+                                                         if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
+                                                         if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
+                                                         
+                                                         getSoldier();               // 自動造兵処理
+                                                         autoLvup();             // 自動武器・防具強化
+                                                         ichibaChange(vId);          // 市場処理
+                                                         autoDonate();               // 自動寄付処理
+                                                         
+                                                         DomesticFlg = false;
+                                                     }
+                                                 });
+                                             while(1) {
+                                                 if (DomesticFlg == false) {
+                                                     debugLog("== END Auto_Domestic==");
+                                                     break;
+                                                 }
+                                                 Thread.sleep(100);  // 100ms 停止
+                                             }
+                                             if (DomesticFlg == false) { break; }
+                                         }
+                                     }
+                                 }
+                                 debugLog("内政スキル未使用");
+                                 if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
+                                 if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
+                                 
+                                 getSoldier();               // 自動造兵処理
+                                 autoLvup();             // 自動武器・防具強化
+                                 ichibaChange(vId);          // 市場処理
+                                 autoDonate();               // 自動寄付処理
+                                 
+                             }
+                         });
+                 });
 }
 
 ///////////////////////////////////////////////
