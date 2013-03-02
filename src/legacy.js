@@ -57,26 +57,6 @@ var OPT_TO_WOOD = 10000; //木に変換する糧
 var OPT_TO_STONE = 10000; //石に変換する糧
 var OPT_TO_IRON = 10000; //鉄に変換する糧
 
-// @@ ADD 2011.09.28 @@
-var LOAD_ROUND_TIME_10 = 10;
-var LOAD_ROUND_TIME_20 = 20;
-var LOAD_ROUND_TIME_30 = 30;
-var LOAD_ROUND_TIME_40 = 40;
-var LOAD_ROUND_TIME_50 = 50;
-var LOAD_ROUND_TIME_60 = 60;
-var LOAD_ROUND_TIME_70 = 70;
-var LOAD_ROUND_TIME_80 = 80;
-var LOAD_ROUND_TIME_90 = 90;
-var LOAD_ROUND_TIME_100 = 100;
-var LOAD_ROUND_TIME_110 = 110;
-var LOAD_ROUND_TIME_120 = 120;
-var LOAD_ROUND_TIME_130 = 130;
-var LOAD_ROUND_TIME_140 = 140;
-var LOAD_ROUND_TIME_150 = 150;
-var LOAD_ROUND_TIME_160 = 160;
-var LOAD_ROUND_TIME_170 = 170;
-var LOAD_ROUND_TIME_180 = 180;
-
 //グローバル変数
 var MOUSE_DRAGGING = false;
 var MOUSE_OFFSET_X;
@@ -112,16 +92,12 @@ var Reload_Flg = 0;
 var OPT_BUILD_VID;
 
 
-//グローバル変数
-//var INTERVAL = 1000;          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
-//var INTERVAL2 = 2000;         // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
-
 var INTERVAL  = 1000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
 var INTERVAL2 = 2000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
 var HOST = location.hostname;
 var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524"; //グリモン領域への保存時のPGの名前
-var TIMEOUT_URL ="/false/login_sessionout.php"; //タイムアウト時のURLの一部
-var g_MD="";
+var TIMEOUT_URL = "/false/login_sessionout.php"; //タイムアウト時のURLの一部
+var g_MD = "";
 
 var SENDTFLG_TIMEOUT = 0;   //タイムアウト画面
 var SENDTFLG_LOGIN_MENU = 1;    //ログイン画面
@@ -171,35 +147,34 @@ var OPT_FUC_NAME = ["拠点","伐採所","石切り場","製鉄所","畑","倉�
                     "研究所","大宿舎","遠征訓練所","見張り台","平地"];
 
 var OPT_FNID = new Array();
-OPT_FNID["拠点"] =       0     ;
-OPT_FNID["伐採所"] =     1    ;
-OPT_FNID["石切り場"] =   2   ;
-OPT_FNID["製鉄所"] =     3    ;
-OPT_FNID["畑"] =         4  ;
-OPT_FNID["倉庫"] =       5     ;
-OPT_FNID["銅雀台"] =     6    ;
-OPT_FNID["鍛冶場"] =     7    ;
-OPT_FNID["防具工場"] =   8   ;
-OPT_FNID["練兵所"] =     9    ;
-OPT_FNID["兵舎"] =       10    ;
-OPT_FNID["弓兵舎"] =     11   ;
-OPT_FNID["厩舎"] =       12    ;
-OPT_FNID["宿舎"] =       13    ;
-OPT_FNID["兵器工房"] =   14  ;
-OPT_FNID["市場"] =       15    ;
-OPT_FNID["訓練所"] =     16   ;
-OPT_FNID["水車"] =       17    ;
-OPT_FNID["工場"] =       18    ;
-OPT_FNID["研究所"] =     19   ;
-OPT_FNID["大宿舎"] =     20   ;
-OPT_FNID["遠征訓練所"] = 21     ;
-OPT_FNID["見張り台"] =   22  ;
-//OPT_FNID["修行所"] =     23     ;
+OPT_FNID["拠点"]       =  0;
+OPT_FNID["伐採所"]     =  1;
+OPT_FNID["石切り場"]   =  2;
+OPT_FNID["製鉄所"]     =  3;
+OPT_FNID["畑"]         =  4;
+OPT_FNID["倉庫"]       =  5;
+OPT_FNID["銅雀台"]     =  6;
+OPT_FNID["鍛冶場"]     =  7;
+OPT_FNID["防具工場"]   =  8;
+OPT_FNID["練兵所"]     =  9;
+OPT_FNID["兵舎"]       = 10;
+OPT_FNID["弓兵舎"]     = 11;
+OPT_FNID["厩舎"]       = 12;
+OPT_FNID["宿舎"]       = 13;
+OPT_FNID["兵器工房"]   = 14;
+OPT_FNID["市場"]       = 15;
+OPT_FNID["訓練所"]     = 16;
+OPT_FNID["水車"]       = 17;
+OPT_FNID["工場"]       = 18;
+OPT_FNID["研究所"]     = 19;
+OPT_FNID["大宿舎"]     = 20;
+OPT_FNID["遠征訓練所"] = 21;
+OPT_FNID["見張り台"]   = 22;
 
 //市場変換処理用
 var OPT_ICHIBA = 0;
 var OPT_ICHIBA_PA = 0;
-var OPT_ICHIBA_PATS = ["平均的に変換","一括変換"];
+var OPT_ICHIBA_PATS = ["平均的に変換", "一括変換"];
 //自動寄付用
 var OPT_KIFU = 0;
 
@@ -2805,35 +2780,25 @@ function addIniBilderHtml() {
                                    OPT_ROUND_TIME1 = document.getElementById("dispMode").value;
                                }, true);
     typeDiv.appendChild(selectBox);
-    
-    var options = new Array(
-        new Array("30sec" , LOAD_ROUND_TIME_30), 
-        new Array("40sec" , LOAD_ROUND_TIME_40), 
-        new Array("50sec" , LOAD_ROUND_TIME_50), 
-        new Array("60sec" , LOAD_ROUND_TIME_60), 
-        new Array("70sec" , LOAD_ROUND_TIME_70), 
-        new Array("80sec" , LOAD_ROUND_TIME_80), 
-        new Array("90sec" , LOAD_ROUND_TIME_90), 
-        new Array("100sec", LOAD_ROUND_TIME_100),
-        new Array("110sec", LOAD_ROUND_TIME_110),
-        new Array("120sec", LOAD_ROUND_TIME_120),
-        new Array("130sec", LOAD_ROUND_TIME_130),
-        new Array("140sec", LOAD_ROUND_TIME_140),
-        new Array("150sec", LOAD_ROUND_TIME_150),
-        new Array("160sec", LOAD_ROUND_TIME_160),
-        new Array("170sec", LOAD_ROUND_TIME_170),
-        new Array("180sec", LOAD_ROUND_TIME_180)
-    );
+
+    var intervals = [30, 40, 50, 60, 90, 120, 150, 180, 300, 480, 600, 900];
+    var options = (function() {
+                       var _i, _len, _results, interval;
+                       _results = [];
+                       for (_i = 0, _len = intervals.length; _i < _len; _i++) {
+                           interval = intervals[_i];
+                           _results.push([interval + "sec", interval]);
+                       }
+                       return _results;
+                   })();
     for (var i = 0; i < options.length; i++) {
         var elem = document.createElement("option");
         elem.innerHTML = options[i][0];
         elem.value = options[i][1];
         selectBox.appendChild(elem);
     }
-    selectBox.value = GM_getValue(HOST+PGNAME+"OPT_ROUND_TIME1", LOAD_ROUND_TIME_60);
-    OPT_ROUND_TIME1 = GM_getValue(HOST+PGNAME+"OPT_ROUND_TIME1", LOAD_ROUND_TIME_60);
-    
-    // 2012.01.11 巡回時間に 1 ~ 10sec 追加
+    selectBox.value = GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
+    OPT_ROUND_TIME1 = GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
     OPT_ROUND_TIME1 = parseInt(OPT_ROUND_TIME1) + Math.floor( Math.random() * 10 );
 
     // 次回表示
