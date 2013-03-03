@@ -191,14 +191,6 @@ var $w = function(func, interval) {
     return unsafeWindow.setTimeout(func, interval);
 };
 
-//LvUPリンク
-var LVUPLINK = "http://SITE/facility/build.php?x=urlX&y=urlY&village_id=viID&ssid=ssid_val#ptop";
-var URL_SITE = "SITE";
-var URL_X = "urlX";
-var URL_Y = "urlY";
-var URL_viID = "viID";
-var URL_viSSID = "ssid_val";
-
 //新規作成リンク
 var URL_fID = "fID"; //建物のID
 var HATAKE = 215;
@@ -234,9 +226,6 @@ var DASkill = [ "■■■■",
               ];
 // ＠＠　ここまで　＠＠
 
-// 屯田機能用
-var URL_PARAM = {};
-
 // 市場変換用
 var ShopURL = "";
 var ShopFlg = false;
@@ -254,33 +243,6 @@ main();
 function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments)) };
 
 function debugLog( mes ) {  if (DEBUG) { console.log(mes); }    };
-
-// ===========================================================================================================
-
-//URL読み込み
-function initUrlParams() {
-    var matches = location.search.match(/(?:\?|&)?([^=]+)(?:=([^&]+))?/g);
-    if (matches) {
-        var param;
-        var key;
-        var data;
-        for(var i = 0 ; i < matches.length ; i++) {
-            param = matches[i].match(/(?:\?|&)?([^=]+)(?:=([^&]+))?/);
-            key = param[1];
-            data = param[2];
-
-            URL_PARAM[key] = '';
-            if( param.length == 3 && typeof data == 'string') {
-                URL_PARAM[key] = decodeURIComponent(data);
-
-                // session id
-                if (key.toLowerCase() == 'ssid') {
-                    SID = key + '=' +data;
-                }
-            }
-        }
-    }
-}
 
 //拠点作成開始
 function settleVillages(z){
@@ -577,16 +539,16 @@ function getAddingVillage(htmldoc) {
 
     function addReserveVillages(kind) {
         url = location;
-        var flgAdd = addList2(kind, 1, URL_PARAM.x, URL_PARAM.y);
+        var flgAdd = addList2(kind, 1, URL_PARAMS.x, URL_PARAMS.y);
         var msg = "";
         if (flgAdd == 0){
-            msg += "(" + URL_PARAM.x + "," + URL_PARAM.y + ")への、";
+            msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")への、";
             if(kind == 220){msg += "村建設予約";
                            }else if(kind == 222){msg += "砦建設予約";
                                                 }
             msg += "を受け付けました。"
         } else {
-            msg += "(" + URL_PARAM.x + "," + URL_PARAM.y + ")には、すでに建設予約があります。";
+            msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")には、すでに建設予約があります。";
         }
         alert(msg);
         if ( is_stay_mode() ) {
@@ -782,35 +744,11 @@ function getDeletingVillage(htmldoc) {
 
 // =================================================================================================
 
-function DeleteFacility(_x,_y){
-    $w(function(){
-           var mURL = FACLINK(HOST, _x, _y);
-           GM_xmlhttpRequest(
-               {
-                   method: "GET", 
-                   url: mURL,
-                   headers: {"Content-type":"text/html"},
-                   overrideMimeType: 'text/html; charset=utf-8',
-                   onload: function(x){
-                       var htmldoc = document.createElement("html");
-                       htmldoc.innerHTML = x.responseText;
-                       var tables = document.evaluate('//*[@name="ssid"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                       var ssid = tables.snapshotItem(0).value;
-                       
-                       var c = {};
-                       c['x'] = parseInt(_x);
-                       c['y'] = parseInt(_y);
-                       c['ssid']=tables.snapshotItem(0).value;
-                       c['remove']="%E5%BB%BA%E7%89%A9%E3%82%92%E5%A3%8A%E3%81%99";
-                       j$.post("http://"+HOST+"/facility/facility.php?x=" + _x + "&y=" + _y + "#ptop",c,function(){});
-                       $w(function(){
-                              location.reload(false);
-                          });
-                       
-                   }
-               });
-       });
-    
+function DeleteFacility(x, y){
+    x = parseInt(x);
+    y = parseInt(y);
+    var village = new Village();
+    village.at(x, y).destroy();
 }
 
 function autoLvup() {
@@ -1257,6 +1195,7 @@ function autoLvup() {
 }
 
 function setVillageFacility() {
+    var village = new Village();
 
     debugLog("=== Start setVillageFacility ===");
 
@@ -1317,54 +1256,34 @@ function setVillageFacility() {
     //建設予約ができるかどうか
     // ＠＠
     if((cnt - del) >= 1) return;
+
     if(OPT_KATEMURA == 1) {
-        var area_all = new Array();
-        area_all = get_area_all();
-        var hatake = 0; //畑の総数
-        var souko = 0; //倉庫の総数
-        var suzume = 0; //雀の総数
-        var heichi = 0; //平地の総数
-        var suzume_Flag = 0;
-        var n = -1;
-        for(var i=0;i < area_all.length;i++){
-            if(area_all[i].name == "平地"){heichi++;n=i;}
-            else if(area_all[i].name.match(/畑\s.*?(\d+)/)){hatake++;if(parseInt(RegExp.$1)>=5){suzume_Flag=1;}}
-            else if(area_all[i].name.match(/倉庫/)){souko++;}
-            else if(area_all[i].name.match(/銅雀台/)){suzume++;}
-        }
-        
+        var heichi = village.find('平地').length;
+        var hatake = village.find('畑').length;
+        var souko = village.find('倉庫').length;
 
-        if(heichi>0){ //平地が余っていたら
-            var tmp = heichi;
-            if(suzume != 1){ //雀がまだ建っていなければ
-                tmp -= 1; //平地の数をマイナス1
+        if (heichi > 0) {
+            if (!village.has('銅雀台')) {
+                heichi -= 1;
             }
-            if(souko < OPT_SOUKO_MAX){ //倉庫がまだ最大数建っていなければ
-                tmp -= (OPT_SOUKO_MAX - souko); //平地の数をマイナス]
+            if (souko < OPT_SOUKO_MAX) {
+                heichi -= (OPT_SOUKO_MAX - souko);
             }
-            if(tmp > 0){ //それでも平地が余っていれば
-                if(Chek_Sigen(new lv_sort("畑",0,"")) != 1){ //資源チェック
-                    createFacility(HATAKE, area_all); //畑を建てる
-                    Reload_Flg = 0;
-                    return;
-                };
-            } else if(souko < OPT_SOUKO_MAX){ //倉庫が建てられる平地があれば
-                if(Chek_Sigen(new lv_sort("倉庫",0,"")) != 1){ //資源チェック
-                    createFacility(SOUKO, area_all); //倉庫を建てる
-                    Reload_Flg = 0;
-                    return;
-                }
-            } else if(suzume != 1 && suzume_Flag == 1){ //雀がまだ建っていなければ
-                if(Chek_Sigen(new lv_sort("銅雀台",0,"")) != 1){ //資源チェック
-                    createFacility(SUZUME, area_all); //雀を建てる
-                    Reload_Flg = 0;
-                    return;
-                }
+            if (heichi > 0 && Chek_Sigen(new lv_sort("畑",0,"")) != 1) {
+                village.build(HATAKE);
+                Reload_Flg = 0;
+                return;
+            } else if (souko < OPT_SOUKO_MAX && Chek_Sigen(new lv_sort("倉庫",0,"")) != 1) {
+                village.build(SOUKO);
+                Reload_Flg = 0;
+                return;
+            } else if (village.enable_suzume() && Chek_Sigen(new lv_sort("銅雀台",0,"")) != 1) {
+                village.build(SUZUME);
+                Reload_Flg = 0;
+                return;
             }
         }
-        //建てられるスペースがなければ通常の処理を続ける
     }
-
 
     var area = new Array();
     area = get_area();
@@ -1725,27 +1644,6 @@ function get_area_all(){
     return area;
 }
 
-//施設建設
-function createFacility(f, area){
-    area.sort(cmp_areas);
-    for(var i=0;i<area.length;i++){
-        if(area[i].name == "平地"){ //一番最初に見つかった平地に建設
-            var Temp = area[i].xy.split(",");
-            var c = {};
-            c['x']=parseInt(Temp[0]);
-            c['y']=parseInt(Temp[1]);
-            c['village_id']=getVillageID(vId);
-            c['id']=f;
-            c['ssid']=j$.cookie('SSID');                        
-            j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-            $w(function(){
-                   location.reload(false);
-               });
-            return;
-        }
-    }
-}
-
 function areas(name,xy){
     this.name = name;
     this.xy = xy;
@@ -2011,7 +1909,7 @@ function addOpenLinkHtml() {
 
 //建築設定画面を開く
 function openIniBilderBox() {
-    addIniBilderHtml();
+    main_view();
 }
 
 //建築設定画面を閉じる
@@ -2430,465 +2328,6 @@ function deleteInifacFrameHtml() {
     var elem = d.getElementById("ABfacContainer");
     if (elem == undefined) return;
     d.body.removeChild(document.getElementById("ABfacContainer"));
-}
-
-//ステイタス取得HTML追加
-function addIniBilderHtml() {
-
-
-    //  var popupLeft = 500;
-    //  var popupTop = 250;
-
-    // add 2011.09.27 設定画面移動
-    var popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left", 150);
-    var popupTop = GM_getValue(location.hostname + PGNAME + "_popup_top", 150);
-    if (popupLeft < 0) popupLeft = 0;
-    if (popupTop < 0) popupTop = 0;
-    // end
-
-    // 表示コンテナ作成
-    var ABContainer = d.createElement("div");
-    ABContainer.id = "ABContainer";
-    ABContainer.style.position = "absolute";
-    ABContainer.style.backgroundColor = COLOR_FRAME;
-    ABContainer.style.opacity= 1.0; // 透明度
-    ABContainer.style.border = "solid 2px #000000";
-    ABContainer.style.MozBorderRadius = "4px";  // 角丸
-    ABContainer.style.top = popupTop + "px";
-    ABContainer.style.left = popupLeft + "px";
-    ABContainer.style.font = fontstyle;
-    ABContainer.style.padding = "4px";
-    ABContainer.style.zIndex = 999;
-    d.body.appendChild(ABContainer);
-
-    $e(ABContainer, "mousedown", function(event){
-           if( event.target != $("ABContainer")) {return false;}
-           g_MD="ABContainer";
-           g_MX=event.pageX-parseInt(this.style.left,10);
-           g_MY=event.pageY-parseInt(this.style.top,10);
-           event.preventDefault();
-       });
-
-    $e(d, "mousemove", function(event){
-           if(g_MD != "ABContainer") return true;
-           var ABContainer = $("ABContainer");
-           if( !ABContainer ) return true;
-           var popupLeft = event.pageX - g_MX;
-           var popupTop = event.pageY - g_MY;
-           ABContainer.style.left = popupLeft + "px";
-           ABContainer.style.top = popupTop + "px";
-           //ポップアップ位置を永続保存
-           GM_setValue(location.hostname + PGNAME + "_popup_left", popupLeft);
-           GM_setValue(location.hostname + PGNAME + "_popup_top", popupTop);
-       });
-
-    $e(d, "mouseup", function(event){ g_MD=""; });
-
-    // タイトル＋バージョン
-    var title = d.createElement("span");
-    title.style.color = "#FFFFFF";
-    title.style.font = 'bold 120% "ＭＳ ゴシック"';
-    title.style.margin = "2px";
-    title.innerHTML = "Auto Bilder ";
-
-    var version = d.createElement("span");
-    version.style.color = COLOR_TITLE;
-    version.style.margin = "2px";
-    version.innerHTML = " Ver." + VERSION;
-
-    var storageLimit = d.createElement("span");
-    storageLimit.style.color = "#FFFFFF";
-    storageLimit.style.font = '110% "ＭＳ Ｐゴシック"';
-    storageLimit.style.margin = "2px";
-
-    storageLimit.innerHTML = "資源保持上限(変換量) ： " + SetPrice(Math.floor(parseInt( $("rice_max").innerHTML, 10 ) * 0.95)) + " ( " + SetPrice(Math.floor(parseInt( $("rice_max").innerHTML, 10 ) * 0.05)) +" )";
-
-    ABContainer.appendChild(title);
-    //  ABContainer.appendChild(storageLimit);
-    ABContainer.appendChild(version);
-
-    // ボタンエリア
-    var ButtonBox = d.createElement("div");
-    ButtonBox.style.border ="solid 0px";    // 通常 0px チェック時 1px
-    ButtonBox.style.margin = "2px";
-    ButtonBox.style.padding = "0px";
-
-    ABContainer.appendChild(ButtonBox);
-
-    // 実行中/停止中ボタン
-    var Button1 = d.createElement("span");
-    if(GM_getValue(HOST+PGNAME+"AutoFlg", true)==true){
-        ccreateButton(Button1, "巡回中", "巡回停止します", 
-                      function() {
-                          GM_setValue(HOST+PGNAME+"AutoFlg", false);
-                          location.reload();
-                      });
-    } else {
-        ccreateButton(Button1, "停止中", "巡回開始します", 
-                      function() {
-                          GM_setValue(HOST+PGNAME+"AutoFlg", true);
-                          location.reload();
-                      });
-    }
-    ButtonBox.appendChild(Button1);
-
-    // 確認済みボタン
-    var Button2 = d.createElement("span");
-    ccreateButton(Button2, "確認済", "完了済の作業を削除します", function() {
-                      confirmTimer();
-                  });
-    ButtonBox.appendChild(Button2);
-
-    // 閉じるボタン
-    var Button3 = d.createElement("span");
-    ccreateButton(Button3, "閉じる", "ウインドウを閉じます", function() {
-                      closeIniBilderBox();
-                  });
-    ButtonBox.appendChild(Button3);
-
-    // 常駐チェックボックス
-    var staySpan = d.createElement("span");
-    staySpan.title = "作業完了がなくても常に表示します";
-    ButtonBox.appendChild(staySpan);
-
-    var stayBox =  document.createElement("input");
-    stayBox.type = "checkbox";
-    stayBox.style.verticalAlign = "middle";
-    stayBox.checked = is_stay_mode();
-    stayBox.addEventListener("change", function() {
-                                 changeStayMode(this.checked);
-                             }, true);
-    ButtonBox.appendChild(stayBox);
-
-    var stayCap = document.createElement("span");
-    stayCap.style.verticalAlign = "middle";
-    stayCap.innerHTML = "　常駐 ";
-    stayCap.style.color = "#FFFFFF";
-    staySpan.appendChild(stayCap);
-
-    // 巡回順チェックボックス
-    var reverseSpan = d.createElement("span");
-    reverseSpan.title = "拠点巡回を逆順にします";
-    ButtonBox.appendChild(reverseSpan);
-
-    var reverseBox =  document.createElement("input");
-    reverseBox.type = "checkbox";
-    reverseBox.style.verticalAlign = "middle";
-    reverseBox.checked = getReverseMode();
-    reverseBox.addEventListener("change", function() {
-                                    changeReverseMode(this.checked);
-                                }, true);
-    ButtonBox.appendChild(reverseBox);
-
-    var reverseCap = document.createElement("span");
-    reverseCap.style.verticalAlign = "middle";
-    reverseCap.innerHTML = "　　逆巡回 ";
-    reverseCap.style.color = "#FFFFFF";
-    reverseSpan.appendChild(reverseCap);
-
-    // 巡回時間プルダウン
-    var typeDiv = document.createElement("span");
-    typeDiv.title = "ROUND_TIME";
-    ButtonBox.appendChild(typeDiv);
-
-    var caption = document.createElement("span");
-    caption.style.verticalAlign = "middle";
-    caption.innerHTML = "　　巡回時間 ";
-    caption.style.color = "#FFFFFF";
-    typeDiv.appendChild(caption);
-
-    var selectBox = document.createElement("select");
-    selectBox.id = "dispMode";
-    selectBox.addEventListener("change", function() {
-                                   GM_setValue(HOST+PGNAME+"OPT_ROUND_TIME1" , document.getElementById("dispMode").value );
-                                   OPT_ROUND_TIME1 = document.getElementById("dispMode").value;
-                               }, true);
-    typeDiv.appendChild(selectBox);
-
-    var intervals = [30, 40, 50, 60, 90, 120, 150, 180, 300, 480, 600, 900];
-    var options = (function() {
-                       var _i, _len, _results, interval;
-                       _results = [];
-                       for (_i = 0, _len = intervals.length; _i < _len; _i++) {
-                           interval = intervals[_i];
-                           _results.push([interval + "sec", interval]);
-                       }
-                       return _results;
-                   })();
-    for (var i = 0; i < options.length; i++) {
-        var elem = document.createElement("option");
-        elem.innerHTML = options[i][0];
-        elem.value = options[i][1];
-        selectBox.appendChild(elem);
-    }
-    selectBox.value = GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
-    OPT_ROUND_TIME1 = GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
-    OPT_ROUND_TIME1 = parseInt(OPT_ROUND_TIME1) + Math.floor( Math.random() * 10 );
-
-    // 次回表示
-    var nowTime = new Date();
-    var nextTime = getNextTime(location.hostname, nowTime);
-    if (nextTime != undefined) {
-        var waitTimeStr = generateWaitTimeString(nextTime, nowTime);
-        var nextTimeBox = document.createElement("div");
-        nextTimeBox.style.color = "#90EE90";
-        nextTimeBox.style.backgroundColor = "#000000";
-        nextTimeBox.style.verticalAlign = "middle";
-        nextTimeBox.innerHTML = "　次回: " + generateDateString2(nextTime);
-        nextTimeBox.innerHTML += " (あと" + waitTimeStr + ")";
-        ABContainer.appendChild(nextTimeBox);
-    }
-
-    // 変換用市場表示
-    var shoplist = cloadData(HOST+"ShopList","[]",true,true);
-    if (shoplist.length != 0) {
-        shoplist.sort( function(a,b) { if (a[1] < b[1]) return 1; if (a[1] > b[1]) return -1; return 0;});
-        var villages = loadVillages(HOST+PGNAME);
-        var nextIndex = -1;
-        for(var i=0; i<villages.length;i++){
-            if(shoplist[0].vId == villages[i][IDX_XY]){
-                nextIndex = i;
-                break;
-            }
-        }
-        if (nextIndex != -1) {
-            var ShopBox = document.createElement("div");
-            ShopBox.style.color = "#90EE90";
-            ShopBox.style.backgroundColor = "#000000";
-            ShopBox.style.verticalAlign = "middle";
-            ShopBox.innerHTML = "　変換用市場 : " + villages[nextIndex][IDX_BASE_NAME] + "　" + villages[nextIndex][IDX_XY] + "　市場Lv : " + shoplist[0].lv;
-            ABContainer.appendChild(ShopBox);
-        }
-    }
-    //document.getElementById("dispMode" + types[i]).value;
-
-    //拠点設定リンクの作成
-    var tbl = d.createElement("table");
-    tbl.style.border ="0px";
-    //拠点情報のロード
-    var villages = loadVillages(HOST+PGNAME);
-    //拠点情報が無い場合
-    var firstboot = false;
-    if (villages == "") { firstboot = true; }
-    if (villages.length > 0) {
-        if (villages[0][IDX_URL] == "") {
-            firstboot = true;
-        }
-    }
-    if(firstboot) {
-        var tr = d.createElement("tr");
-        var td = d.createElement("td");
-        td.style.padding = "3px";
-        //      td.style.border = "solid 2px black";
-        tr.appendChild(td);
-        tbl.appendChild(tr);
-        var msg = d.createElement("span");
-        msg.style.fontSize = "15px";
-        msg.style.margin = "3px";
-        msg.style.color = "#FFFFFF";
-        msg.style.font = 'bold 120% "ＭＳ ゴシック"';
-        msg.innerHTML = "<br>" + 
-            "　　インストールありがとうございます。<br>" + 
-            "　　まずは、プロフィール画面を開いて<br>" +
-            "　　拠点情報を取得してください。<br>　";
-        td.appendChild(msg);
-    } else {
-        var landElems = document.evaluate(
-            '//li[@class="on"]/span',
-            document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
-        for (var i = 0; i < villages.length; i++) {
-            var vname = villages[i][IDX_BASE_NAME];
-            var fColor = "#71C4F9";
-            var tr = d.createElement("tr");
-            var td = d.createElement("td");
-            tr.style.fontWeight = "bold";
-            td.style.padding = "2px";
-            td.style.border = "solid 1px black";
-            td.style.backgroundColor = "#E6CF88";
-
-            tr.appendChild(td);
-            tbl.appendChild(tr);
-
-            //各拠点の設定画面リンク
-            var vname = villages[i][IDX_BASE_NAME];
-            if(vname != ""){    // add 2012.09.06
-                vId2 = villages[i][IDX_XY];
-
-                var td00 = d.createElement("div");
-                td00.style.width = "140px";
-
-                var tdA = d.createElement("td");
-                tdA.style.padding = "3px";
-                ccreateCheckBox0(td00, "OPT_CHKBOX_AVC_"+i, loadAVCBox2(i), villages[i][IDX_BASE_NAME],"",0 ,villages);
-
-                //拠点一覧項目
-                var opfacLink = document.createElement("text");
-                opfacLink.style.padding = "3px";
-                td00.appendChild(opfacLink);
-
-                var villageText = villages[i][IDX_BASE_NAME];
-                if (villages[i][IDX_URL] != "") {
-                    villageText = "<a href=" + villages[i][IDX_URL] + 
-                        " style='color:#654634; text-decoration:none'>" + 
-                        villageText + "</a>";
-                }
-                opfacLink.innerHTML = villageText;
-                opfacLink.style.textDecoration = "none";
-                td.appendChild(td00);
-                tr.appendChild(td);
-
-                //実行中作業情報項目
-                var actionsTd = document.createElement("td");
-                actionsTd.style.backgroundColor = COLOR_BACK;
-                actionsTd.style.border = "solid 1px black";
-                actionsTd.style.padding = "3px";
-                actionsTd.style.width = "380px";
-                tr.appendChild(actionsTd);
-                var actions = sortAction(villages[i][IDX_ACTIONS]);
-                var nowTime = new Date();
-                for (var j = 0; j < actions.length; j++) {
-                    var actionDiv = createActionDiv(actions[j], nowTime, villages[i][IDX_XY], location.hostname);
-                    if (!actionDiv) continue;
-                    // 完了済みフラグのチェック
-                    actionDiv = createActionDiv(actions[j], nowTime, villages[i][IDX_XY], location.hostname);
-                    actionsTd.appendChild(actionDiv);
-                }
-
-                //設定ボタン
-                var settingTd = document.createElement("td");
-                settingTd.style.backgroundColor = "#E6CF88";
-                settingTd.style.border = "solid 1px black";
-                settingTd.style.padding = "3px";
-                settingTd.style.width = "20px";
-                tr.appendChild(settingTd);
-
-                var btn = d.createElement("input");
-                btn.style.padding = "1px";
-                btn.type = "button";
-                btn.value = "設定";
-                btn.title = "設定画面を表示します";
-                settingTd.appendChild(d.createTextNode(" "));
-                settingTd.appendChild(btn);
-                settingTd.appendChild(d.createTextNode(" "));
-                settingTd.setAttribute('vId', villages[i][IDX_XY]);
-                settingTd.addEventListener("click", function() {
-                                               var vId = this.getAttribute('vId');
-                                               openInifacBox(vId);
-                                           }, true);
-            }   // add 2012.09.06
-        }
-        saveVillages(HOST+PGNAME, villages);
-    }
-
-
-    //拠点作成状況の表示 2012.04.09
-    var tbl2 = d.createElement("table");
-    tbl2.style.border ="0px";
-    var lists = cloadData(HOST+"ReserveList", "[]", true, true);
-    for(var i=0 ; i<lists.length ; i++) {
-        var vId = "(" + lists[i].x + "," + lists[i].y + ")";
-
-        var tr = d.createElement("tr");
-        var td = d.createElement("td");
-
-        tbl2.appendChild(tr);
-
-        var td00 = d.createElement("div");
-
-        td.appendChild(td00);
-        tr.appendChild(td);
-
-        var actionsTd = document.createElement("td");
-        actionsTd.style.backgroundColor = COLOR_BACK;
-        actionsTd.style.border = "solid 1px black";
-        actionsTd.style.padding = "3px";
-        actionsTd.style.width = "525px";
-
-        tr.appendChild(actionsTd);
-
-        var actionDiv = document.createElement("text");
-        actionDiv.style.padding = "3px";
-
-        actionDiv.innerHTML = "座標" + vId + " に ";
-        if(lists[i].kind == 220){ actionDiv.innerHTML += "「村」";
-                                }else if(lists[i].kind == 222){ actionDiv.innerHTML += "「砦」";
-                                                              }
-        if(lists[i].status == 0){actionDiv.innerHTML += "作成失敗";
-                                }else if(lists[i].status == 1){actionDiv.innerHTML += "作成予約";
-                                                              }else if(lists[i].status == 2){actionDiv.innerHTML += "作成中";
-                                                                                            }else if(lists[i].status == 3){actionDiv.innerHTML += "作成完了";
-                                                                                                                          }else if(lists[i].status == 4){actionDiv.innerHTML += "破棄中";  
-                                                                                                                                                        }else if(lists[i].status == 5){actionDiv.innerHTML += "破棄完了";
-                                                                                                                                                                                      }
-        if(lists[i].status == 2 || lists[i].status == 4){
-            actionDiv.innerHTML += " (" + lists[i].time + " 完了予定)";
-        }
-
-        var delTd = document.createElement("td");
-        delTd.style.backgroundColor = "#E6CF88";
-        delTd.style.border = "solid 1px black";
-        delTd.style.padding = "3px";
-        delTd.style.width = "34px";
-        tr.appendChild(delTd);
-
-        if(lists[i].status == 1 || lists[i].status == 0){
-            var btn = d.createElement("input");
-            btn.style.padding = "1px";
-            btn.type = "button";
-            btn.value = "取消";
-            btn.title = "予約を取消します";
-            delTd.appendChild(d.createTextNode(" "));
-            delTd.appendChild(btn);
-            delTd.appendChild(d.createTextNode(" "));
-            delTd.setAttribute('x', lists[i].x);
-            delTd.setAttribute('y', lists[i].y);
-            delTd.addEventListener("click", function() {
-                                       var x = this.getAttribute('x');
-                                       var y = this.getAttribute('y');
-                                       delList(x, y)
-                                   }, true); //delListへ
-        }
-        else if(lists[i].status == 3 || lists[i].status == 5){
-            var btn = d.createElement("input");
-            btn.style.padding = "1px";
-            btn.type = "button";
-            btn.value = "確認";
-            btn.title = "確認済にして削除します";
-            delTd.appendChild(d.createTextNode(" "));
-            delTd.appendChild(btn);
-            delTd.appendChild(d.createTextNode(" "));
-            delTd.setAttribute('x', lists[i].x);
-            delTd.setAttribute('y', lists[i].y);
-            delTd.addEventListener("click", function() {
-                                       var x = this.getAttribute('x');
-                                       var y = this.getAttribute('y');
-                                       delList(x, y)
-                                   }, true); //delListへ
-
-        }
-        tr.appendChild(delTd);
-        actionsTd.appendChild(actionDiv);
-    }
-
-    ABContainer.appendChild(tbl);
-    ABContainer.appendChild(tbl2);
-
-    function delList(x, y)
-    {
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y ) {
-                lists.splice(i,1);
-                csaveData(HOST+"ReserveList", lists, true, true );
-
-                //更新後内容で表示
-                reopen();
-
-                break;
-            }
-        }
-    }
 }
 
 // 拠点巡回読込
@@ -4147,6 +3586,23 @@ function ccreateText(container, id, text, left )
 }
 // ＠＠　ここまで　＠＠
 
+function jcreateCheckBox(container, id, def, text, title, left) {
+    left += 2;
+    var div = j$("<div>").css({"padding": "1px", "padding-left": left + "px"}).attr("title", title);
+
+    var cb = j$("<input>").attr("type", "checkbox").css({"vertical-align": "middle"}).attr("id", id).val(1);
+
+    if (def) {
+        cb.attr("checked", true);
+    }
+    
+    var lb = j$("<label>").attr("html-for", id).css({"vertical-align": "middle"}).text(text);
+    
+    div.append(cb).append(lb);
+    container.append(div);
+    return cb;
+}
+
 function ccreateCheckBox(container, id, def, text, title, left )
 {
     left += 2;
@@ -4174,6 +3630,28 @@ function ccreateCheckBox(container, id, def, text, title, left )
     return cb;
 }
 
+function jcreateButton(container, text, title, func, width, top) {
+    var btn = j$("<input>").css(
+        {
+            "padding": "0px",
+            "height": "22px",
+            "vertical-align": "middle"
+        }).attr("type", "button").val(text);
+    if (top != undefined) {
+        btn.css("margin-top", top + "px");
+    }
+    if (width == undefined) {
+        btn.css("width", "54px");
+    } else {
+        btn.css("width", width + "px");
+    }
+    container.append(btn);
+    btn.click(function() {
+                  func();
+                  return false;
+              });
+    return btn;
+}
 
 function ccreateButton(container, text, title, func, width, top)
 {
@@ -4772,6 +4250,21 @@ if ((typeof GM_getValue == 'undefined') || (GM_getValue('a', 'b') == undefined))
     };
 }
 
+function jcreateCheckBox0(container, id, def, text, title, left, villages) {
+    left += 2;
+    
+    var cb = j$("<input>").attr("type", "checkbox").attr("id", id).css("vertical-align", "middle");
+    
+    cb.attr("checked", def);
+    cb.change(function() {
+                  for (var i = 0; i < villages.length; i++) {
+                      GM_setValue(HOST+PGNAME+"OPT_CHKBOX_AVC_" + i, document.getElementById('OPT_CHKBOX_AVC_' + i).checked);
+                  }
+              });
+    container.append(cb);
+    return cb;
+}
+
 function ccreateCheckBox0(container, id, def, text, title, left, villages)
 {
     left += 2;
@@ -4988,6 +4481,41 @@ function saveVillage(newData, type) {
     if (!exists) allData.push(newData);
     //Greasemonkey領域へ永続保存
     saveVillages(HOST+PGNAME, allData);
+}
+
+function jcreateActionDiv(action, now, baseXY, host) {
+    var type = action[IDX2_TYPE].charAt(0);
+    
+    var actionDiv = j$("<div>");
+    if ( action[IDX2_DELETE] == "true" ) {
+        actionDiv.css("background-color", "#BBDDDD");
+    }
+
+    var actionTime = new Date(action[IDX2_TIME]);
+    if (actionTime < now) {
+        actionDiv.css("background-color", COLOR_TITLE);
+    }
+
+    //作業完了時刻
+    var text = action[IDX2_TIME].replace(/^[0-9]{4}\//, "");
+    var finishTime = new Date(action[IDX2_TIME]);
+    text += " (あと" + generateWaitTimeString(finishTime, now) + ")";
+    text += action[IDX2_STATUS] + " ";
+   
+    var textSpan = j$("<span>").text(text);
+    actionDiv.append(textSpan);
+    
+    if (actionTime < now) {
+        var del_link = j$("<a>").attr("title", "確認済にして削除します").attr("href", "#").css("color", "#E86D61").text("済");
+        
+        var key = host + DELIMIT1 + baseXY + DELIMIT1 + action[IDX2_TIME];
+        del_link.click(function(e){
+                          deleteAction(key);
+                      });
+        actionDiv.append(del_link);
+    }
+    
+    return actionDiv;
 }
 
 //各作業行生成
@@ -5315,18 +4843,6 @@ function getDomesticSkill(htmldoc) {
         reopen();
     }
 }
-
-//常駐モード取得
-function is_stay_mode() {
-    var result = GM_getValue(HOST + "_stay_mode" + PGNAME, true);
-    return result;
-}
-
-//常駐モード変更
-function changeStayMode(value) {
-    GM_setValue(location.hostname + "_stay_mode" + PGNAME, value);
-}
-
 
 //巡回モード取得
 function getReverseMode() {
