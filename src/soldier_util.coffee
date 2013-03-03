@@ -42,6 +42,7 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
                             type: "POST"
                             data: { x: builder.x, y: builder.y, unit_id: soldier.unit_id(), count: request_num }
                             success: (res) ->
+                                update_creating_soldiers res
                                 callback j$(res)
                         }
                     else
