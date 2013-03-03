@@ -1257,6 +1257,7 @@ function autoLvup() {
 }
 
 function setVillageFacility() {
+    var village = new Village();
 
     debugLog("=== Start setVillageFacility ===");
 
@@ -1317,54 +1318,34 @@ function setVillageFacility() {
     //建設予約ができるかどうか
     // ＠＠
     if((cnt - del) >= 1) return;
+
     if(OPT_KATEMURA == 1) {
-        var area_all = new Array();
-        area_all = get_area_all();
-        var hatake = 0; //畑の総数
-        var souko = 0; //倉庫の総数
-        var suzume = 0; //雀の総数
-        var heichi = 0; //平地の総数
-        var suzume_Flag = 0;
-        var n = -1;
-        for(var i=0;i < area_all.length;i++){
-            if(area_all[i].name == "平地"){heichi++;n=i;}
-            else if(area_all[i].name.match(/畑\s.*?(\d+)/)){hatake++;if(parseInt(RegExp.$1)>=5){suzume_Flag=1;}}
-            else if(area_all[i].name.match(/倉庫/)){souko++;}
-            else if(area_all[i].name.match(/銅雀台/)){suzume++;}
-        }
-        
+        var heichi = village.find('平地').length;
+        var hatake = village.find('畑').length;
+        var souko = village.find('倉庫').length;
 
-        if(heichi>0){ //平地が余っていたら
-            var tmp = heichi;
-            if(suzume != 1){ //雀がまだ建っていなければ
-                tmp -= 1; //平地の数をマイナス1
+        if (heichi > 0) {
+            if (!village.has('銅雀台')) {
+                heichi -= 1;
             }
-            if(souko < OPT_SOUKO_MAX){ //倉庫がまだ最大数建っていなければ
-                tmp -= (OPT_SOUKO_MAX - souko); //平地の数をマイナス]
+            if (souko < OPT_SOUKO_MAX) {
+                heichi -= (OPT_SOUKO_MAX - souko);
             }
-            if(tmp > 0){ //それでも平地が余っていれば
-                if(Chek_Sigen(new lv_sort("畑",0,"")) != 1){ //資源チェック
-                    createFacility(HATAKE, area_all); //畑を建てる
-                    Reload_Flg = 0;
-                    return;
-                };
-            } else if(souko < OPT_SOUKO_MAX){ //倉庫が建てられる平地があれば
-                if(Chek_Sigen(new lv_sort("倉庫",0,"")) != 1){ //資源チェック
-                    createFacility(SOUKO, area_all); //倉庫を建てる
-                    Reload_Flg = 0;
-                    return;
-                }
-            } else if(suzume != 1 && suzume_Flag == 1){ //雀がまだ建っていなければ
-                if(Chek_Sigen(new lv_sort("銅雀台",0,"")) != 1){ //資源チェック
-                    createFacility(SUZUME, area_all); //雀を建てる
-                    Reload_Flg = 0;
-                    return;
-                }
+            if (heichi > 0 && Chek_Sigen(new lv_sort("畑",0,"")) != 1) {
+                village.build(HATAKE);
+                Reload_Flg = 0;
+                return;
+            } else if (souko < OPT_SOUKO_MAX && Chek_Sigen(new lv_sort("倉庫",0,"")) != 1) {
+                village.build(SOUKO);
+                Reload_Flg = 0;
+                return;
+            } else if (village.enable_suzume() && Chek_Sigen(new lv_sort("銅雀台",0,"")) != 1) {
+                village.build(SUZUME);
+                Reload_Flg = 0;
+                return;
             }
         }
-        //建てられるスペースがなければ通常の処理を続ける
     }
-
 
     var area = new Array();
     area = get_area();
@@ -1723,27 +1704,6 @@ function get_area_all(){
         n++;
     }
     return area;
-}
-
-//施設建設
-function createFacility(f, area){
-    area.sort(cmp_areas);
-    for(var i=0;i<area.length;i++){
-        if(area[i].name == "平地"){ //一番最初に見つかった平地に建設
-            var Temp = area[i].xy.split(",");
-            var c = {};
-            c['x']=parseInt(Temp[0]);
-            c['y']=parseInt(Temp[1]);
-            c['village_id']=getVillageID(vId);
-            c['id']=f;
-            c['ssid']=j$.cookie('SSID');                        
-            j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-            $w(function(){
-                   location.reload(false);
-               });
-            return;
-        }
-    }
 }
 
 function areas(name,xy){
