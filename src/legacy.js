@@ -226,9 +226,6 @@ var DASkill = [ "■■■■",
               ];
 // ＠＠　ここまで　＠＠
 
-// 屯田機能用
-var URL_PARAM = {};
-
 // 市場変換用
 var ShopURL = "";
 var ShopFlg = false;
@@ -246,33 +243,6 @@ main();
 function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments)) };
 
 function debugLog( mes ) {  if (DEBUG) { console.log(mes); }    };
-
-// ===========================================================================================================
-
-//URL読み込み
-function initUrlParams() {
-    var matches = location.search.match(/(?:\?|&)?([^=]+)(?:=([^&]+))?/g);
-    if (matches) {
-        var param;
-        var key;
-        var data;
-        for(var i = 0 ; i < matches.length ; i++) {
-            param = matches[i].match(/(?:\?|&)?([^=]+)(?:=([^&]+))?/);
-            key = param[1];
-            data = param[2];
-
-            URL_PARAM[key] = '';
-            if( param.length == 3 && typeof data == 'string') {
-                URL_PARAM[key] = decodeURIComponent(data);
-
-                // session id
-                if (key.toLowerCase() == 'ssid') {
-                    SID = key + '=' +data;
-                }
-            }
-        }
-    }
-}
 
 //拠点作成開始
 function settleVillages(z){
@@ -569,16 +539,16 @@ function getAddingVillage(htmldoc) {
 
     function addReserveVillages(kind) {
         url = location;
-        var flgAdd = addList2(kind, 1, URL_PARAM.x, URL_PARAM.y);
+        var flgAdd = addList2(kind, 1, URL_PARAMS.x, URL_PARAMS.y);
         var msg = "";
         if (flgAdd == 0){
-            msg += "(" + URL_PARAM.x + "," + URL_PARAM.y + ")への、";
+            msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")への、";
             if(kind == 220){msg += "村建設予約";
                            }else if(kind == 222){msg += "砦建設予約";
                                                 }
             msg += "を受け付けました。"
         } else {
-            msg += "(" + URL_PARAM.x + "," + URL_PARAM.y + ")には、すでに建設予約があります。";
+            msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")には、すでに建設予約があります。";
         }
         alert(msg);
         if ( is_stay_mode() ) {
