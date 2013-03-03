@@ -1859,9 +1859,9 @@ function forwardNextVillage(vId){
                 } else {
                     // 通常巡回処理
                     roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                    tidMain2 = $(function(){
-                                     location.href = vcURL;
-                                 }, roundTime);
+                    tidMain2 = $w(function(){
+                                      location.href = vcURL;
+                                  }, roundTime);
                 }
             }
         }
