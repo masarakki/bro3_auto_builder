@@ -1,17 +1,4 @@
 class Village
-    class Building
-        constructor: (@name, @x, @y, @level) ->
-        html: (callback) ->
-            j$.ajax {
-                method: 'GET'
-                url: "http://#{HOST}/facility/facility.php"
-                data: { x: @x, y: @y }
-                headers: { "Content-type": "text/html" }
-                overrideMimeType: 'text/html; charset=utf-8'
-                success: (res) ->
-                    callback j$(res)
-            }
-
     constructor: ->
         [_, @x, @y] = for num in trim(j$("#basepoint .xy").text()).match /\((\d+),(\d+)\)/
             parseInt num
@@ -35,7 +22,8 @@ class Village
                 @hash[name] = building
                 building
         @buildings = (building for building in buildings when building)
-
+    at: (x, y) ->
+        (building for building in @buildings when building.x == x and building.y == y)[0]
     build_at: (building_id, x, y) ->
         j$.ajax {
             url: "http://#{HOST}/facility/build.php"
@@ -54,6 +42,26 @@ class Village
     enable_suzume: ->
         (building for building in find('畑') when building.level >= 5).length >= 1
 
+class Building
+    constructor: (@name, @x, @y, @level) ->
+    html: (callback) ->
+        j$.ajax {
+            method: 'GET'
+            url: "/facility/facility.php"
+            data: { x: @x, y: @y }
+            success: (res) ->
+                callback j$(res)
+        }
+    destroy: ->
+        html (html) ->
+            ssid = j$("[name=ssid]", html)[0].value
+            j$.ajax {
+                url: "/facility/facility.php"
+                method: 'POST'
+                data: {x: @x, y: @y, ssid: ssid, remove: '建物を壊す'}
+                success: (res) ->
+                    location.reload false
+            }
 
 update_creating_soldiers = (res) ->
     htmldoc = document.createElement "html"

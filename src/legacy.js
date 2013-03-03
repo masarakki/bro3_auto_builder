@@ -191,14 +191,6 @@ var $w = function(func, interval) {
     return unsafeWindow.setTimeout(func, interval);
 };
 
-//LvUPリンク
-var LVUPLINK = "http://SITE/facility/build.php?x=urlX&y=urlY&village_id=viID&ssid=ssid_val#ptop";
-var URL_SITE = "SITE";
-var URL_X = "urlX";
-var URL_Y = "urlY";
-var URL_viID = "viID";
-var URL_viSSID = "ssid_val";
-
 //新規作成リンク
 var URL_fID = "fID"; //建物のID
 var HATAKE = 215;
@@ -782,35 +774,11 @@ function getDeletingVillage(htmldoc) {
 
 // =================================================================================================
 
-function DeleteFacility(_x,_y){
-    $w(function(){
-           var mURL = FACLINK(HOST, _x, _y);
-           GM_xmlhttpRequest(
-               {
-                   method: "GET", 
-                   url: mURL,
-                   headers: {"Content-type":"text/html"},
-                   overrideMimeType: 'text/html; charset=utf-8',
-                   onload: function(x){
-                       var htmldoc = document.createElement("html");
-                       htmldoc.innerHTML = x.responseText;
-                       var tables = document.evaluate('//*[@name="ssid"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                       var ssid = tables.snapshotItem(0).value;
-                       
-                       var c = {};
-                       c['x'] = parseInt(_x);
-                       c['y'] = parseInt(_y);
-                       c['ssid']=tables.snapshotItem(0).value;
-                       c['remove']="%E5%BB%BA%E7%89%A9%E3%82%92%E5%A3%8A%E3%81%99";
-                       j$.post("http://"+HOST+"/facility/facility.php?x=" + _x + "&y=" + _y + "#ptop",c,function(){});
-                       $w(function(){
-                              location.reload(false);
-                          });
-                       
-                   }
-               });
-       });
-    
+function DeleteFacility(x, y){
+    x = parseInt(x);
+    y = parseInt(y);
+    var village = new Village();
+    village.at(x, y).destroy();
 }
 
 function autoLvup() {
