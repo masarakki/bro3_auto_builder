@@ -1,4 +1,17 @@
 global_status = null
+URL_PARAMS = {}
+
+init_url_params = ->
+    matches = location.search.match(/(?:\?|&)?([^=]+)(?:=([^&]+))?/g);
+    if matches
+        for match in matches
+            params = match.match /(?:\?|&)?([^=]+)(?:=([^&]+))?/
+            key = params[1];
+            data = params[2];
+
+            URL_PARAMS[key] = '';
+            if params.length == 3 && typeof data == 'string'
+                URL_PARAMS[key] = decodeURIComponent data
 
 main = ->
     global_status = new Status
@@ -9,7 +22,7 @@ main = ->
     j$("div#map-scroll").css({"z-index": "150"})
     j$("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"})
 
-    initUrlParams()
+    init_url_params()
 
     j$("#mixi_ad_head").hide()
     j$("#mixi_ad_groups").hide()
@@ -19,7 +32,7 @@ main = ->
     reopen() if is_stay_mode()
 
     # 領地画面なら拠点建設データ取得
-    if location.pathname == "/land.php" && URL_PARAM.x && URL_PARAM.y
+    if location.pathname == "/land.php" && URL_PARAMS.x && URL_PARAMS.y
         getAddingVillage document.body
 
     # 拠点画面なら拠点削除データ取得
@@ -102,3 +115,4 @@ main = ->
     # 兵士作成画面なら作成中兵士を取得
     if location.pathname == "/facility/facility.php"
         update_creating_soldiers document.getElementById("container").innerHTML
+
