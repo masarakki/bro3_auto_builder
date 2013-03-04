@@ -4773,23 +4773,29 @@ function getMyXY() {
 }
 
 function get_using_skill_all() {
+    var name = null;
+    var level = null;    
     var text = j$("div.base-skill span a").text();
-    var matches = text.match(/(.+)\s*(.+)\((.+)\)/);
-    
+    var matches = text.match(/(.+?):?\s*(.+)\((.+)\)/);
     var chara = matches[1] === '--' ? null : matches[1];
-    var skill = matches[2] === '--' ? null : matches[2];
+    if (matches[2] !== '--') {
+        var name_and_level = matches[2].split('LV');
+        name = name_and_level[0];
+        level = parseInt(name_and_level[1]);
+    }
     var time = matches[3] === '--:--:--' ? null : matches[3];
 
     return {
         chara: chara,
-        skill: skill,
+        name: name,
+        level: level,
         time: time
     };
 }
 
 function get_using_skill() {
     var skill = get_using_skill_all();
-    if (skill.skill == null) {
+    if (skill.name == null) {
         return null;
     } else {
         return skill.name;
@@ -4803,7 +4809,7 @@ function getDomesticSkill(htmldoc) {
     var i = -1;
 
     var skill = get_using_skill_all();
-    if (skill.skill) {     
+    if (skill.name) {
         i += 1;
         var status = "内政:使用(" + skill.name + ")";
         data[IDX_ACTIONS][i] = new Array();
