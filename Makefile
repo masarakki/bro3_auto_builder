@@ -11,7 +11,7 @@ $(BUILD_DIR)/%.js: %.coffee
 	coffee -b -o $(BUILD_DIR) -c $<
 
 $(TARGET): $(OBJS)
-	cat $(OBJS) > $(TARGET)
+	cat $(OBJS) | ./bin/timestamp.sh > $(TARGET)
 
 clean:
 	rm -r $(BUILD_DIR)

@@ -45,25 +45,17 @@ main_view = ->
     popupLeft = 0 if popupLeft < 0
     popupTop = 0 if popupTop < 0
 
-    # 表示コンテナ作成
-    container = j$("<div>").attr('id', 'ABContainer').css  {
-        "position": "absolute"
-        "background-color": COLOR_FRAME
-        "opacity": 1.0
-        "border": "solid 2px #000000"
-        "moz-border-radius": "4px"
-        "top": "#{popupTop}px"
-        "left": "#{popupLeft}px"
-        "font": fontstyle
-        "padding": "4px"
-        "z-index": 999
+    container_id = "bab_main"
+    container = j$("<div id=#{container_id}>").css  {
+        top: "#{popupTop}px"
+        left: "#{popupLeft}px"
     }
 
     j$("body").append container
 
     container.mousedown (e) ->
         return true unless e.target == this
-        g_MD = "ABContainer"
+        g_MD = container_id
         g_MX = e.pageX - parseInt(this.style.left, 10)
         g_MY = e.pageY - parseInt(this.style.top, 10)
         e.preventDefault()
@@ -71,8 +63,8 @@ main_view = ->
 
 
     j$(document).mousemove (e) ->
-        return true unless g_MD == 'ABContainer'
-        c = j$("#ABContainer");
+        return true unless g_MD == container_id
+        c = j$("##{container_id}");
         return true unless c
         left = e.pageX - g_MX
         top = e.pageY - g_MY
@@ -85,18 +77,8 @@ main_view = ->
         g_MD = ''
         false
 
-    title = j$("<span>").text('Auto Builder').css {
-        "color": "#FFFFFF"
-        "margin": "2px"
-    }
-
-    version = j$("<span>").text("Ver. #{VERSION}").css {
-        "color": COLOR_TITLE
-        "margin": "2px"
-    }
-
-    container.append title
-    container.append version
+    container.append j$("<span id=title>").text('Auto Builder')
+    container.append j$("<span id=version>").text("Ver. #{VERSION}")
 
     # ボタンエリア
     button_box = j$("<div>").css {

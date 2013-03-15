@@ -245,6 +245,11 @@ function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slic
 
 function debugLog( mes ) {  if (DEBUG) { console.log(mes); }    };
 
+j$(document).ready(function () {
+  var css = GM_getResourceText("style");
+  GM_addStyle(css);
+});
+
 //拠点作成開始
 function settleVillages(z){
     //名声チェック
@@ -1920,15 +1925,15 @@ function closeIniBilderBox() {
 }
 //建築対象拠点表示HTML削除
 function deleteIniBilderHtml() {
-    var elem = d.getElementById("ABContainer");
+    var elem = d.getElementById("bab_main");
     if (elem == undefined) return;
-    d.body.removeChild(d.getElementById("ABContainer"));
+    d.body.removeChild(d.getElementById("bab_main"));
 }
 //建築対象拠点表示HTML削除
 function deleteIniBilderFrameHtml() {
-    var elem = d.getElementById("ABContainer");
+    var elem = d.getElementById("bab_main");
     if (elem == undefined) return;
-    d.body.removeChild(document.getElementById("ABContainer"));
+    d.body.removeChild(document.getElementById("bab_main"));
 }
 
 //LvUP対象施設設定画面を開く
