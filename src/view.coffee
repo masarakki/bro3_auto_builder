@@ -291,7 +291,7 @@ main_view = ->
             }
 
             tr.append actions_td
-            action_div = $("<span>").css {
+            action_div = j$("<span>").css {
                 padding: "3px"
             }
 
