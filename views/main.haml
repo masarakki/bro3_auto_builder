@@ -1,0 +1,41 @@
+#bab-main
+  .header
+    %span.title Auto Builder
+    %span.version by masarakki
+  .button-box
+    %button 巡回中
+    %button 確認済み
+    %button 閉じる
+    %label
+      常駐
+      %input#stay(name="stay" type="checkbox")
+    %span
+      巡回時間
+      %select#round-time(name="round_time")
+        - @round_times.each do |time|
+          %option(val=time)= "#{time} sec"
+  #next-time
+    次回:
+    %span#next-at
+    (あと
+    %span#after-by
+    )
+  %table#villages
+
+  .partials
+    %table
+      %tbody#village-template
+        %tr
+          %td.name
+            %label
+              %input(type="checkbox")
+              ${name}
+          %td.updates
+          %td.actions
+            %button 設定
+
+    #update-template
+      %div
+        ${at}
+        ${name}
+

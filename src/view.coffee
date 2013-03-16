@@ -37,7 +37,11 @@ create_box = (header_func, body_func) ->
     box.appendChild body_tr
     box
 
+j$(document).ready ->
+    left = Math.max GM_getValue(location.hostname + PGNAME + "_popup_left", 150), 0
+    top  = Math.max GM_getValue(location.hostname + PGNAME + "_popup_top", 150), 0
 
+    main_view = new MainView left, top, is_stay_mode()
 
 main_view = ->
     popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left", 150);
@@ -45,7 +49,7 @@ main_view = ->
     popupLeft = 0 if popupLeft < 0
     popupTop = 0 if popupTop < 0
 
-    container_id = "bab_main"
+    container_id = "bab-main"
     container = j$("<div id=#{container_id}>").css  {
         top: "#{popupTop}px"
         left: "#{popupLeft}px"
@@ -81,11 +85,7 @@ main_view = ->
     container.append j$("<span id=version>").text("Ver. #{VERSION}")
 
     # ボタンエリア
-    button_box = j$("<div>").css {
-        "border": "solid 0px"
-        "margin": "2px"
-        "padding": "0px"
-    }
+    button_box = j$("<div id=button-box>")
 
     container.append button_box
     status_button_area = j$("<span>")
