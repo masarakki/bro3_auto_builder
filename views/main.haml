@@ -3,7 +3,7 @@
     %span.title Auto Builder
     %span.version by masarakki
   .button-box
-    %button 巡回中
+    %button ${reload_status}
     %button 確認済み
     %button 閉じる
     %label
@@ -13,7 +13,7 @@
       巡回時間
       %select#round-time(name="round_time")
         - @round_times.each do |time|
-          %option(val=time)= "#{time} sec"
+          %option(value=time)= "#{time} sec"
   #next-time
     次回:
     %span#next-at

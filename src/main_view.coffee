@@ -13,7 +13,11 @@ class MainView
     generate: ->
         moving = false
         template = GM_getResourceText('main_template')
-        main = j$.tmpl(template).css {
+        template_values = {
+            reload_status: if @config.auto_reload() then '巡回中' else '停止中'
+        }
+
+        main = j$.tmpl(template, template_values).css {
             top: @top
             left: @left
         }
@@ -46,14 +50,18 @@ class MainView
         j$(document).mouseup (e) ->
             moving = false
             false
-        if @config.auto_reload()
-            j$(".button-box button:eq(0)", main).text("巡回中")
-        else
-            j$(".button-box button:eq(0)", main).text("停止中")
 
         j$(".button-box button:eq(0)", main).click (e) ->
             self.toggle_reload_button(j$(this))
-
+        j$(".button-box button:eq(1)", main).click (e) ->
+            confirmTimer()
         j$(".button-box button:eq(2)", main).click (e) ->
             main.hide()
+        j$(".button-box input", main).attr("checked", "checked") if @config.stay_mode()
+        j$(".button-box input", main).change (e) ->
+            self.config.update_stay_mode this.checked
+        j$(".button-box select", main).val @config.round_time()
+        j$(".button-box select", main).change (e) ->
+            self.config.update_round_time j$(this).val()
+
         main.appendTo j$("body")

@@ -44,80 +44,9 @@ j$(document).ready ->
     main_view = new MainView left, top
 
 main_view = ->
-    popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left", 150);
-    popupTop = GM_getValue(location.hostname + PGNAME + "_popup_top", 150);
-    popupLeft = 0 if popupLeft < 0
-    popupTop = 0 if popupTop < 0
+    j$("#bab-main").show()
+    return false
 
-    container_id = "bab-main"
-    container = j$("<div id=#{container_id}>").css  {
-        top: "#{popupTop}px"
-        left: "#{popupLeft}px"
-    }
-
-    j$("body").append container
-
-    container.mousedown (e) ->
-        return true unless e.target == this
-        g_MD = container_id
-        g_MX = e.pageX - parseInt(this.style.left, 10)
-        g_MY = e.pageY - parseInt(this.style.top, 10)
-        e.preventDefault()
-        false
-
-
-    j$(document).mousemove (e) ->
-        return true unless g_MD == container_id
-        c = j$("##{container_id}");
-        return true unless c
-        left = e.pageX - g_MX
-        top = e.pageY - g_MY
-        c = c.css("left", left + "px").css("top",  top + "px")
-        GM_setValue(location.hostname + PGNAME + "_popup_left", left);
-        GM_setValue(location.hostname + PGNAME + "_popup_top", top);
-        false
-
-    j$(document).mouseup (e) ->
-        g_MD = ''
-        false
-
-    container.append j$("<span id=title>").text('Auto Builder')
-    container.append j$("<span id=version>").text("Ver. #{VERSION}")
-
-    # ボタンエリア
-    button_box = j$("<div id=button-box>")
-
-    container.append button_box
-    status_button_area = j$("<span>")
-    # 実行中/停止中ボタン
-    status_flag = GM_getValue(HOST + PGNAME + "AutoFlg", true)
-    if status_flag
-        jcreateButton status_button_area, "巡回中", "巡回停止します", (e) ->
-            GM_setValue HOST + PGNAME + "AutoFlg", false
-            location.reload()
-    else
-        jcreateButton status_button_area, "停止中", "巡回開始します", (e) ->
-            GM_setValue HOST + PGNAME + "AutoFlg", true
-            location.reload()
-    button_box.append status_button_area
-
-    clear_button_area = j$("<span>")
-    jcreateButton clear_button_area, "確認済", "完了済の作業を削除します", (e) ->
-        confirmTimer()
-    button_box.append clear_button_area
-
-    close_button_area = j$("<span>")
-    jcreateButton close_button_area, "閉じる", "ウインドウを閉じます", (e) ->
-        closeIniBilderBox()
-    button_box.append close_button_area
-
-    stay_checkbox = j$("<input>").attr("type", "checkbox").css(
-        {"vertical-align": "middle"}).attr("checked", is_stay_mode()).change (e) ->
-        changeStayMode(this.checked);
-    stay_label = j$("<span>").text("常駐").css {
-        "vertical-align": "middle"
-        "color": "#ffffff"
-    }
     button_box.append j$("<span>").append(stay_label).append(stay_checkbox)
 
     round_label = j$("<span>").text("巡回時間").css {

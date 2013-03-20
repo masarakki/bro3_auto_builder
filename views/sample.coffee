@@ -45,6 +45,10 @@ $(document).ready ->
         moving = false
         false
 
-
     $(".button-box button:eq(2)").click (e) ->
         main.hide()
+
+    $(".button-box input").change (e) ->
+        console.log e
+    $(".button-box select").change (e) ->
+        console.log e
