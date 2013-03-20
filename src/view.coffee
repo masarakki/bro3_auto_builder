@@ -47,45 +47,6 @@ main_view = ->
     j$("#bab-main").show()
     return false
 
-    button_box.append j$("<span>").append(stay_label).append(stay_checkbox)
-
-    round_label = j$("<span>").text("巡回時間").css {
-        "vertical-align": "middle"
-        "color": "#ffffff"
-    }
-
-    round_select = j$("<select>").attr("id", "dispMode").change (e) ->
-        GM_setValue HOST + PGNAME + "OPT_ROUND_TIME1" , j$("#dispMode").val()
-        OPT_ROUND_TIME1 = j$("#dispMode").val()
-        true
-
-    intervals = [30, 40, 50, 60, 90, 120, 150, 180, 300, 480, 600, 900];
-    for interval in intervals
-        round_select.append j$("<option>").attr("value", interval).text("#{interval} sec")
-
-    button_box.append j$("<span>").append(round_label).append(round_select)
-
-    round_select.val GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
-    OPT_ROUND_TIME1 = GM_getValue(HOST + PGNAME + "OPT_ROUND_TIME1", 60);
-    OPT_ROUND_TIME1 = parseInt(OPT_ROUND_TIME1) + Math.floor( Math.random() * 10 );
-
-    now = new Date
-    next_time = getNextTime(location.hostname, now);
-
-    if next_time
-        wait_time_str = generateWaitTimeString(next_time, now);
-        timer_box = j$("<div>").text("次回: #{generateDateString2(next_time)} (あと#{wait_time_str})").css {
-            "color": "#90EE90"
-            "background-color": "#000000"
-            "vertical-align": "middle"
-        }
-        container.append timer_box
-
-    # 拠点設定リンクの作成
-    table = j$("<table>").css {
-        "border": "0px"
-    }
-
     villages = loadVillages HOST + PGNAME
 
     firstboot = false;

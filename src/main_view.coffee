@@ -12,12 +12,15 @@ class MainView
 
     generate: ->
         moving = false
-        template = GM_getResourceText('main_template')
+        main_template    = GM_getResourceText('main_template')
+        village_template = GM_getResourceText('village_row')
+        updates_template = GM_getResourceText('village_updates')
+
         template_values = {
             reload_status: if @config.auto_reload() then '巡回中' else '停止中'
         }
 
-        main = j$.tmpl(template, template_values).css {
+        main = j$.tmpl(main_template, template_values).css {
             top: @top
             left: @left
         }
@@ -64,4 +67,30 @@ class MainView
         j$(".button-box select", main).change (e) ->
             self.config.update_round_time j$(this).val()
 
+        now = new Date
+        next_time = getNextTime(location.hostname, now);
+        if next_time
+            j$("#next-at", main).text generateDateString2(next_time)
+            j$("#after-by", main).text generateWaitTimeString(next_time, now)
+        else
+            j$("#next-time", main).hide()
+
+        villages = loadVillages HOST + PGNAME
+
+        for village in villages
+            actions = for action in sortAction(village[IDX_ACTIONS])
+                {
+                    name: action[0]
+                    at: action[1]
+                }
+            updates = j$.tmpl(updates_template, actions)
+            village_params ={
+                name: village[IDX_BASE_NAME]
+            }
+
+            village_info = j$.tmpl(village_template, village_params)
+            j$(".updates", village_info).append(updates)
+            village_info.appendTo j$("#villages", main)
+
         main.appendTo j$("body")
+

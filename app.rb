@@ -14,7 +14,15 @@ end
 
 get '/village.html' do
   mode = (params[:mode] || :html).to_sym
-  haml :village, layotu: (mode != :partial)
+  haml :village, layout: (mode != :partial)
+end
+
+get '/village_row.html' do
+  haml :village_row, layout: false
+end
+
+get '/village_updates.html' do
+  haml :village_updates, layout: false
 end
 
 get '/sample.js' do

@@ -8,5 +8,7 @@
 // @resource     style http://bro3-autobuilder.herokuapp.com/style.css?__TIMESTAMP__
 // @resource     main_template http://bro3-autobuilder.herokuapp.com/main.html?mode=partial&__TIMESTAMP__
 // @resource     village_template http://bro3-autobuilder.herokuapp.com/village.html?mode=partial&__TIMESTAMP__
+// @resource     village_row http://bro3-autobuilder.herokuapp.com/village_row.html?mode=partial&__TIMESTAMP__
+// @resource     village_updates http://bro3-autobuilder.herokuapp.com/village_updates.html?mode=partial&__TIMESTAMP__
 // @version      2013.02.22
 // ==/UserScript==
