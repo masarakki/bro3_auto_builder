@@ -11,16 +11,18 @@ class Village
         buildings = for num in [0..(len - 1)]
             item = results.snapshotItem(num)
             if item.alt.match(/(.*?)\s.*?(\d+)/)
-                url = item.href
                 name = RegExp.$1
                 level = parseInt RegExp.$2
-
-                url.match(/x=(\d)&y=(\d)/)
-                x = parseInt RegExp.$1
-                y = parseInt RegExp.$2
-                building = new Building name, x, y, level
-                @hash[name] = building
-                building
+            else
+                name = item.alt
+                level = 0
+            url = item.href
+            url.match(/x=(\d)&y=(\d)/)
+            x = parseInt RegExp.$1
+            y = parseInt RegExp.$2
+            building = new Building name, x, y, level
+            @hash[name] = building
+            building
         @buildings = (building for building in buildings when building)
     at: (x, y) ->
         (building for building in @buildings when building.x == x and building.y == y)[0]
@@ -34,7 +36,7 @@ class Village
         }
     build: (building_id) ->
         position = @hash['平地']
-        build_at building_id, position.x, position.y
+        @build_at building_id, position.x, position.y
     find: (name) ->
         (building for building in @buildings when building.name is name)
     has: (name) ->
