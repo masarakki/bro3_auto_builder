@@ -116,6 +116,7 @@ var IDX_BASE_NAME = 1; //拠点名
 var IDX_URL = 2; //拠点URL
 var IDX_ACTIONS = 3; //実行中作業
 var IDX_BASE_ID = 11; //拠点ID
+var INDEX_HASH = 24;
 
 //保存データインデックス（実行中作業）
 var IDX2_STATUS = 0; //ステータス
@@ -3343,12 +3344,16 @@ function getUserProf(htmldoc) {
         newVil[IDX_XY] = xy;
         newVil[IDX_BASE_NAME] = name;
         newVil[IDX_URL] = url;
-        newVil[IDX_BASE_ID]=getParameter2(url, "village_id")
+        newVil[IDX_BASE_ID]=getParameter2(url, "village_id");
         newVillages.push(newVil);
     }
     
     //保存
     saveVillages(HOST+PGNAME, newVillages);
+}
+
+function newLoadVillages() {
+    return JSON.parse(GM_getValue('villages.json', '[]') || '[]');
 }
 
 //拠点情報を読み出し
@@ -3390,18 +3395,68 @@ function loadVillages(hostname) {
 }
 //拠点情報を保存
 function saveVillages(hostname, newData) {
-    
+    var hash_array = [];
     //配列をデリミタ区切り文字列に変換
     var newDataStr = new Array();
     for (var i = 0; i < newData.length; i++) {
         var villageData = newData[i];
         var actions = villageData[IDX_ACTIONS];
-        
+        var actions_array = [];
+        for(var j = 0; j < actions.length; j ++) {
+            var action = actions[j];
+            var status = action[IDX2_STATUS];
+            var level = null;
+            var matched = null;
+            matched = status.match(/(.+?):(.+?)\(/);
+            var act = matched[1];
+            var name = matched[2];
+            matched = status.match(/<strong>(\d+)/);
+            if(matched) {
+                level = paseInt(matched[1]);
+            }
+            
+            var type = null;
+            switch(action[IDX2_TYPE]) {
+            case "C":
+                type = 'building';
+                break;
+            case "D":
+                type = 'skill';
+                break;
+            default:
+                type = 'unknown';
+            }
+            
+            var action_hash = {
+                action: act,
+                target: name,
+                level: level,
+                at: action[IDX2_TIME],
+                type: type,
+                alerted: action[IDX2_ALERTED],
+                delete: action[IDX2_DELETE],
+                rotation: action[IDX2_ROTATION]
+            };
+            actions_array.push(action_hash);
+        }
+        var position = villageData[IDX_XY];
+        var matches = position.match(/(-?\d+)\s*,\s*(-?\d+)/);
+        var x = parseInt(matches[1]);
+        var y = parseInt(matches[2]);
+        var hash = {
+            name: villageData[IDX_BASE_NAME],
+            position: {x: x, y: y},
+            url: villageData[IDX_URL],
+            id: parseInt(villageData[IDX_BASE_ID]),
+            actions: actions_array
+        };
         //配列をデリミタ区切り文字列に変換
         for (var j = 0; j < actions.length; j++) {
             actions[j] = genDelimitString(actions[j], DELIMIT4);
         }
         villageData[IDX_ACTIONS] = genDelimitString(actions, DELIMIT3);
+        villageData[INDEX_HASH] = JSON.stringify(hash);
+        hash_array.push(hash);
         newDataStr[i] = genDelimitString(villageData, DELIMIT2);
     }
     if(newDataStr.length==0){
@@ -3409,7 +3464,7 @@ function saveVillages(hostname, newData) {
     }
     //Greasemondey領域へ永続保存
     GM_setValue(hostname, genDelimitString(newDataStr, DELIMIT1));
-
+    GM_setValue('villages.json', JSON.stringify(hash_array));
 
 }
 
