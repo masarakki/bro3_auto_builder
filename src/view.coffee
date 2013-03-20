@@ -41,7 +41,7 @@ j$(document).ready ->
     left = Math.max GM_getValue(location.hostname + PGNAME + "_popup_left", 150), 0
     top  = Math.max GM_getValue(location.hostname + PGNAME + "_popup_top", 150), 0
 
-    main_view = new MainView left, top, is_stay_mode()
+    main_view = new MainView left, top
 
 main_view = ->
     popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left", 150);

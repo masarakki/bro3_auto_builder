@@ -13,7 +13,7 @@ villages = [
 $(document).ready ->
     template = $("#village-template")
     updates_template = $("#update-template")
-    before_x = before_y = null
+
     for village in villages
         updates = $.tmpl(updates_template, village.updates)
         village_info = $.tmpl(template, village)
@@ -45,3 +45,6 @@ $(document).ready ->
         moving = false
         false
 
+
+    $(".button-box button:eq(2)").click (e) ->
+        main.hide()
