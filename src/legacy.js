@@ -3412,7 +3412,7 @@ function saveVillages(hostname, newData) {
             var name = matched[2];
             matched = status.match(/<strong>(\d+)/);
             if(matched) {
-                level = paseInt(matched[1]);
+                level = parseInt(matched[1]);
             }
             
             var type = null;
