@@ -3407,7 +3407,7 @@ function saveVillages(hostname, newData) {
             var status = action[IDX2_STATUS];
             var level = null;
             var matched = null;
-            matched = status.match(/(.+?):(.+?)\(/);
+            matched = status.match(/(.+?):(.+?)\(?/);
             var act = matched[1];
             var name = matched[2];
             matched = status.match(/<strong>(\d+)/);
