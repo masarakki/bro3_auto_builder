@@ -1,6 +1,6 @@
 class Village
     constructor: ->
-        [_, @x, @y] = for num in trim(j$("#basepoint .xy").text()).match /\((\d+),(\d+)\)/
+        [_, @x, @y] = for num in trim(j$("#basepoint .xy").text()).match /\((-?\d+),(-?\d+)\)/
             parseInt num
 
         @id = parseInt getVillageID("(#{@x},#{@y})")
