@@ -75,17 +75,17 @@ class MainView
         else
             j$("#next-time", main).hide()
 
-        villages = loadVillages HOST + PGNAME
+        villages = newLoadVillages()
 
         for village in villages
-            actions = for action in sortAction(village[IDX_ACTIONS])
+            actions = for action in village.actions
                 {
-                    name: action[0]
-                    at: action[1]
+                    name: "#{action.action}:#{action.target}"
+                    at: action.at
                 }
             updates = j$.tmpl(updates_template, actions)
             village_params ={
-                name: village[IDX_BASE_NAME]
+                name: village.name
             }
 
             village_info = j$.tmpl(village_template, village_params)
