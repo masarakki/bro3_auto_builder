@@ -4,6 +4,9 @@ $title_color: #ffcc00
 $titlebar_color: #665544
 $bg_light: #fff2bb
 $bg_dark: #e6cf88
+$bg_finished: #ffcc00
+$bg_deleting: #bbdddd
+$bg_deleted: #bbdddd
 
 #bab-main
   position: absolute
@@ -44,6 +47,13 @@ $bg_dark: #e6cf88
     .updates
       background-color: $bg_light
       width: 380px
+      .action-working
+      .action-finished
+        background-color: $bg_finished
+      .action-deleting
+        background-color: $bg_deleting
+      .action-deleted
+        background-color: $bg_deleted
     .actions
       background-color: $bg_dark
 

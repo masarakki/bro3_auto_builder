@@ -77,11 +77,24 @@ class MainView
 
         villages = newLoadVillages()
 
-        for village in villages
+        for village, i in villages
             actions = for action in village.actions
+                name = "#{action.action}:#{action.target}"
+                name += "(LV#{action.level})" if action.level
+                finish_at = Date.parse action.at
+                status = 'working'
+                if action.action == '削除'
+                    if finish_at < now
+                        status = 'deleted'
+                    else
+                        status = 'deleting'
+                else
+                    status = 'finished' if finish_at < now
+
                 {
-                    name: "#{action.action}:#{action.target}"
+                    name: name
                     at: action.at
+                    status: status
                 }
             updates = j$.tmpl(updates_template, actions)
             village_params ={
@@ -89,7 +102,14 @@ class MainView
             }
 
             village_info = j$.tmpl(village_template, village_params)
+            enable_checkbox = j$(".name input:eq(0)", village_info).attr("village_index", i)
+            enable_checkbox.attr("checked", "checked") if GM_getValue("#{HOST}#{PGNAME}OPT_CHKBOX_AVC_#{i}", false)
+            enable_checkbox.click (e) ->
+                village_index = j$(this).attr 'village_index'
+                GM_setValue "#{HOST}#{PGNAME}OPT_CHKBOX_AVC_#{village_index}", this.checked
             j$(".updates", village_info).append(updates)
+            j$(".actions button:eq(0)", village_info).click (e) ->
+                openInifacBox "(#{village.position.x},#{village.position.y})"
             village_info.appendTo j$("#villages", main)
 
         main.appendTo j$("body")

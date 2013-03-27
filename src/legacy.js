@@ -4649,6 +4649,9 @@ function confirmTimer() {
         saveVillages(hosts[ii] + PGNAME, villages);
     }
     
+    j$("#bab-main .action-finished").remove();
+    j$("#bab-main .action-deleted").remove();
+
     //更新後内容で表示　2013.01.10 ???
     if ( is_stay_mode() ) {
         reopen();
