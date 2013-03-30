@@ -234,7 +234,6 @@ var ShopFlg = false;
 var DBG_Flg = false;
 
 var reopen = function() {
-    closeIniBilderBox();
     openIniBilderBox();
 };
 
@@ -1915,25 +1914,7 @@ function addOpenLinkHtml() {
 
 //建築設定画面を開く
 function openIniBilderBox() {
-    main_view();
-}
-
-//建築設定画面を閉じる
-function closeIniBilderBox() {
-    deleteIniBilderHtml();
-    deleteIniBilderFrameHtml();
-}
-//建築対象拠点表示HTML削除
-function deleteIniBilderHtml() {
-    var elem = d.getElementById("bab_main");
-    if (elem == undefined) return;
-    d.body.removeChild(d.getElementById("bab_main"));
-}
-//建築対象拠点表示HTML削除
-function deleteIniBilderFrameHtml() {
-    var elem = d.getElementById("bab_main");
-    if (elem == undefined) return;
-    d.body.removeChild(document.getElementById("bab_main"));
+    j$("#bab-main").show();
 }
 
 //LvUP対象施設設定画面を開く

@@ -97,7 +97,7 @@ class MainView
                     status: status
                 }
             updates = j$.tmpl(updates_template, actions)
-            village_params ={
+            village_params = {
                 name: village.name
             }
 
@@ -110,6 +110,37 @@ class MainView
             j$(".updates", village_info).append(updates)
             j$(".actions button:eq(0)", village_info).click (e) ->
                 openInifacBox "(#{village.position.x},#{village.position.y})"
+            village_info.appendTo j$("#villages", main)
+
+        del_list = (village) ->
+            lists = cloadData HOST + "ReserveList", "[]", true, true
+            for list, i in lists
+                if list.x == village.x && list.y == village.y
+                    lists.splice(i, 1);
+                    csaveData HOST + "ReserveList", lists, true, true
+
+        reserved_villages = cloadData HOST + "ReserveList", "[]", true, true
+        for village in reserved_villages
+            console.log village.kind
+            village_params = {
+                name: "(#{village.x}, #{village.y})"
+            }
+            village_info = j$.tmpl(village_template, village_params)
+            type = if village.kind == 220 then '村' else '砦'
+            status = switch village.status
+                when 0 then '作成失敗'
+                when 1 then '作成予約'
+                when 2 then '作成中'
+                when 3 then '作成完了'
+                when 4 then '破棄中'
+            village_info.attr("id", "reserved_#{village.x}_#{village.y}")
+            j$(".updates", village_info).text "#{status}: #{type}"
+            j$(".updates", village_info).append j$("<button>").text("削除").click (e) ->
+                del_list(village)
+                j$("#reserved_#{village.x}_#{village.y}").remove()
+
+            j$(".actions button:eq(0)", village_info).click (e) ->
+                openInifacBox "(#{village.x},#{village.y})"
             village_info.appendTo j$("#villages", main)
 
         main.appendTo j$("body")
