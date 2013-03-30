@@ -1,0 +1,24 @@
+#bab-main
+  .header
+    %span.title Auto Builder
+    %span.version by masarakki
+  .button-box
+    %button ${reload_status}
+    %button 確認済み
+    %button 閉じる
+    %label
+      常駐
+      %input#stay(name="stay" type="checkbox")
+    %span
+      巡回時間
+      %select#round-time(name="round_time")
+        - @round_times.each do |time|
+          %option(value=time)= "#{time} sec"
+  #next-time
+    次回:
+    %span#next-at
+    (あと
+    %span#after-by
+    )
+  %table#villages
+
