@@ -234,7 +234,6 @@ var ShopFlg = false;
 var DBG_Flg = false;
 
 var reopen = function() {
-    closeIniBilderBox();
     openIniBilderBox();
 };
 
@@ -244,6 +243,11 @@ main();
 function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments)) };
 
 function debugLog( mes ) {  if (DEBUG) { console.log(mes); }    };
+
+j$(document).ready(function () {
+  var css = GM_getResourceText("style");
+  GM_addStyle(css);
+});
 
 //拠点作成開始
 function settleVillages(z){
@@ -1910,25 +1914,7 @@ function addOpenLinkHtml() {
 
 //建築設定画面を開く
 function openIniBilderBox() {
-    main_view();
-}
-
-//建築設定画面を閉じる
-function closeIniBilderBox() {
-    deleteIniBilderHtml();
-    deleteIniBilderFrameHtml();
-}
-//建築対象拠点表示HTML削除
-function deleteIniBilderHtml() {
-    var elem = d.getElementById("ABContainer");
-    if (elem == undefined) return;
-    d.body.removeChild(d.getElementById("ABContainer"));
-}
-//建築対象拠点表示HTML削除
-function deleteIniBilderFrameHtml() {
-    var elem = d.getElementById("ABContainer");
-    if (elem == undefined) return;
-    d.body.removeChild(document.getElementById("ABContainer"));
+    j$("#bab-main").show();
 }
 
 //LvUP対象施設設定画面を開く
@@ -4644,6 +4630,9 @@ function confirmTimer() {
         saveVillages(hosts[ii] + PGNAME, villages);
     }
     
+    j$("#bab-main .action-finished").remove();
+    j$("#bab-main .action-deleted").remove();
+
     //更新後内容で表示　2013.01.10 ???
     if ( is_stay_mode() ) {
         reopen();
