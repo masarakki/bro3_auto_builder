@@ -120,8 +120,8 @@ class MainView
                     csaveData HOST + "ReserveList", lists, true, true
 
         reserved_villages = cloadData HOST + "ReserveList", "[]", true, true
+
         for village in reserved_villages
-            console.log village.kind
             village_params = {
                 name: "(#{village.x}, #{village.y})"
             }
@@ -135,9 +135,11 @@ class MainView
                 when 4 then '破棄中'
             village_info.attr("id", "reserved_#{village.x}_#{village.y}")
             j$(".updates", village_info).text "#{status}: #{type}"
-            j$(".updates", village_info).append j$("<button>").text("削除").click (e) ->
-                del_list(village)
-                j$("#reserved_#{village.x}_#{village.y}").remove()
+            ((village) ->
+                j$(".updates", village_info).append j$("<button>").text("削除").click (e) ->
+                    del_list(village)
+                    j$("#reserved_#{village.x}_#{village.y}").remove()
+            )(village)
 
             j$(".actions button:eq(0)", village_info).click (e) ->
                 openInifacBox "(#{village.x},#{village.y})"
