@@ -75,6 +75,7 @@ var RICE = 104; //糧の内部コード
 
 //新規作成用
 var OPT_KATEMURA = 0; //自動糧村化オプション
+var OPT_SHIGEN = 0;
 var OPT_TORIDE = 0; //自動砦化オプション
 var OPT_SOUKO_MAX = 1; //倉庫の最大数
 
@@ -195,6 +196,7 @@ var $w = function(func, interval) {
 //新規作成リンク
 var URL_fID = "fID"; //建物のID
 var HATAKE = 215;
+
 var SOUKO = 233;
 var SUZUME = 216;
 
@@ -1262,6 +1264,9 @@ function setVillageFacility() {
     // ＠＠
     if((cnt - del) >= 1) return;
 
+    if (OPT_SHIGEN == 1) {
+        village.build_shigen();
+    }
     if(OPT_KATEMURA == 1) {
         var heichi = village.find('平地').length;
         var hatake = village.find('畑').length;
@@ -1275,15 +1280,15 @@ function setVillageFacility() {
                 heichi -= (OPT_SOUKO_MAX - souko);
             }
             if (heichi > 0 && Chek_Sigen(new lv_sort("畑",0,"")) != 1) {
-                village.build(HATAKE);
+                village.build('畑');
                 Reload_Flg = 0;
                 return;
             } else if (souko < OPT_SOUKO_MAX && Chek_Sigen(new lv_sort("倉庫",0,"")) != 1) {
-                village.build(SOUKO);
+                village.build('倉庫');
                 Reload_Flg = 0;
                 return;
             } else if (village.enable_suzume() && Chek_Sigen(new lv_sort("銅雀台",0,"")) != 1) {
-                village.build(SUZUME);
+                village.build('銅雀台');
                 Reload_Flg = 0;
                 return;
             }
@@ -2016,6 +2021,7 @@ function clearInifacBox() {
     var checkbox = $a('//input[@id="OPT_DOME32"]'); checkbox[0].checked = false; // 　　修練
     // 糧村オプション
     var checkbox = $a('//input[@id="OPT_KATEMURA"]');  checkbox[0].checked = false; // 糧村化
+    var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked  = false;
 }
 
 function InitMilitaryHome(){
@@ -2151,6 +2157,7 @@ function InitRiceParadise(){
     var checkbox = $a('//input[@id="OPT_DOME32"]'); checkbox[0].checked = false;    // 　　修練
     // 糧村オプション
     var checkbox = $a('//input[@id="OPT_KATEMURA"]');  checkbox[0].checked = true; // 糧村化
+    var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked = false;
 }
 
 function InitResVillage(){
@@ -2206,6 +2213,7 @@ function InitResVillage(){
     var checkbox = $a('//input[@id="OPT_DOME32"]'); checkbox[0].checked = false;    // 　　修練
     // 糧村オプション
     var checkbox = $a('//input[@id="OPT_KATEMURA"]');  checkbox[0].checked = false; // 糧村化
+    var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked = true;
 }
 
 function InitMilitarySite(){
@@ -2722,10 +2730,21 @@ function addInifacHtml(vId) {
     td611.style.verticalAlign = "top";
     ccreateTextBox(td611,"OPT_SOUKO_MAX", OPT_SOUKO_MAX,"設置する倉庫の数　","設置する倉庫の数を指定してください。",4,0);
 
+    var tr_shigen = d.createElement("tr");
+    tr_shigen.style.border = 'solid 1px black';
+    tr_shigen.style.backgroundColor = COLOR_TITLE;
+    
+    var td_shigen = d.createElement("td");
+    ccreateCheckBox(td_shigen, "OPT_SHIGEN", OPT_SHIGEN, "資源村化", "", 0);
+    
+
     Field_Box.appendChild(tr600);
     tr600.appendChild(td600);
     Field_Box.appendChild(tr611);
     tr611.appendChild(td611);
+
+    Field_Box.appendChild(tr_shigen);
+    tr_shigen.appendChild(td_shigen);
 
     // ==== 自動兵産設定 ====
     var soldier_box = create_soldier_box(get_soldiers());
@@ -3073,7 +3092,7 @@ function SaveInifacBox(vId){
         }
     }
     strSave += cgetCheckBoxValue($("OPT_BKBG_CHK")) + DELIMIT2;; //自動武器・防具強化するかのフラグ
-
+    strSave += cgetCheckBoxValue($("OPT_SHIGEN")) + DELIMIT2;
     GM_setValue(HOST+PGNAME+vId, strSave);
 }
 //拠点単位の設定の読み込み
@@ -3086,6 +3105,7 @@ function Load_OPT(vId){
         // 拠点データがない場合
 
         OPT_KATEMURA = 0;
+        OPT_SHIGEN = 0;
         OPT_SOUKO_MAX = 0;
         OPT_KIFU = 0;
         OPT_RISE_KIFU_MAX = 0;
@@ -3160,10 +3180,10 @@ function Load_OPT(vId){
             if(Temp2[i] == ""){return;}
             OPT_CHKBOX[i] = forInt(Temp2[i]);
         }
-
         //糧村化
         if(Temp2[28] == ""){return;}
         OPT_KATEMURA = forInt(Temp2[28]);
+        OPT_SHIGEN = forInt(Temp2[166]);
         OPT_SOUKO_MAX = forInt(Temp2[29]);
 
         //自動寄付
