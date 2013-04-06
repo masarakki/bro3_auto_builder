@@ -108,8 +108,10 @@ class MainView
                 village_index = j$(this).attr 'village_index'
                 GM_setValue "#{HOST}#{PGNAME}OPT_CHKBOX_AVC_#{village_index}", this.checked
             j$(".updates", village_info).append(updates)
-            j$(".actions button:eq(0)", village_info).click (e) ->
-                openInifacBox "(#{village.position.x},#{village.position.y})"
+            ((village) ->
+                j$(".actions button:eq(0)", village_info).click (e) ->
+                    openInifacBox "(#{village.position.x},#{village.position.y})"
+            )(village)
             village_info.appendTo j$("#villages", main)
 
         del_list = (village) ->
