@@ -1782,9 +1782,10 @@ function nextVillageURL(vId2){
     var villages = loadVillages(HOST+PGNAME);
     var nextIndex = 0;
     var chkNextVID = new Array();
-    for(var i=0; i<villages.length;i++){
-        var tChk1 = GM_getValue(HOST+PGNAME+"OPT_CHKBOX_AVC_"+i, true);
-        if(tChk1==true){
+    for (var i = 0; i < villages.length; i++) {
+        matched = villages[i][0].match(/\((-?\d+),(-?\d+)\)/);
+        var tChk1 = GM_getValue("enable_auto_build_" + matched[1] + "_" + matched[2], true);
+        if(tChk1){
             chkNextVID.push(villages[i][IDX_URL]);
         }
     }
@@ -2317,17 +2318,6 @@ function deleteInifacFrameHtml() {
     d.body.removeChild(document.getElementById("ABfacContainer"));
 }
 
-// 拠点巡回読込
-function loadAVCBox(){
-    OPT_CHKBOX_AVC = parseInt(GM_getValue(HOST+PGNAME+"AVC", ""));
-}
-
-function loadAVCBox2(tVID){
-    //OPT_CHKBOX_AVC = parseInt(GM_getValue(HOST+PGNAME+"AVC"+"_"+tVID, ""));
-    OPT_CHKBOX_AVC = GM_getValue(HOST+PGNAME+"OPT_CHKBOX_AVC_" + tVID, true);
-    return OPT_CHKBOX_AVC;
-}
-
 // @@@@ add 2011.09.07 @@@@
 function loadRoundTime() {
     OPT_ROUND_TIME1 = GM_getValue(HOST+PGNAME+"OPT_ROUND_TIME1", 60);
@@ -2339,21 +2329,6 @@ function SetPrice(price){
     　var num = new String(price).replace(/,/g, "");
     　while(num != (num = num.replace(/^(-?\d+)(\d{3})/, "$1,$2")));
     　return num;
-}
-
-// 拠点巡回保存
-function saveAVCBox(){
-    OPT_CHKBOX_AVC = cgetCheckBoxValue($("OPT_CHKBOX_AVC"));
-    GM_setValue(HOST+PGNAME+"AVC", OPT_CHKBOX_AVC);
-}
-function saveAVCBox2(tVID,flg){
-    //OPT_CHKBOX_AVC = cgetCheckBoxValue($("OPT_CHKBOX_AVC"));
-    //GM_setValue(HOST+PGNAME+"AVC", OPT_CHKBOX_AVC);
-    GM_setValue(HOST+PGNAME+"AVC"+"_"+tVID, flg);
-    
-    tidMain = $w(function(){
-                     location.reload(false);
-                 });
 }
 
 //施設建設必要資源読込
