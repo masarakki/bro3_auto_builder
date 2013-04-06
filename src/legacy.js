@@ -1,11 +1,6 @@
-var VERSION = "2013.01.10 (やっぱり人柱版）";   // バージョン情報
-
-//*** これを変更するとダイアログのフォントスタイルが変更できます ***
-var fontstyle = "bold 10px 'ＭＳ ゴシック'";  // ダイアログの基本フォントスタイル
+var fontstyle = "bold 10px 'ＭＳ ゴシック'";
 
 var DEBUG = false;
-
-// 色設定
 
 var COLOR_FRAME = "#333333";    // 枠背景色
 var COLOR_BASE  = "#654634";    // 拠点リンク色
@@ -64,7 +59,6 @@ var MOUSE_OFFSET_Y;
 var MOUSE_DRAGGING_WINDOW = 0;
 var ALERT_TIME;
 
-// @@ ADD 2011.05.14 @@
 var OPT_MAX_WOOD = 0;           // 木の最大保持量
 var OPT_MAX_STONE = 0;      // 石の最大保持量
 var OPT_MAX_IRON = 0;           // 鉄の最大保持量
@@ -80,8 +74,8 @@ var OPT_TORIDE = 0; //自動砦化オプション
 var OPT_SOUKO_MAX = 1; //倉庫の最大数
 
 //内政用 by nottisan
-//                                1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 4 
-//              1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 
+//                                1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 4
+//              1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0
 var OPT_DOME = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var OPT_BLD = "AC";
 var OPT_SorH = "DD";
@@ -93,11 +87,11 @@ var Reload_Flg = 0;
 var OPT_BUILD_VID;
 
 
-var INTERVAL  = 1000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
-var INTERVAL2 = 2000; // + Math.floor( Math.random() * 5000 );          // 負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
+var INTERVAL  = 1000;
+var INTERVAL2 = 2000;
 var HOST = location.hostname;
-var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524"; //グリモン領域への保存時のPGの名前
-var TIMEOUT_URL = "/false/login_sessionout.php"; //タイムアウト時のURLの一部
+var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524";
+var TIMEOUT_URL = "/false/login_sessionout.php";
 var g_MD = "";
 
 var SENDTFLG_TIMEOUT = 0;   //タイムアウト画面
@@ -181,10 +175,24 @@ var OPT_ICHIBA_PATS = ["平均的に変換", "一括変換"];
 var OPT_KIFU = 0;
 
 var d = document;
-var $ = function(id) { return d.getElementById(id); };
-var $x = function(xp,dc) { return d.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; };
-var $a = function(xp,dc) { var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); var a=[]; for(var i=0; i<r.snapshotLength; i++){ a.push(r.snapshotItem(i)); } return a; };
-var $e = function(e,t,f) { if (!e) return; e.addEventListener(t, f, false); };
+var $ = function(id) {
+    return d.getElementById(id);
+};
+var $x = function(xp, dc) {
+    return d.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+};
+var $a = function(xp, dc) {
+    var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var a = [];
+    for (var i = 0; i < r.snapshotLength; i++) {
+        a.push(r.snapshotItem(i));
+    }
+    return a;
+};
+var $e = function(e, t, f) {
+    if (!e) return;
+    e.addEventListener(t, f, false);
+};
 
 var $w = function(func, interval) {
     if (interval == undefined) {
@@ -202,14 +210,13 @@ var SUZUME = 216;
 
 var FACLINK = function(host, x, y) {
     return "http://" + host + "/facility/facility.php?x=" + x + "&y=" + y;
-}
+};
 
 var VillageData = new Array();
 var OPT_VILLAGE = new Array();
 
 var isMixi = true;
 
-// ＠＠　ここから　＠＠
 var DASkill = [ "■■■■",
                 "伐採知識","伐採技術","弓兵増強",
                 "石切知識","石切技術","槍兵増強",
@@ -227,7 +234,6 @@ var DASkill = [ "■■■■",
                 "厩舎訓練","厩舎修練",
                 "兵器訓練","兵器修練"
               ];
-// ＠＠　ここまで　＠＠
 
 // 市場変換用
 var ShopURL = "";
@@ -239,12 +245,17 @@ var reopen = function() {
     openIniBilderBox();
 };
 
-//Main
 main();
 
-function log() { unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments)) };
+function log() {
+    unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments));
+};
 
-function debugLog( mes ) {  if (DEBUG) { console.log(mes); }    };
+function debugLog(mes) {
+    if (DEBUG) {
+        console.log(mes);
+    }
+};
 
 j$(document).ready(function () {
   var css = GM_getResourceText("style");
@@ -252,11 +263,11 @@ j$(document).ready(function () {
 });
 
 //拠点作成開始
-function settleVillages(z){
+function settleVillages(z) {
     //名声チェック
     var is_village_buildable = function () {
         var max_famous = global_status.max_famous;
-        
+
         //拠点作成に必要な名声
         var bldtbl = [17, 35, 54, 80, 112, 150, 195, 248, 310, 999];
         var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length; //拠点数-1になる
@@ -265,7 +276,7 @@ function settleVillages(z){
         var lists = cloadData(HOST + "ReserveList", "[]", true, true);
         var x = 0;
         for (var i = 0; i < lists.length; i++) {
-            if(lists[i].status == 2){
+            if (lists[i].status == 2) {
                 x++;
             }
         }
@@ -277,20 +288,20 @@ function settleVillages(z){
         if (lists[z].status == 1) {
             lists[z].status = 0;
         }
-        csaveData(HOST + "ReserveList", lists, true, true );
+        csaveData(HOST + "ReserveList", lists, true, true);
     };
 
     //新規拠点作成に必要な名声があれば拠点作成
-    if (is_village_buildable()){
+    if (is_village_buildable()) {
         //予約データ取得
         var lists = cloadData(HOST + "ReserveList", "[]", true, true);
-        if( lists.length == 0 || z >= lists.length) {
+        if (lists.length == 0 || z >= lists.length) {
             return;
         }
-        if( lists[z].status != 1 && lists[z].status != 0) {
+        if (lists[z].status != 1 && lists[z].status != 0) {
             settleVillages(z+1);
         } else {
-            $w(function(){
+            $w(function() {
                    build_village(list[z].x, list[z].y, list[z].kind, function() {
                                      failSettleVillage(z);
                                      settleVillages(z+1);
@@ -300,17 +311,11 @@ function settleVillages(z){
     }
 }
 
-
-// 拠点数の保存情報と現状を比較＆修正 2012.04.09
 function checkVillageLength() {
-    //データ整理
     var lists = cloadData(HOST+"ReserveList", "[]", true, true);
-    lists = checkList(lists);       //時間の過ぎたものを削除
+    lists = checkList(lists);
 
-
-    //予定時刻を過ぎていたら新規拠点情報を取得
-    function checkList(lists)
-    {
+    function checkList(lists) {
         //時刻チェック
         var dt = new Date();
         var ntime = dt.getFullYear() + "-" +
@@ -321,15 +326,21 @@ function checkVillageLength() {
             (dt.getSeconds()+100).toString().substr(-2);
         //リストのデータを書き換え
         var flg = 0;
-        for(var i=0 ; i<lists.length ; i++) {
-            if( lists[i].time < ntime ) {
-                if( lists[i].status == 4 ) { lists[i].status = 5; flg = 1;} //破棄 -> 破棄完了
-                if( lists[i].status == 2 ) { lists[i].status = 3; flg = 1;} //作成 -> 作成完了
+        for (var i = 0 ; i < lists.length; i++) {
+            if (lists[i].time < ntime) {
+                if (lists[i].status == 4) {
+                    lists[i].status = 5;
+                    flg = 1;
+                }
+                if (lists[i].status == 2) {
+                    lists[i].status = 3;
+                    flg = 1;
+                }
             }
         }
-        csaveData(HOST+"ReserveList", lists, true, true );
+        csaveData(HOST + "ReserveList", lists, true, true);
         //拠点情報を取得＆移動
-        if (flg == 1){
+        if (flg == 1) {
             getUserProfJumpNewVillage();
         } else {
             checkVillageLengthDiff();
@@ -337,34 +348,34 @@ function checkVillageLength() {
         return lists;
     }
 
-    function getUserProfJumpNewVillage(){
-        $w(function(){
+    function getUserProfJumpNewVillage() {
+        $w(function() {
                GM_xmlhttpRequest({
-                                     method:"GET", 
+                                     method:"GET",
                                      url:"http://" + HOST + "/user/",
                                      headers:{"Content-type":"text/html"},
                                      overrideMimeType:'text/html; charset=utf-8',
-                                     onload:function(x){
+                                     onload: function(x) {
                                          var htmldoc = document.createElement("html");
                                          htmldoc.innerHTML = x.responseText;
                                          //拠点リストを更新
                                          getUserProf(htmldoc);
-                                         if ( is_stay_mode() ) {
+                                         if (is_stay_mode()) {
                                              reopen();
                                          }
                                          //本拠地に強制ジャンプ
                                          var villages = loadVillages(HOST+PGNAME);
-                                         var tid = $w(function(){
+                                         var tid = $w(function() {
                                                           location.href = villages[0][IDX_URL];
                                                       });
                                      }
                                  });
            });
     }
-    
+
     //拠点数が変わっていたら情報取得 @@1@@
     function checkVillageLengthDiff() {
-        
+
         debugLog("=== Start checkVillageLengthDiff ===");
 
         var villages = loadVillages(HOST+PGNAME);
@@ -375,20 +386,20 @@ function checkVillageLength() {
 
         //if (villages.length != villageLength.snapshotLength) {
         if (villages.length != villageLength) {
-            $w(function(){
+            $w(function() {
                    GM_xmlhttpRequest({
-                                         method:"GET", 
+                                         method:"GET",
                                          url:"http://" + HOST + "/user/",
                                          headers:{"Content-type":"text/html"},
                                          overrideMimeType:'text/html; charset=utf-8',
-                                         onload:function(x){
+                                         onload: function(x) {
                                              var htmldoc = document.createElement("html");
                                              htmldoc.innerHTML = x.responseText;
                                              getUserProf(htmldoc);
-                                             if ( is_stay_mode() ) {
+                                             if (is_stay_mode()) {
                                                  reopen();
                                              }
-                                             $w(function(){
+                                             $w(function() {
                                                     location.reload();
                                                 });
                                          }
@@ -398,32 +409,29 @@ function checkVillageLength() {
     }
 }
 
-//Beyond系save, load関数
-function csaveData(key, value, local, ev)
-{
-    if( local ) key = location.hostname + key  + PGNAME;
-    if( ev ) {
+function csaveData(key, value, local, ev) {
+    if (local) {
+        key = location.hostname + key  + PGNAME;
+    }
+    if (ev) {
         if (window.opera || typeof JSON != 'object') {
             value = toJSON(value);
-        }
-        else {
-            value = JSON.stringify( value );
+        } else {
+            value = JSON.stringify(value);
         }
     }
-    GM_setValue(key, value );
+    GM_setValue(key, value);
 }
 
-function cloadData(key, value, local, ev)
-{
-    if( local ) key = location.hostname + key  + PGNAME;
+function cloadData(key, value, local, ev) {
+    if (local) {
+        key = location.hostname + key  + PGNAME;
+    }
     var ret = GM_getValue(key, value);
-    return ev ? eval('ret='+ret) : ret;
+    return ev ? eval('ret=' + ret) : ret;
 }
 
-//-----------------------------------TonDen---------------------------------
-//領地画面なら拠点建設データ取得
 function getAddingVillage(htmldoc) {
-
     var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
                                    htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     var xy = xyElem.snapshotItem(0).innerHTML.match(/(-?\d+,-?\d+)/);
@@ -431,47 +439,45 @@ function getAddingVillage(htmldoc) {
     var x = Temp[0];
     var y = Temp[1];
 
-    var rmname = htmldoc.innerHTML.match(/(現在村を建設中です|現在砦を建設中です)/ );
-    if( rmname ) {
-        var rmtime = htmldoc.innerHTML.match(/(\d+-\d+-\d+ \d+:\d+:\d+)*に完了します。/ );
-        if( rmname[1] == "現在村を建設中です" ) {
-            addList(rmtime[1], 220, 2, x, y );
-        }else if( rmname[1] == "現在砦を建設中です" ) {
-            addList(rmtime[1], 222, 2, x, y );
+    var rmname = htmldoc.innerHTML.match(/(現在村を建設中です|現在砦を建設中です)/);
+    if (rmname) {
+        var rmtime = htmldoc.innerHTML.match(/(\d+-\d+-\d+ \d+:\d+:\d+)*に完了します。/);
+        if (rmname[1] == "現在村を建設中です") {
+            addList(rmtime[1], 220, 2, x, y);
+        } else if (rmname[1] == "現在砦を建設中です") {
+            addList(rmtime[1], 222, 2, x, y);
         }
     }
 
-    if(htmldoc == document.body) {
-        //      addLink();
+    if (htmldoc == document.body) {
         addLink2();
     }
 
-    function addList(tim, kind, status, x, y) 
-    {
+    function addList(tim, kind, status, x, y) {
         var lists = cloadData(HOST+"ReserveList", "[]", true, true);
 
         var flg = 0;
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y ) {
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].x == x && lists[i].y == y) {
                 lists[i].time = tim;
                 lists[i].kind = kind;
                 lists[i].status = status;
                 flg = 1;
             }
         }
-        if(flg == 0) {
-            lists.push({"x":x, "y":y, "time":tim, "kind":kind, "status":status });
+        if (flg == 0) {
+            lists.push({"x": x, "y": y, "time": tim, "kind": kind, "status": status});
         }
-        lists.sort( function(a,b){
-                        if(a.time > b.time) return 1;
-                        if(a.time < b.time) return -1;
-                        return 0;});
+        lists.sort(function(a,b) {
+                       if (a.time > b.time) return 1;
+                       if (a.time < b.time) return -1;
+                       return 0;
+                   });
 
-        csaveData(HOST+"ReserveList", lists, true, true );
+        csaveData(HOST + "ReserveList", lists, true, true);
     }
 
     function addLink() {
-
         //id="tMenu"にLinkを挿入
         var tMenu = document.evaluate('//*[@id="tMenu"]',
                                       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -482,7 +488,9 @@ function getAddingVillage(htmldoc) {
         villageLink.id = "village";
         villageLink.href = "javascript:void(0);";
         villageLink.innerHTML = "村建設予約";
-        villageLink.addEventListener("click", function() {addReserveVillages(220)}, true);
+        villageLink.addEventListener("click", function() {
+                                         addReserveVillages(220);
+                                     }, true);
         tMenu.snapshotItem(0).appendChild(villageLink);
 
         //砦作成予約
@@ -490,7 +498,9 @@ function getAddingVillage(htmldoc) {
         fortLink.id = "fort";
         fortLink.href = "javascript:void(0);";
         fortLink.innerHTML = "砦建設予約";
-        fortLink.addEventListener("click", function() {addReserveVillages(222)}, true);
+        fortLink.addEventListener("click", function() {
+                                      addReserveVillages(222);
+                                  }, true);
         tMenu.snapshotItem(0).appendChild(fortLink);
 
     }
@@ -521,7 +531,9 @@ function getAddingVillage(htmldoc) {
         villageLink.style.textAlign = "center";
         villageLink.href = "javascript:void(0);";
         villageLink.innerHTML = "村";
-        villageLink.addEventListener("click", function() {addReserveVillages(220)}, true);
+        villageLink.addEventListener("click", function() {
+                                         addReserveVillages(220);
+                                     }, true);
         tMenu.snapshotItem(0).appendChild(villageLink);
 
         var villageLink = document.createElement("span");
@@ -539,7 +551,9 @@ function getAddingVillage(htmldoc) {
         fortLink.style.textAlign = "center";
         fortLink.href = "javascript:void(0);";
         fortLink.innerHTML = "砦";
-        fortLink.addEventListener("click", function() {addReserveVillages(222)}, true);
+        fortLink.addEventListener("click", function() {
+                                      addReserveVillages(222);
+                                  }, true);
         tMenu.snapshotItem(0).appendChild(fortLink);
 
     }
@@ -548,24 +562,25 @@ function getAddingVillage(htmldoc) {
         url = location;
         var flgAdd = addList2(kind, 1, URL_PARAMS.x, URL_PARAMS.y);
         var msg = "";
-        if (flgAdd == 0){
+        if (flgAdd == 0) {
             msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")への、";
-            if(kind == 220){msg += "村建設予約";
-                           }else if(kind == 222){msg += "砦建設予約";
-                                                }
-            msg += "を受け付けました。"
+            if (kind == 220) {
+                msg += "村建設予約";
+            } else if (kind == 222) {
+                msg += "砦建設予約";
+            }
+            msg += "を受け付けました。";
         } else {
             msg += "(" + URL_PARAMS.x + "," + URL_PARAMS.y + ")には、すでに建設予約があります。";
         }
         alert(msg);
-        if ( is_stay_mode() ) {
+        if (is_stay_mode()) {
             reopen();
         }
     }
 
-    function addList2(kind, status, x, y) //kind=220:村予約 222:砦予約
-    {
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
+    function addList2(kind, status, x, y) {
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
 
         var dt = new Date();
         var ntime = dt.getFullYear() + "-" +
@@ -575,22 +590,22 @@ function getAddingVillage(htmldoc) {
             (dt.getMinutes()+100).toString().substr(-2)  + ":" +
             (dt.getSeconds()+100).toString().substr(-2);
 
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y ) {
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].x == x && lists[i].y == y) {
                 return;
             }
         }
         lists.push({"x":x, "y":y, "time":ntime, "kind":kind, "status":status });
-        lists.sort( function(a,b){
-                        if(a.time > b.time) return 1;
-                        if(a.time < b.time) return -1;
-                        return 0;});
+        lists.sort(function(a, b) {
+                       if (a.time > b.time) return 1;
+                       if (a.time < b.time) return -1;
+                       return 0;
+                   });
 
-        csaveData(HOST+"ReserveList", lists, true, true );
+        csaveData(HOST+"ReserveList", lists, true, true);
 
         return 0;
     }
-
 }
 
 //拠点画面で建設予約受付
@@ -621,7 +636,9 @@ function addLinkTondenVillage() {
         villageLink.id = "village";
         villageLink.href = "javascript:void(0);";
         villageLink.innerHTML = "村";
-        villageLink.addEventListener("click", function() {addReserveVillages(220)}, true);
+        villageLink.addEventListener("click", function() {
+                                         addReserveVillages(220);
+                                     }, true);
         tMenu.snapshotItem(0).appendChild(villageLink);
 
         var villageLink = document.createElement("span");
@@ -633,32 +650,34 @@ function addLinkTondenVillage() {
         fortLink.id = "fort";
         fortLink.href = "javascript:void(0);";
         fortLink.innerHTML = "砦";
-        fortLink.addEventListener("click", function() {addReserveVillages(222)}, true);
+        fortLink.addEventListener("click", function() {
+                                      addReserveVillages(222);
+                                  }, true);
         tMenu.snapshotItem(0).appendChild(fortLink);
-
     }
 
     function addReserveVillages(kind) {
         url = location;
         var flgAdd = addList2(kind, 1, x, y);
         var msg = "";
-        if (flgAdd == 0){
+        if (flgAdd == 0) {
             msg += "(" + x + "," + y + ")への、";
-            if(kind == 220){msg += "村建設予約";
-                           }else if(kind == 222){msg += "砦建設予約";
-                                                }
-            msg += "を受け付けました。"
+            if (kind == 220) {
+                msg += "村建設予約";
+            } else if (kind == 222) {
+                msg += "砦建設予約";
+            }
+            msg += "を受け付けました。";
         } else {
             msg += "(" + x + "," + y + ")には、すでに建設予約があります。";
         }
         alert(msg);
-        if ( is_stay_mode() ) {
+        if (is_stay_mode()) {
             reopen();
         }
     }
 
-    function addList2(kind, status, x, y) //kind=220:村予約 222:砦予約
-    {
+    function addList2(kind, status, x, y) {
         var lists = cloadData(HOST+"ReserveList", "[]", true, true);
 
         var dt = new Date();
@@ -669,18 +688,19 @@ function addLinkTondenVillage() {
             (dt.getMinutes()+100).toString().substr(-2)  + ":" +
             (dt.getSeconds()+100).toString().substr(-2);
 
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y && (lists[i].status == 0 || lists[i].status == 1)) {
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].x == x && lists[i].y == y && (lists[i].status == 0 || lists[i].status == 1)) {
                 return;
             }
         }
         lists.push({"x":x, "y":y, "time":ntime, "kind":kind, "status":status });
-        lists.sort( function(a,b){
-                        if(a.time > b.time) return 1;
-                        if(a.time < b.time) return -1;
-                        return 0;});
+        lists.sort(function(a, b) {
+                       if (a.time > b.time) return 1;
+                       if (a.time < b.time) return -1;
+                       return 0;
+                   });
 
-        csaveData(HOST+"ReserveList", lists, true, true );
+        csaveData(HOST+"ReserveList", lists, true, true);
 
         return 0;
     }
@@ -695,63 +715,59 @@ function getDeletingVillage(htmldoc) {
     var y = Temp[1];
 
     var rmtime = htmldoc.innerHTML.match(/(村を削除中です。|砦を削除中です。)[^\d]*(\d+-\d+-\d+ \d+:\d+:\d+)に完了します。/);
-    if( rmtime ) {
-        if( rmtime[1] == "村を削除中です。" ) {
-            addList(rmtime[2], 220, 4, x, y );
-        }else if( rmtime[1] == "砦を削除中です。" ) {
-            addList(rmtime[2], 222, 4, x, y );
+    if (rmtime) {
+        if (rmtime[1] == "村を削除中です。") {
+            addList(rmtime[2], 220, 4, x, y);
+        } else if (rmtime[1] == "砦を削除中です。") {
+            addList(rmtime[2], 222, 4, x, y);
         }
-    }else{
+    } else {
         delList(1, x, y);
     }
-    if ( is_stay_mode() ) {
+    if (is_stay_mode()) {
         reopen();
     }
 
-    function addList(tim, kind, status, x, y) 
-    {
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
+    function addList(tim, kind, status, x, y) {
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
 
         var flg = 0;
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y && (lists[i].status != 0 && lists[i].status != 1 && lists[i].status != 2)) {
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].x == x && lists[i].y == y && (lists[i].status != 0 && lists[i].status != 1 && lists[i].status != 2)) {
                 lists[i].time = tim;
                 lists[i].kind = kind;
                 lists[i].status = status;
                 flg = 1;
             }
         }
-        if(flg == 0) {
-            lists.push({"x":x, "y":y, "time":tim, "kind":kind, "status":status });
+        if (flg == 0) {
+            lists.push({"x": x, "y": y, "time": tim, "kind": kind, "status": status});
         }
-        lists.sort( function(a,b){
-                        if(a.time > b.time) return 1;
-                        if(a.time < b.time) return -1;
-                        return 0;});
+        lists.sort(function(a, b) {
+                       if (a.time > b.time) return 1;
+                       if (a.time < b.time) return -1;
+                       return 0;
+                   });
 
-        csaveData(HOST+"ReserveList", lists, true, true );
+        csaveData(HOST + "ReserveList", lists, true, true);
     }
 
-    function delList(kind, x, y) //kind=0:land 1:castle
-    {
-        var lists = cloadData(HOST+"ReserveList", "[]", true, true);
+    function delList(kind, x, y) {
+        var lists = cloadData(HOST + "ReserveList", "[]", true, true);
 
-        for(var i=0 ; i<lists.length ; i++) {
-            if(lists[i].x == x && lists[i].y == y ) {
-                if( lists[i].status == 4 && kind == 1 ) {
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].x == x && lists[i].y == y) {
+                if (lists[i].status == 4 && kind == 1) {
                     lists.splice(i,1);
-                    csaveData(HOST+"ReserveList", lists, true, true );
+                    csaveData(HOST + "ReserveList", lists, true, true);
                     break;
                 }
             }
         }
     }
-
 }
 
-// =================================================================================================
-
-function DeleteFacility(x, y){
+function DeleteFacility(x, y) {
     x = parseInt(x);
     y = parseInt(y);
     var village = new Village();
@@ -759,7 +775,6 @@ function DeleteFacility(x, y){
 }
 
 function autoLvup() {
-    
     debugLog("=== Start autoLvup ===");
 
     var cost_bk_ken=[
@@ -1067,16 +1082,18 @@ function autoLvup() {
     costs["防具工場投石機"]      = cost_bg_stone;
 
     var make_loop = function(loop) {
-
-        if (loop == 2) { 
-
+        if (loop == 2) {
             return;
-
         } else {
-
-            if (loop == 0) { var type = "鍛冶場"; }
-            if (loop == 1) { var type = "防具工場"; }
-            if (OPT_BKBG_CHK == 0) { return; }
+            if (loop == 0) {
+                var type = "鍛冶場";
+            }
+            if (loop == 1) {
+                var type = "防具工場";
+            }
+            if (OPT_BKBG_CHK == 0) {
+                return;
+            }
 
             var UnitID = [];
 
@@ -1099,7 +1116,7 @@ function autoLvup() {
             var area = new Array();
             area = get_area();
 
-            for (var i=0;i<area.length;i++){
+            for (var i = 0; i < area.length; i++) {
                 if (area[i].name == type) {
                     var Temp = area[i].xy.split(",");
                     _x = Temp[0];
@@ -1107,45 +1124,47 @@ function autoLvup() {
                     _lv = area[i].lv;
                 }
             }
-            if ( _x < 0 ) {
+            if (_x < 0) {
                 return;
             }
-            $w(function(){
+            $w(function() {
                    var mURL = FACLINK(HOST, _x, _y);
                    GM_xmlhttpRequest(
                        {
-                           method:"GET", 
+                           method: "GET",
                            url: mURL,
-                           headers: {"Content-type":"text/html"},
+                           headers: {
+                               "Content-type": "text/html"
+                           },
                            overrideMimeType: 'text/html; charset=utf-8',
-                           onload: function(x){
+                           onload: function(x) {
                                var htmldoc = document.createElement("html");
                                htmldoc.innerHTML = x.responseText;
                                // 鍛冶場・防具工場情報の取得
                                getTrainingSoldier(htmldoc);
-                               if ( is_stay_mode() ) {
+                               if (is_stay_mode()) {
                                    reopen();
                                }
-                               
+
                                var actionsElem  = document.evaluate('//th[@class="mainTtl6"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                                var actionsElem2 = document.evaluate('//b[contains(@class,"f14")]',       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                                var actionsElem3 = document.evaluate('//td[@class="center"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                                var actionsElem4 = document.evaluate('//td[@class="cost"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                               
+
                                var htmldoc2 = document.createElement("html");
-                               
+
                                var actionsElem7  = document.evaluate('//*[@colspan="4"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                               
+
                                var Buki = Array();
                                var x = -1;
-                               
-                               if ( htmldoc.innerHTML.lastIndexOf("を強化する") != -1 ) {
-                                   for (var i=0;i<actionsElem2.snapshotLength;i++){
+
+                               if (htmldoc.innerHTML.lastIndexOf("を強化する") != -1) {
+                                   for (var i = 0; i < actionsElem2.snapshotLength; i++) {
                                        var BG_Name = actionsElem.snapshotItem(i+1).innerHTML;
                                        var BG_LvNm = actionsElem2.snapshotItem(i).innerHTML.substring(actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;&nbsp;")+12);
                                        var BG_UID  = UnitID[BG_Name];
                                        var BG_Lv   = actionsElem2.snapshotItem(i).innerHTML.substring(3,actionsElem2.snapshotItem(i).innerHTML.lastIndexOf("&nbsp;")-6);
-                                       
+
                                        var BG_WOOD  = costs[type + BG_Name][BG_Lv][0];
                                        var BG_STONE = costs[type + BG_Name][BG_Lv][1];
                                        var BG_IRON  = costs[type + BG_Name][BG_Lv][2];
@@ -1153,51 +1172,55 @@ function autoLvup() {
                                        var BG_TIME  = costs[type + BG_Name][BG_Lv][4];
                                        var BG_Go    = (actionsElem3.snapshotItem(i+1).innerHTML.lastIndexOf("を強化する") != -1);
                                        if (type == "鍛冶場") {
-                                           var BG_GoLv  = OPT_BK_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
+                                           var BG_GoLv  = OPT_BK_LV[ (UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300) ];
                                        } else {
-                                           var BG_GoLv  = OPT_BG_LV[ ( UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300 ) ];
+                                           var BG_GoLv  = OPT_BG_LV[ (UnitID[actionsElem.snapshotItem(i+1).innerHTML][0] - 300) ];
                                        }
-                                       if ( checkBKLvup(BG_WOOD,BG_STONE,BG_IRON,BG_RICE,BG_Go,BG_Lv,BG_GoLv) ){
+                                       if (checkBKLvup(BG_WOOD,BG_STONE,BG_IRON,BG_RICE,BG_Go,BG_Lv,BG_GoLv)) {
                                            x++;
                                            Buki[x] = [BG_Name,BG_Lv,BG_LvNm,BG_UID,BG_TIME];
                                        }
                                    }
-                                   Buki.sort( function(a, b) { if (a[4] > b[4]) return 1; if (a[4] < b[4]) return -1; return 0;});
-                                   
+                                   Buki.sort(function(a, b) {
+                                                 if (a[4] > b[4]) return 1;
+                                                 if (a[4] < b[4]) return -1;
+                                                 return 0;
+                                             });
+
                                    if (x != -1) {
                                        // 武器強化処理
                                        var c={};
                                        c['x'] = parseInt(_x);
                                        c['y'] = parseInt(_y);
                                        c['unit_id'] = parseInt(Buki[0][3]);
-                                       j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function(){});                                    
+                                       j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function() {});
                                    }
-                               }   
+                               }
                                make_loop(loop + 1);
-                               
+
                                function checkBKLvup(hwood,hstone,hiron,hrice,hgo,hnlv,hslv) {
-                                   
-                                   var wood = parseInt( $("wood").innerHTML, 10 );
-                                   var stone = parseInt( $("stone").innerHTML, 10 );
-                                   var iron = parseInt( $("iron").innerHTML, 10 );
-                                   var rice = parseInt( $("rice").innerHTML, 10 );
-                                  
-                                                          
+
+                                   var wood = parseInt($("wood").innerHTML, 10);
+                                   var stone = parseInt($("stone").innerHTML, 10);
+                                   var iron = parseInt($("iron").innerHTML, 10);
+                                   var rice = parseInt($("rice").innerHTML, 10);
+
+
                                    if (parseInt(hnlv) >= parseInt(hslv)) { return false; }
-                                   if ((parseInt(hwood)  + OPT_BLD_WOOD ) > wood ) { return false; }
+                                   if ((parseInt(hwood)  + OPT_BLD_WOOD) > wood) { return false; }
                                    if ((parseInt(hstone) + OPT_BLD_STONE) > stone) { return false; }
-                                   if ((parseInt(hiron)  + OPT_BLD_IRON ) > iron ) { return false; }
-                                   if ((parseInt(hrice)  + OPT_BLD_RICE ) > rice ) { return false; }
+                                   if ((parseInt(hiron)  + OPT_BLD_IRON) > iron) { return false; }
+                                   if ((parseInt(hrice)  + OPT_BLD_RICE) > rice) { return false; }
                                    if (hgo == false) { return false; }
-                                   
+
                                    return true;
                                }
-                               
+
                            }
                        });
                });
         }
-    }
+    };
     make_loop(0);
 }
 
@@ -1206,17 +1229,17 @@ function setVillageFacility() {
 
     debugLog("=== Start setVillageFacility ===");
 
-    var cnt=0;
+    var cnt = 0;
     var vID = "";
 
-    var del=0;
+    var del = 0;
     var delX = 0;
     var delY = 0;
 
     //座標を取得
     var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     vId = trim(xyElem.snapshotItem(0).innerHTML);
-    
+
     //建設情報を取得
     var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
@@ -1226,12 +1249,9 @@ function setVillageFacility() {
         //ステータス
         var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         if (buildStatusElem.snapshotLength > 0) {
-            //施設建設数
             cnt++;
-
-            // 削除数カウント
-            if( buildStatusElem.snapshotItem(0).parentNode.parentNode.textContent.indexOf("削除") >= 0 ){
-                if(buildStatusElem.snapshotItem(0).href.match(/.*\/.*(\d+).*(\d+)/)){
+            if (buildStatusElem.snapshotItem(0).parentNode.parentNode.textContent.indexOf("削除") >= 0) {
+                if (buildStatusElem.snapshotItem(0).href.match(/.*\/.*(\d+).*(\d+)/)) {
                     delX = parseInt(RegExp.$1);
                     delY = parseInt(RegExp.$2);
                 }
@@ -1247,8 +1267,8 @@ function setVillageFacility() {
         var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         if (buildStatusElem.snapshotLength > 0) {
             //建物削除等に対応 2010.10.25 byおぜがづ
-            for(var j=0; j<buildStatusElem.snapshotLength;j++){
-                if(buildStatusElem.snapshotItem(j).parentNode.innerHTML.match(RegExp("(建設中|建設準備中)"))) {
+            for (var j = 0; j < buildStatusElem.snapshotLength; j++) {
+                if (buildStatusElem.snapshotItem(j).parentNode.innerHTML.match(RegExp("(建設中|建設準備中)"))) {
                     //施設建設数
                     cnt++;
                 }
@@ -1261,13 +1281,12 @@ function setVillageFacility() {
     Load_OPT(vId);  //LvUP対象の取得
 
     //建設予約ができるかどうか
-    // ＠＠
-    if((cnt - del) >= 1) return;
+    if ((cnt - del) >= 1) return;
 
     if (OPT_SHIGEN == 1) {
         village.build_shigen();
     }
-    if(OPT_KATEMURA == 1) {
+    if (OPT_KATEMURA == 1) {
         var heichi = village.find('平地').length;
         var hatake = village.find('畑').length;
         var souko = village.find('倉庫').length;
@@ -1302,7 +1321,7 @@ function setVillageFacility() {
     Reload_Flg = 0;
 
     // 拠点の状況を調査（削除中なら処理しない）
-    j$.get("http://"+HOST+"/facility/facility.php?x=3&y=3#ptop",function(x){
+    j$.get("http://"+HOST+"/facility/facility.php?x=3&y=3#ptop", function(x) {
                var htmldoc = document.createElement("html");
                htmldoc.innerHTML = x;
                var rmtime = htmldoc.innerHTML.match(/(村を削除中です。|砦を削除中です。)[^\d]*(\d+-\d+-\d+ \d+:\d+:\d+)に完了します。/);
@@ -1311,42 +1330,43 @@ function setVillageFacility() {
                    return;
                }
 
-               for(i=0;i<area.length;i++){
+               for (i = 0; i < area.length; i++) {
                    var tmpName1 = area[i].name;
-                   switch (tmpName1) { 
+                   switch (tmpName1) {
                    case "村":
                    case "城":
                    case "砦":
-                       tmpName1  = "拠点";              //
+                       tmpName1  = "拠点";
                        chkFlg = 1;
                        break;
                    }
 
-                   if(parseInt(area[i].lv) >= parseInt(OPT_CHKBOXLV[OPT_FNID[tmpName1]])){
+                   if (parseInt(area[i].lv) >= parseInt(OPT_CHKBOXLV[OPT_FNID[tmpName1]])) {
                        continue;
-                   } //指定Lv以上ならメインに戻る
+                   }
+                   //指定Lv以上ならメインに戻る
                    //建築物名分回す
-                   OPT_FUC_NAME.push("村","城","砦");
-                   if(OPT_CHKBOX[0] == 1) {
+                   OPT_FUC_NAME.push("村", "城", "砦");
+                   if (OPT_CHKBOX[0] == 1) {
                        OPT_CHKBOX.push(1,1,1);
                        OPT_CHKBOXLV.push(OPT_CHKBOXLV[0],OPT_CHKBOXLV[0],OPT_CHKBOXLV[0]);
                    } else {
                        OPT_CHKBOX.push(0,0,0);
                        OPT_CHKBOXLV.push(0,0,0);
                    }
-                   OPT_CHKBOX.push
-                   for(var ii=0;ii<OPT_FUC_NAME.length;ii++){
+
+                   for (var ii = 0; ii < OPT_FUC_NAME.length; ii++) {
                        //ソートしたLvの低い順に比較する
-                       if(area[i].name == OPT_FUC_NAME[ii]){
+                       if (area[i].name == OPT_FUC_NAME[ii]) {
                            //建築指示が有るか確認する。
-                           if(parseInt(OPT_CHKBOX[ii]) == 1){
-                               if(parseInt(area[i].lv) >= parseInt(OPT_CHKBOXLV[ii])){
+                           if (parseInt(OPT_CHKBOX[ii]) == 1) {
+                               if (parseInt(area[i].lv) >= parseInt(OPT_CHKBOXLV[ii])) {
                                    break;
                                }
 
                                //建築に必要な資源が有るかどうかチェック
                                var ret = Chek_Sigen(area[i]);
-                               if(ret == 1){
+                               if (ret == 1) {
                                    //30分後にリロードするかどうか
                                    Reload_Flg = 1;
                                    break;
@@ -1354,7 +1374,7 @@ function setVillageFacility() {
 
                                var Temp = area[i].xy.split(",");
                                var c = {};
-                               if( (del != 0) && (parseInt(Temp[0]) == delX) && (parseInt(Temp[1]) == delY) ){
+                               if ((del != 0) && (parseInt(Temp[0]) == delX) && (parseInt(Temp[1]) == delY)) {
                                    // 削除施設とレベルアップ施設が一致したらスキップ
                                    continue;
                                }
@@ -1362,13 +1382,13 @@ function setVillageFacility() {
                                c['x']=parseInt(Temp[0]);
                                c['y']=parseInt(Temp[1]);
                                c['village_id']=getVillageID(vId);
-                               c['ssid']=j$.cookie('SSID');                        
-                               j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                               $w(function(){
+                               c['ssid']=j$.cookie('SSID');
+                               j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                               $w(function() {
                                       location.reload(false);
                                   });
-                               
-                               GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId) );
+
+                               GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId));
                                var nowTime = new Date();
                                Reload_Flg = 0;
                                return;
@@ -1378,20 +1398,17 @@ function setVillageFacility() {
                }
            });
 
-    
-    if(Reload_Flg == 1){
-        //10分後にリロードし、再度建築できるかチェックする。
-        $w(function(){
+
+    if (Reload_Flg == 1) {
+        $w(function() {
                location.reload();
            }, 60000);
     }
-
 }
 
-// @@@@ add 2011.09.06 宿舎(畑) 自動ビルド＆スクラッチ
 function setVillageFacility2() {
-    var cnt=0;
-    var del=0;
+    var cnt = 0;
+    var del = 0;
     var delX = 0;
     var delY = 0;
     var vID = "";
@@ -1399,7 +1416,7 @@ function setVillageFacility2() {
     var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
                                    document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     vId = trim(xyElem.snapshotItem(0).innerHTML);
-    
+
     //建設情報を取得
     var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li',
                                         document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -1414,8 +1431,8 @@ function setVillageFacility2() {
             cnt++;
 
             // 削除数カウント
-            if( buildStatusElem.snapshotItem(0).parentNode.parentNode.textContent.indexOf("削除") >= 0 ){
-                if(buildStatusElem.snapshotItem(0).href.match(/.*\/.*(\d+).*(\d+)/)){
+            if (buildStatusElem.snapshotItem(0).parentNode.parentNode.textContent.indexOf("削除") >= 0) {
+                if (buildStatusElem.snapshotItem(0).href.match(/.*\/.*(\d+).*(\d+)/)) {
                     delX = parseInt(RegExp.$1);
                     delY = parseInt(RegExp.$2);
                 }
@@ -1426,30 +1443,29 @@ function setVillageFacility2() {
 
     var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     var area = new Array();
-    for(var i=0,n=0; i<results.snapshotLength; i++){
-        if(results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)){
+    for (var i = 0, n = 0; i < results.snapshotLength; i++) {
+        if (results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)) {
             strURL = results.snapshotItem(i).href;
-            area[n] = new lv_sort(RegExp.$1,RegExp.$2,getURLxy(strURL));
+            area[n] = new lv_sort(RegExp.$1, RegExp.$2, getURLxy(strURL));
             n++;
-        }
-        else if(results.snapshotItem(i).alt == "平地"){
+        } else if (results.snapshotItem(i).alt == "平地") {
             // 平地の座標を拾う
             strURL = results.snapshotItem(i).href;
-            area[n] = new lv_sort("平地",0,getURLxy(strURL));
+            area[n] = new lv_sort("平地", 0, getURLxy(strURL));
             n++;
         }
     }
 
-    if( OPT_SorH == "DD" ){
+    if (OPT_SorH == "DD") {
         //宿舎が処理対象の場合、エリアリストに練兵所(宿舎建設条件)があるかをチェック
         var cntv = 0;
-        for(var i=0;i<area.length;i++){
-            if(area[i].name == "練兵所"){
+        for (var i = 0; i < area.length; i++) {
+            if (area[i].name == "練兵所") {
                 cntv++;
                 break;
             }
         }
-        if(cntv == 0) return;
+        if (cntv == 0) return;
     }
 
 
@@ -1457,7 +1473,7 @@ function setVillageFacility2() {
     area.sort(cmp_lv2);
     Load_OPT(vId);  //LvUP対象の取得
     // 削除中かチェック
-    if( (del == 0) ){
+    if ((del == 0)) {
         // 削除中でなければ、削除できる施設があるか調べる ＠＠
         var TargetName = "";
         if (OPT_SorH == "DD") { TargetName = "宿舎"; }
@@ -1465,18 +1481,18 @@ function setVillageFacility2() {
         var TargetCount = 0;
         var BlankCount = 0;
         // 対象レベル以下の宿舎（畑）と平地の数をカウントする
-        for (i=0;i<area.length;i++){
+        for (i = 0; i < area.length; i++) {
             if (area[i].name == TargetName && parseInt(area[i].lv) <= OPT_MAXLV) { TargetCount += 1; }
             if (area[i].name == "平地") { TargetCount += 1; }
         }
-        if (TargetCount < OPT_MAX){
+        if (TargetCount < OPT_MAX) {
             // 対象となる宿舎（畑）と平地の合計が指定数に満たない場合
             area.sort(cmp_lv);
-            for (i=0;i<area.length;i++){
+            for (i = 0; i < area.length; i++) {
                 if ((area[i].name == TargetName) && (parseInt(area[i].lv) >= OPT_MAXLV)) {
                     // 削除
                     var Temp = area[i].xy.split(",");
-                    DeleteFacility(Temp[0],Temp[1]);
+                    DeleteFacility(Temp[0], Temp[1]);
                     JSSleep(2);
                     Reload_Flg = 0;
                     return;
@@ -1484,11 +1500,11 @@ function setVillageFacility2() {
             }
         } else {
             // 普通に削除処理を実行
-            for (i=0;i<area.length;i++){
+            for (i = 0; i < area.length; i++) {
                 if ((area[i].name == TargetName) && (parseInt(area[i].lv) == OPT_MAXLV)) {
                     // 削除
                     var Temp = area[i].xy.split(",");
-                    DeleteFacility(Temp[0],Temp[1]);
+                    DeleteFacility(Temp[0], Temp[1]);
                     JSSleep(2);
                     Reload_Flg = 0;
                     return;
@@ -1499,27 +1515,24 @@ function setVillageFacility2() {
 
     area.sort(cmp_lv2);
     //建設予約ができるかどうか
-    if((cnt - del) >= 1) return;
-    //if(cnt == 2) return;
+    if ((cnt - del) >= 1) return;
 
     // 平地建設条件がある場合、対象施設数がOPT_MAX以上かチェックする
     var yct = 0;
 
-    if( OPT_SorH == "DD" ){
-        for(i=0;i<area.length;i++){
-            if(area[i].name == "宿舎"){
-                // @@ Lv6以下の数だけを数える 2011.06.22 5zen
-                if(area[i].lv < (OPT_MAXLV + 1)){
+    if (OPT_SorH == "DD") {
+        for (i = 0; i < area.length; i++) {
+            if (area[i].name == "宿舎") {
+                if (area[i].lv < (OPT_MAXLV + 1)) {
                     yct++;
                 }
             }
         }
     }
-    if( OPT_SorH == "HH" ){
-        for(i=0;i<area.length;i++){
-            if(area[i].name == "畑"){
-                // @@ Lv6以下の数だけを数える 2011.06.22 5zen
-                if(area[i].lv < (OPT_MAXLV + 1)){
+    if (OPT_SorH == "HH") {
+        for (i = 0; i < area.length; i++) {
+            if (area[i].name == "畑") {
+                if (area[i].lv < (OPT_MAXLV + 1)) {
                     yct++;
                 }
             }
@@ -1527,43 +1540,40 @@ function setVillageFacility2() {
     }
 
     Reload_Flg = 0;
-    for(i=0;i<area.length;i++){
-
-        if( OPT_SorH == "DD" ){
-            if((area[i].name != "宿舎") && (area[i].name != "平地")){
+    for (i = 0; i < area.length; i++) {
+        if (OPT_SorH == "DD") {
+            if ((area[i].name != "宿舎") && (area[i].name != "平地")) {
                 // 平地と宿舎以外スキップ
                 continue;
             }
-        }
-        else if( OPT_SorH == "HH" ){
-            if((area[i].name != "畑") && (area[i].name != "平地")){
+        } else if (OPT_SorH == "HH") {
+            if ((area[i].name != "畑") && (area[i].name != "平地")) {
                 // 平地と畑以外スキップ
                 continue;
             }
         }
-        if( yct >= OPT_MAX ){
-            if( OPT_SorH == "DD" ){
-                if(area[i].name != "宿舎"){
+        if (yct >= OPT_MAX) {
+            if (OPT_SorH == "DD") {
+                if (area[i].name != "宿舎") {
                     // 宿数がすでにOPT_MAX以上なら、平地は無視
                     continue;
                 }
             }
-            if( OPT_SorH == "HH" ){
-                if(area[i].name != "畑"){
+            if (OPT_SorH == "HH") {
+                if (area[i].name != "畑") {
                     // 畑数がすでにOPT_MAX以上なら、平地は無視
                     continue;
                 }
             }
         }
-        //      if(parseInt(area[i].lv) >= OPT_MAXLV){break;} //指定Lv以上ならメインに戻る
 
         //建築物名分回す
-        for(var ii=0;ii<OPT_FUC_NAME.length;ii++){
+        for (var ii = 0; ii < OPT_FUC_NAME.length; ii++) {
             //ソートしたLvの低い順に比較する
-            if(area[i].name == OPT_FUC_NAME[ii]){
+            if (area[i].name == OPT_FUC_NAME[ii]) {
                 //建築に必要な資源が有るかどうかチェック
                 var ret = Chek_Sigen(area[i]);
-                if(ret == 1){
+                if (ret == 1) {
                     //30分後にリロードするかどうか
                     Reload_Flg = 1;
                     break;
@@ -1572,32 +1582,31 @@ function setVillageFacility2() {
                 var Temp = area[i].xy.split(",");
                 var c={};
 
-                if( (del != 0) && (parseInt(Temp[0]) == delX) && (parseInt(Temp[1]) == delY) ){
+                if ((del != 0) && (parseInt(Temp[0]) == delX) && (parseInt(Temp[1]) == delY)) {
                     // 削除施設とレベルアップ施設が一致したらスキップ
                     continue;
                 }
-                // add 2011.12.14
                 if (area[i].lv > (OPT_MAXLV - 1)) {
                     continue;
                 }
-                if( area[i].name != "平地"){
+                if (area[i].name != "平地") {
                     c['x']=parseInt(Temp[0]);
                     c['y']=parseInt(Temp[1]);
                     c['village_id']=getVillageID(vId);
                     c['ssid']=j$.cookie('SSID');
-                    j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                    $w(function(){
+                    j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                    $w(function() {
                            location.reload(false);
                        });
                 } else {
-                    if( OPT_SorH == "DD" ){
+                    if (OPT_SorH == "DD") {
                         c['x']=parseInt(Temp[0]);
                         c['y']=parseInt(Temp[1]);
                         c['id']=242;
                         c['village_id']=getVillageID(vId);
                         c['ssid']=j$.cookie('SSID');
-                        j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                        $w(function(){
+                        j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                        $w(function() {
                                location.reload(false);
                            });
                     } else {
@@ -1605,36 +1614,36 @@ function setVillageFacility2() {
                         c['y']=parseInt(Temp[1]);
                         c['id']=215;
                         c['village_id']=getVillageID(vId);
-                        c['ssid']=j$.cookie('SSID');                        
-                        j$.post("http://"+HOST+"/facility/build.php",c,function(){});
-                        $w(function(){
+                        c['ssid']=j$.cookie('SSID');
+                        j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                        $w(function() {
                                location.reload(false);
                            });
                     }
                 }
-                GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId) );
+                GM_setValue(HOST+PGNAME+"OPT_BUILD_VID" , getVillageID(vId));
                 Reload_Flg = 0;
                 return;
             }
         }
     }
-    
-    if(Reload_Flg == 1){
+
+    if (Reload_Flg == 1) {
         //30分後にリロードし、再度建築できるかチェックする。
-        var tid = $w(function(){location.reload();},1800000);
+        var tid = $w(function() {
+                         location.reload();
+                     },1800000);
     }
 
     return;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
 //施設一覧取得
-function get_area(){
+function get_area() {
     var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     var area = new Array();
-    for(var i=0,n=0; i<results.snapshotLength; i++){
-        if(results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)){
+    for (var i = 0, n = 0; i < results.snapshotLength; i++) {
+        if (results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)) {
             var strURL = results.snapshotItem(i).href;
             area[n] = new lv_sort(RegExp.$1,RegExp.$2,getURLxy(strURL));
             n++;
@@ -1643,10 +1652,10 @@ function get_area(){
     return area;
 }
 
-function get_area_all(){
+function get_area_all() {
     var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
     var area = new Array();
-    for(var i=0,n=0; i<results.snapshotLength; i++){
+    for (var i = 0, n = 0; i < results.snapshotLength; i++) {
         var strURL = results.snapshotItem(i).href;
         area[n] = new areas(results.snapshotItem(i).alt,getURLxy(strURL));
         n++;
@@ -1654,19 +1663,20 @@ function get_area_all(){
     return area;
 }
 
-function areas(name,xy){
+function areas(name,xy) {
     this.name = name;
     this.xy = xy;
 }
 
 //比較する関数
-function cmp_areas(a,b){
-    if(a.xy > b.xy){return 1;} else {return -1;}
+function cmp_areas(a,b) {
+    if (a.xy > b.xy) return 1;
+    return -1;
 }
 
 // 次拠点移動
-function forwardNextVillage(vId){
-    // 巡回停止中ならスキップ 2012.01.24
+function forwardNextVillage(vId) {
+    // 巡回停止中ならスキップ
     if (GM_getValue(HOST+PGNAME+"AutoFlg", true) == false) { return; }
 
     var nowTime = new Date();
@@ -1674,13 +1684,11 @@ function forwardNextVillage(vId){
     var waitTime = nextTime - nowTime;
     var roundTime = 0;
 
-    // @@ add 2011.10.04 @@
-
     clearInterval(tidMain2);
 
     if ((ShopFlg == true) && (ShopURL != "")) {
         roundTime = 10 * 1000;
-        tidMain2 = $w(function(){
+        tidMain2 = $w(function() {
                           location.href = ShopURL;
                       }, roundTime);
     }
@@ -1693,18 +1701,18 @@ function forwardNextVillage(vId){
         for (var j = 0; j < actions.length; j++) {
             var actionDiv = createActionDiv(actions[j], nowTime, villages[i][IDX_XY], location.hostname);
             if (!actionDiv) continue;
-            
+
             var actionTime = new Date(actions[j][IDX2_TIME]);
             var moveFlg = 0;
-            if ( actionTime < nowTime && actions[j][IDX2_ROTATION] == 0 && actions[j][IDX2_TYPE] == TYPE_CONSTRUCTION){
-                for (var x = j + 1; x < actions.length; x++){
+            if (actionTime < nowTime && actions[j][IDX2_ROTATION] == 0 && actions[j][IDX2_TYPE] == TYPE_CONSTRUCTION) {
+                for (var x = j + 1; x < actions.length; x++) {
                     actionTime = new Date(actions[x][IDX2_TIME]);
-                    if ( actionTime > nowTime && actions[x][IDX2_ROTATION] == 0 && actions[x][IDX2_TYPE] == TYPE_CONSTRUCTION){
+                    if (actionTime > nowTime && actions[x][IDX2_ROTATION] == 0 && actions[x][IDX2_TYPE] == TYPE_CONSTRUCTION) {
                         moveFlg = 1;
                         break;
                     }
                 }
-                if ( !(x < actions.length) ) {
+                if (!(x < actions.length)) {
                     actions[j][IDX2_ROTATION] = 1;
                 }
                 if (moveFlg == 0) {
@@ -1715,10 +1723,10 @@ function forwardNextVillage(vId){
 
                     if (location.pathname == "/village.php") {
                         var vcURL = villages[i][IDX_URL];
-                        if(vcURL!=undefined){
+                        if (vcURL!=undefined) {
                             saveVillages(HOST+PGNAME, villages);
                             roundTime = 5 * 1000;
-                            tidMain2 = $w(function(){
+                            tidMain2 = $w(function() {
                                               location.href = vcURL;
                                           }, roundTime);
                         }
@@ -1727,7 +1735,7 @@ function forwardNextVillage(vId){
             }
         }
     }
-    if ( tidMain2 == undefined ) {
+    if (tidMain2 == undefined) {
         //一番早い作業完了時刻を取得
         var startTime = new Date("2099/12/31 23:59:59");
         var nextTime = startTime;
@@ -1751,23 +1759,23 @@ function forwardNextVillage(vId){
         var nTime = (nextTime - nowTime);
         var vcURL = nextVillageURL(getVillageID(vId));
 
-        if(vcURL!=undefined){
+        if (vcURL!=undefined) {
             if (nextURL == "") {
                 // 次回建築完了予定がない場合は通常巡回処理
                 roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                tidMain2 = $w(function(){
+                tidMain2 = $w(function() {
                                   location.href = vcURL;
                               }, roundTime);
             } else {
                 if (parseInt(OPT_ROUND_TIME1) * 1000 > nTime) {
                     roundTime = (nextTime - nowTime + 10000);
-                    tidMain2 = $w(function(){
+                    tidMain2 = $w(function() {
                                       location.href = nextURL;
                                   }, roundTime);
                 } else {
                     // 通常巡回処理
                     roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                    tidMain2 = $w(function(){
+                    tidMain2 = $w(function() {
                                       location.href = vcURL;
                                   }, roundTime);
                 }
@@ -1778,37 +1786,38 @@ function forwardNextVillage(vId){
 }
 
 //比較する関数
-function cmp_time(a,b){
-    if(a.xy > b.xy){return 1;} else {return -1;}
+function cmp_time(a,b) {
+    if (a.xy > b.xy) return 1;
+    return -1;
 }
 
 // 次拠点URL取得
-function nextVillageURL(vId2){
+function nextVillageURL(vId2) {
     var villages = loadVillages(HOST+PGNAME);
     var nextIndex = 0;
     var chkNextVID = new Array();
     for (var i = 0; i < villages.length; i++) {
         matched = villages[i][0].match(/\((-?\d+),(-?\d+)\)/);
         var tChk1 = GM_getValue("enable_auto_build_" + matched[1] + "_" + matched[2], true);
-        if(tChk1){
+        if (tChk1) {
             chkNextVID.push(villages[i][IDX_URL]);
         }
     }
 
     // 現在の拠点のインデックスを検索 2012.01.24 逆順処理追加
-    for(var i=0; i<chkNextVID.length;i++){
+    for (var i = 0; i < chkNextVID.length; i++) {
         var url = chkNextVID[i];
-        if(vId2 == getParameter2(chkNextVID[i], "village_id")){
+        if (vId2 == getParameter2(chkNextVID[i], "village_id")) {
             if (getReverseMode() == false) {
                 // 正巡回
-                if(i+1 < chkNextVID.length){
+                if (i+1 < chkNextVID.length) {
                     nextIndex = i+1;
-                }else{
+                } else {
                     nextIndex = 0;
                 }
             } else {
                 // 逆巡回
-                if(i-1 < 0){
+                if (i-1 < 0) {
                     nextIndex = chkNextVID.length-1;
                 } else {
                     nextIndex = i-1;
@@ -1840,25 +1849,25 @@ function getParameter2(url, key) {
 
 
 //建築物の格納用
-function lv_sort(name,lv,xy){
+function lv_sort(name,lv,xy) {
     this.name = name;
     this.lv = lv;
     this.xy = xy;
 }
 //比較する関数
-function cmp_lv(a,b){
+function cmp_lv(a,b) {
     return a.lv - b.lv;
 }
 
-function cmp_lv2(a,b){
+function cmp_lv2(a,b) {
     return b.lv - a.lv;
 }
 //拠点IDの取得
-function getVillageID(vId){
+function getVillageID(vId) {
     //villages
     var villages = loadVillages(HOST+PGNAME);
-    for(var i=0; i<villages.length;i++){
-        if(villages[i][IDX_XY] == vId){
+    for (var i = 0; i < villages.length; i++) {
+        if (villages[i][IDX_XY] == vId) {
             var vURL = villages[i][IDX_URL];
             var temp = vURL.split("?");
             var temp2 = temp[1].split("=");
@@ -1866,8 +1875,8 @@ function getVillageID(vId){
         }
     }
 }
-function getURLxy(strURL){
-    if(strURL == ""){ return "";}
+function getURLxy(strURL) {
+    if (strURL == "") { return "";}
     var strTemp = "";
     strTemp = strURL;
     var Temp = strTemp.split("?");
@@ -1880,17 +1889,16 @@ function getURLxy(strURL){
 //リンクHTML追加
 function addOpenLinkHtml() {
     if (location.hostname[0] == "s" || location.hostname[0] == "h" || location.hostname[0] == "p") {
-        //          var sidebar = d.evaluate('//*[@class="copyright"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var sidebar = d.evaluate('//*[@class="sideBoxHead"]/h3/strong',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     } else {
         var sidebar = d.evaluate('//a[@title="拠点"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     }
-    if (sidebar.snapshotLength == 0){
+    if (sidebar.snapshotLength == 0) {
         sidebar = d.evaluate('//*[@class="xy"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         if (sidebar.snapshotLength == 0) return;
         isMixi = false;
     }
-    
+
     //自動移動リンク
     var openLink = d.createElement("a");
     openLink.id = "Auto_Bilder";
@@ -1898,13 +1906,6 @@ function addOpenLinkHtml() {
     openLink.style.marginTop = "0px";
     openLink.style.marginLeft = "0px";
     openLink.innerHTML = " [自動建築]";
-    /*
-     if (location.hostname[0] == "s" || location.hostname[0] == "h") {
-     openLink.style.color = "#000000";
-     } else {
-     openLink.style.color = "#FFFFFF";
-     }
-     */
     openLink.style.color = "#FFFFFF";
     openLink.style.cursor = "pointer";
 
@@ -2024,7 +2025,7 @@ function clearInifacBox() {
     var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked  = false;
 }
 
-function InitMilitaryHome(){
+function InitMilitaryHome() {
     // 遠征訓練所
     clearInifacBox();
     var checkbox = $a('//input[@id="OPT_CHKBOX0"]');   checkbox[0].checked = false; // 拠点
@@ -2110,7 +2111,7 @@ function InitMilitaryHome(){
     var checkbox = $a('//input[@id="OPT_DOME32"]'); checkbox[0].checked = false; // 　　修練
 }
 
-function InitRiceParadise(){
+function InitRiceParadise() {
     // 糧村
     clearInifacBox();
     var checkbox = $a('//input[@id="OPT_CHKBOX0"]');   checkbox[0].checked = true;  // 拠点
@@ -2160,7 +2161,7 @@ function InitRiceParadise(){
     var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked = false;
 }
 
-function InitResVillage(){
+function InitResVillage() {
     // 資源村
     clearInifacBox();
     var checkbox = $a('//input[@id="OPT_CHKBOX0"]');   checkbox[0].checked = true;  // 拠点
@@ -2216,7 +2217,7 @@ function InitResVillage(){
     var checkbox = $a('//input[@id="OPT_SHIGEN"]'); checkbox[0].checked = true;
 }
 
-function InitMilitarySite(){
+function InitMilitarySite() {
     //軍事拠点
     clearInifacBox();
     var checkbox = $a('//input[@id="OPT_CHKBOX0"]');   checkbox[0].checked = true;  // 拠点
@@ -2264,7 +2265,7 @@ function InitMilitarySite(){
 }
 
 // 残す資源量のクリア
-function clearInitRemainingRes(){
+function clearInitRemainingRes() {
     var textbox = $a('//input[@id="OPT_BLD_WOOD"]');  textbox[0].value = 0;
     var textbox = $a('//input[@id="OPT_BLD_STONE"]'); textbox[0].value = 0;
     var textbox = $a('//input[@id="OPT_BLD_IRON"]');  textbox[0].value = 0;
@@ -2272,7 +2273,7 @@ function clearInitRemainingRes(){
 }
 
 // 武器・防具強化レベルのクリア
-function clearInitArmsArmor(){
+function clearInitArmsArmor() {
 
     var textbox = $a('//input[@id="OPT_BK_LV1"]');  textbox[0].value = 0;
     var textbox = $a('//input[@id="OPT_BK_LV8"]');  textbox[0].value = 0;
@@ -2298,7 +2299,7 @@ function clearInitArmsArmor(){
 }
 
 // 造兵時作成単位初期化
-function clearInitSoldier(){
+function clearInitSoldier() {
 
     var textbox = $a('//input[@id="OPT_SOL_ADD1"]');    textbox[0].value = 0;
     var textbox = $a('//input[@id="OPT_SOL_ADD8"]');    textbox[0].value = 0;
@@ -2333,32 +2334,27 @@ function loadRoundTime() {
 }
 
 //数値を3ケタ区切りにする関数
-function SetPrice(price){
+function SetPrice(price) {
     　var num = new String(price).replace(/,/g, "");
     　while(num != (num = num.replace(/^(-?\d+)(\d{3})/, "$1,$2")));
     　return num;
 }
 
 //施設建設必要資源読込
-function loadFacility(){
+function loadFacility() {
 }
 
 //施設建設必要資源保存
-function saveFacility(f){
+function saveFacility(f) {
 }
 
 //ステイタス取得HTML追加
 function addInifacHtml(vId) {
-
-    // add 2011.09.27 設定画面移動 @@@@
     var popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left2", 10);
     var popupTop = GM_getValue(location.hostname + PGNAME + "_popup_top2", 10);
     if (popupLeft < 0) popupLeft = 0;
     if (popupTop < 0) popupTop = 0;
 
-    // end
-
-    
     //表示コンテナ作成
     var ABfacContainer = d.createElement("div");
     ABfacContainer.id = "ABfacContainer";
@@ -2377,16 +2373,17 @@ function addInifacHtml(vId) {
     ABfacContainer.setAttribute('vId', vId);
     d.body.appendChild(ABfacContainer);
 
-    $e(ABfacContainer, "mousedown", function(event){
-           if( event.target != $("ABfacContainer")) {return false;}
-           g_MD="ABfacContainer";
-           g_MX=event.pageX-parseInt(this.style.left,10);
-           g_MY=event.pageY-parseInt(this.style.top,10);
-           event.preventDefault();});
-    $e(d, "mousemove", function(event){
-           if(g_MD != "ABfacContainer") return true;
+    $e(ABfacContainer, "mousedown", function(event) {
+           if (event.target != $("ABfacContainer")) return false;
+           g_MD = "ABfacContainer";
+           g_MX = event.pageX-parseInt(this.style.left,10);
+           g_MY = event.pageY-parseInt(this.style.top,10);
+           event.preventDefault();
+       });
+    $e(d, "mousemove", function(event) {
+           if (g_MD != "ABfacContainer") return true;
            var ABfacContainer = $("ABfacContainer");
-           if( !ABfacContainer ) return true;
+           if (!ABfacContainer) return true;
            var popupLeft = event.pageX - g_MX;
            var popupTop  = event.pageY - g_MY;
            ABfacContainer.style.left = popupLeft + "px";
@@ -2395,7 +2392,9 @@ function addInifacHtml(vId) {
            GM_setValue(location.hostname + PGNAME + "_popup_left2", popupLeft);
            GM_setValue(location.hostname + PGNAME + "_popup_top2", popupTop);
        });
-    $e(d, "mouseup", function(event){g_MD="";});
+    $e(d, "mouseup", function(event) {
+           g_MD = "";
+       });
 
     // ===== 作業拠点名 =====
     var BaseName  = d.createElement("span");
@@ -2404,10 +2403,10 @@ function addInifacHtml(vId) {
     BaseName.style.font = "bold 120% 'ＭＳ ゴシック'";
     BaseName.style.color = "#71C4F9";
 
-    var villages = loadVillages(HOST+PGNAME);
+    var villages = loadVillages(HOST + PGNAME);
     for (var i = 0; i < villages.length; i++) {
         //表示中の設定対象拠点名の表示
-        if(vId == villages[i][IDX_XY]){
+        if (vId == villages[i][IDX_XY]) {
             BaseName.innerHTML = villages[i][IDX_BASE_NAME];
         }
     }
@@ -2427,7 +2426,7 @@ function addInifacHtml(vId) {
     var td11 = d.createElement("td");
     td11.style.padding = "1px";
     td11.colSpan = "3";
-    td11.appendChild( createRadioBtn ( 'AC', '自動建築' ) );
+    td11.appendChild(createRadioBtn ('AC', '自動建築'));
 
     var tr111 = d.createElement("tr");
     tr111.style.backgroundColor = COLOR_BACK;
@@ -2463,8 +2462,6 @@ function addInifacHtml(vId) {
     Build_Box.appendChild(tr30);
     tr30.appendChild(td31);
 
-    //  ABfacContainer.appendChild(Build_Box);
-
     ccreateCheckBoxKai2(td111, "OPT_CHKBOX",  0, " 拠点 　　　","中央の城・村・砦のLvを上げます。",0);
     ccreateCheckBoxKai2(td111, "OPT_CHKBOX",  6, " 銅雀台 　　","自動でLv上げをする建築物にチェックをしてください。",0);
     ccreateText(td111, "Dummy" , "　", 0);
@@ -2497,11 +2494,21 @@ function addInifacHtml(vId) {
     ccreateCheckBoxKai2(td113, "OPT_CHKBOX", 19, " 研究所 　　","自動でLv上げをする建築物にチェックをしてください。",0);
     ccreateCheckBoxKai2(td113, "OPT_CHKBOX", 22, " 見張り台 　","自動でLv上げをする建築物にチェックをしてください。",0);
 
-    ccreateButton(td31, "遠征訓練所"  , "本拠地に遠征訓練所を建てる設定にします。",       function() {InitMilitaryHome()},85);
-    ccreateButton(td31, "糧村"  , "糧村の設定にします。",    function() {InitRiceParadise()});
-    ccreateButton(td31, "資源村"  , "資源村の設定にします。", function() {InitResVillage()});
-    ccreateButton(td31, "軍事拠点"  , "軍事拠点の設定にします。", function() {InitMilitarySite()});
-    ccreateButton(td31, "初期化", "自動建設設定を消去します。", function() {clearInifacBox()});
+    ccreateButton(td31, "遠征訓練所", "本拠地に遠征訓練所を建てる設定にします。", function() {
+                      InitMilitaryHome();
+                  },85);
+    ccreateButton(td31, "糧村", "糧村の設定にします。", function() {
+                      InitRiceParadise();
+                  });
+    ccreateButton(td31, "資源村", "資源村の設定にします。", function() {
+                      InitResVillage();
+                  });
+    ccreateButton(td31, "軍事拠点", "軍事拠点の設定にします。", function() {
+                      InitMilitarySite();
+                  });
+    ccreateButton(td31, "初期化", "自動建設設定を消去します。", function() {
+                      clearInifacBox();
+                  });
 
     // ===== 内政設定 =====
     var Domestic_Box = d.createElement("table");
@@ -2512,9 +2519,8 @@ function addInifacHtml(vId) {
     var tr1 = d.createElement("tr");
     var td1 = d.createElement("td");
     td1.colSpan = 5;
-    //      td1.style.padding = "2px";
     td1.style.backgroundColor = COLOR_TITLE;
-    ccreateText(td1, "dummy", "■ 自動内政設定", 0 );
+    ccreateText(td1, "dummy", "■ 自動内政設定", 0);
 
     var tr2 = d.createElement("tr");
     tr2.style.backgroundColor = COLOR_BACK;
@@ -2548,8 +2554,6 @@ function addInifacHtml(vId) {
     tr2.appendChild(td23);
     tr2.appendChild(td24);
     tr2.appendChild(td25);
-
-    //  ABfacContainer.appendChild(Domestic_Box);
 
     ccreateCheckBox(td21, "OPT_DOME1" , OPT_DOME[1] , " " + DASkill[1]  + "　", "この都市に来たら、自動的に内政スキル（" + DASkill[1]  + "）を発動します。", 0);
     ccreateCheckBox(td22, "OPT_DOME2" , OPT_DOME[2] , " " + DASkill[2]  + "　", "この都市に来たら、自動的に内政スキル（" + DASkill[2]  + "）を発動します。", 0);
@@ -2631,8 +2635,6 @@ function addInifacHtml(vId) {
     tr311.appendChild(td311);
     tr311.appendChild(td312);
 
-    //  ABfacContainer.appendChild(Market_Box);
-
     ccreateTextBox(td311, "OPT_RISE_MAX",       OPT_RISE_MAX,                                       "糧の自動変換開始量　",   "自動で糧を他の資源に変換し始める量指定します。", 10, 5);
     ccreateTextBox(td311, "OPT_TO_WOOD",        OPT_TO_WOOD,                                        "木に変換する糧の量　",   "自動で木に変換する糧の量を指定します。", 10, 5);
     ccreateTextBox(td311, "OPT_TO_STONE",       OPT_TO_STONE,                                       "石に変換する糧の量　",   "自動で石に変換する糧の量を指定します。", 10, 5);
@@ -2655,7 +2657,6 @@ function addInifacHtml(vId) {
     tr400.style.backgroundColor =COLOR_TITLE;
 
     var td401 = d.createElement("td");
-    //      td401.style.padding = "2px";
     ccreateCheckBox(td401, "OPT_KIFU", OPT_KIFU, " 自動寄付", "この都市に来たら、自動的に寄付します。", 0);
 
     var tr411 = d.createElement("tr");
@@ -2686,7 +2687,7 @@ function addInifacHtml(vId) {
 
     var td510 = d.createElement("td");
     td510.style.padding = "1px";
-    td510.appendChild( createRadioBtn ( 'BS', '宿舎ビルスク' ) );
+    td510.appendChild(createRadioBtn ('BS', '宿舎ビルスク'));
 
     var tr511 = d.createElement("tr");
     tr511.style.border = "solid 1px black";
@@ -2696,8 +2697,8 @@ function addInifacHtml(vId) {
     td511.style.padding = "3px";
     td511.style.verticalAlign = "top";
 
-    td511.appendChild( createRadioBtn2 ( 'DD', ' 宿舎対象　' ) );
-    td511.appendChild( createRadioBtn2 ( 'HH', ' 畑対象　　' ) );
+    td511.appendChild(createRadioBtn2 ('DD', ' 宿舎対象　'));
+    td511.appendChild(createRadioBtn2 ('HH', ' 畑対象　　'));
     ccreateTextBox(td511, "OPT_MAX", OPT_MAX,     "対象施設数　", "自動で建築/破棄する施設の数。", 5, 3);
     ccreateTextBox(td511, "OPT_MAXLV", OPT_MAXLV, "対象施設LV　",  "自動で建築/破棄する施設の最大LV。", 5, 3);
 
@@ -2718,7 +2719,6 @@ function addInifacHtml(vId) {
     tr600.style.backgroundColor =COLOR_TITLE;
 
     var td600 = d.createElement("td");
-    //      td600.style.padding = "2px";
     ccreateCheckBox(td600,"OPT_KATEMURA", OPT_KATEMURA, " 糧村化", "この都市を糧村にする。平地に畑・倉庫・銅雀台を建てる。",0);
 
     var tr611 = d.createElement("td");
@@ -2733,10 +2733,10 @@ function addInifacHtml(vId) {
     var tr_shigen = d.createElement("tr");
     tr_shigen.style.border = 'solid 1px black';
     tr_shigen.style.backgroundColor = COLOR_TITLE;
-    
+
     var td_shigen = d.createElement("td");
     ccreateCheckBox(td_shigen, "OPT_SHIGEN", OPT_SHIGEN, "資源村化", "", 0);
-    
+
 
     Field_Box.appendChild(tr600);
     tr600.appendChild(td600);
@@ -2765,7 +2765,7 @@ function addInifacHtml(vId) {
     tra10.style.backgroundColor =COLOR_TITLE;
 
     var tda10 = d.createElement("td");
-    ccreateText(tda10, "dummy", "■ 自動造兵・武器防具強化時に残す資源量 ■", 0 );
+    ccreateText(tda10, "dummy", "■ 自動造兵・武器防具強化時に残す資源量 ■", 0);
 
     var tra1 = d.createElement("tr");
     tra1.style.border = "solid 1px black";
@@ -2812,19 +2812,20 @@ function addInifacHtml(vId) {
     tra11.appendChild(tda16);
 
 
-    ccreateText(tda11, "dummy", "　", 0 );
-    ccreateText(tda11, "dummy", "残す資源量", 0 );
+    ccreateText(tda11, "dummy", "　", 0);
+    ccreateText(tda11, "dummy", "残す資源量", 0);
 
-    ccreateText(tda12, "dummy", "木", 0 );
+    ccreateText(tda12, "dummy", "木", 0);
     ccreateTextBox(tda12,"OPT_BLD_WOOD", OPT_BLD_WOOD,"","木を残す量",7,0);
-    ccreateText(tda13, "dummy", "石", 0 );
+    ccreateText(tda13, "dummy", "石", 0);
     ccreateTextBox(tda13,"OPT_BLD_STONE", OPT_BLD_STONE,"","石を残す量",7,0);
-    ccreateText(tda14, "dummy", "鉄", 0 );
+    ccreateText(tda14, "dummy", "鉄", 0);
     ccreateTextBox(tda14,"OPT_BLD_IRON", OPT_BLD_IRON,"","鉄を残す量",7,0);
-    ccreateText(tda15, "dummy", "糧", 0 );
+    ccreateText(tda15, "dummy", "糧", 0);
     ccreateTextBox(tda15,"OPT_BLD_RICE", OPT_BLD_RICE,"","糧を残す量",7,0);
-    //  ccreateText(tda16, "dummy", "　", 0 );
-    ccreateButton(tda16, "初期化", "残す資源量の設定内容を消去します。", function() {clearInitRemainingRes()},54,10);
+    ccreateButton(tda16, "初期化", "残す資源量の設定内容を消去します。", function() {
+                      clearInitRemainingRes();
+                  }, 54, 10);
 
     // ===== 確認 ====
 
@@ -2846,7 +2847,7 @@ function addInifacHtml(vId) {
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
                       closeInifacBox();
                       clearInterval(tidMain2);
-                      tidMain2 = $w(function(){
+                      tidMain2 = $w(function() {
                                         location.reload();
                                     });
                   });
@@ -2854,11 +2855,10 @@ function addInifacHtml(vId) {
 
     if (vId == villages[0][IDX_XY]) {
         ccreateButton(td711, "市場情報初期化", "市場情報を初期化します", function() {
-
                           csaveData(HOST+"ShopList",[],true,true);
                           reopen();
                           alert("市場情報を初期化しました");
-                      },90);
+                      }, 90);
     }
 
     // == コンテナ設定 ==
@@ -2866,13 +2866,12 @@ function addInifacHtml(vId) {
     var tbl000 = d.createElement("table");  // 全体
     tbl000.style.border = "solid 0px lime";
 
-    var tr000 = d.createElement("tr");                                          
+    var tr000 = d.createElement("tr");
     var td001 = d.createElement("td");  // 左枠
     td001.style.verticalAlign = "top";
     td001.style.width = "Auto";
     td001.appendChild(Build_Box);
-    td001.appendChild(Domestic_Box)
-
+    td001.appendChild(Domestic_Box);
 
     var td002 = d.createElement("td");  // 右枠
     td002.style.verticalAlign = "top";
@@ -2884,11 +2883,11 @@ function addInifacHtml(vId) {
 
     td002.appendChild(Contribution_Box);
     td002.appendChild(Storage_Box);
-    td002.appendChild(Market_Box)
+    td002.appendChild(Market_Box);
 
     // 本拠地かどうか
     if (vId != villages[0][IDX_XY]) {
-        Market_Box.style.visibility = "hidden"
+        Market_Box.style.visibility = "hidden";
     }
 
     // 中段
@@ -2923,54 +2922,56 @@ function addInifacHtml(vId) {
 }
 
 // ラジオボタン生成 @@@@ add 2011.09.06
-function createRadioBtn ( value, txt ) {
+function createRadioBtn (value, txt) {
     var radioLabel = document.createElement('label');
     radioLabel.style.display = 'inline-block';
     radioLabel.style.margin = '0 5px 0 0';
     radioLabel.style.padding = '0px';
-    //  dv.style.padding = "2px";
-    //    radioLabel.addEventListener ( 'click', function(){GM_setValue( 'tweetOpt', value );}, true );
-    radioLabel.addEventListener ( 'click', function(){ OPT_BLD = value;}, true );
+    radioLabel.addEventListener('click', function() {
+                                    OPT_BLD = value;
+                                }, true);
     var radioLabelText = document.createTextNode(" " + txt);
     var radioButton = document.createElement('input');
     radioButton.type = 'radio';
     radioButton.name = 'tweetOpt';
     radioButton.value = value;
     radioButton.style.verticalAlign = "top";
-    //    radioButton.style.margin = '0 2px 0 0';
-    if ( OPT_BLD == value ) radioButton.checked = true;
-    radioLabel.appendChild( radioButton );
-    radioLabel.appendChild( radioLabelText );
+
+    if (OPT_BLD == value) radioButton.checked = true;
+    radioLabel.appendChild(radioButton);
+    radioLabel.appendChild(radioLabelText);
     return radioLabel;
 }
 
-function createRadioBtn2 ( value, txt ) {
+function createRadioBtn2 (value, txt) {
     var radioLabel = document.createElement('label');
     radioLabel.style.display = 'inline-block';
     radioLabel.style.margin = '0 5px 0 0';
     radioLabel.style.padding = '0px';
-    radioLabel.addEventListener ( 'click', function(){ OPT_SorH = value; }, true );
+    radioLabel.addEventListener('click', function() {
+                                    OPT_SorH = value;
+                                }, true);
     var radioLabelText = document.createTextNode(txt);
     var radioButton = document.createElement('input');
     radioButton.type = 'radio';
     radioButton.name = 'SorH';
     radioButton.value = value;
-    //    radioButton.style.margin = '0 2px 0 0';
+
     radioButton.style.verticalAlign = "top";
-    if ( OPT_SorH == value ) radioButton.checked = true;
-    radioLabel.appendChild( radioButton );
-    radioLabel.appendChild( radioLabelText );
+    if (OPT_SorH == value) radioButton.checked = true;
+    radioLabel.appendChild(radioButton);
+    radioLabel.appendChild(radioLabelText);
     return radioLabel;
 }
 
 //拠点単位の設定の保存（XY MAX_LV CheckData)
-function SaveInifacBox(vId){
+function SaveInifacBox(vId) {
 
     // 本拠地
     var i;
     var opt = $("OPT_MAX_LV");
     strSave = cgetTextBoxValue(opt) + DELIMIT1;
-    for(i=0; i<=22;i++){
+    for (i = 0; i <= 22; i++) {
         var opt = $("OPT_CHKBOX"+i);
         strSave += cgetCheckBoxValue(opt) + DELIMIT2;
     }
@@ -2988,9 +2989,7 @@ function SaveInifacBox(vId){
     strSave += cgetCheckBoxValue($("OPT_KIFU")) + DELIMIT2; //寄付するかどうかのフラグ
     strSave += cgetTextBoxValue($("OPT_RISE_KIFU_MAX")) + DELIMIT2;
     strSave += cgetTextBoxValue($("OPT_RISE_KIFU")) + DELIMIT2; //自動内政用に修正
-    
-    //自動内政用 by nottisan ここから追加
-    // ＠＠　追加　＠＠
+
     strSave += cgetComboBoxValue($("OPT_ICHIBA_PA")) + DELIMIT2; //市場での変換パターンフラグ
     try {
         strSave += cgetCheckBoxValue($("OPT_DOME1")) + DELIMIT2; //内政使用するかのフラグ
@@ -3037,7 +3036,7 @@ function SaveInifacBox(vId){
         strSave += 0 + DELIMIT2; //内政使用するかのフラグ
     }
     // 施設ごとの建設レベル保存用
-    for(i=0; i<=22;i++) {
+    for (i = 0; i <= 22; i++) {
         var opt = $("OPT_CHKBOXLV" + i);
         strSave += cgetTextBoxValue(opt) + DELIMIT2;
     }
@@ -3056,22 +3055,22 @@ function SaveInifacBox(vId){
         strSave += 15 + DELIMIT2;   // 対象上限LV
     }
     // 兵作成情報の保存
-    for (i=0;i<14;i++){
+    for (i = 0; i < 14; i++) {
         var opt = $("OPT_SOL_MAX" + i);
         strSave += cgetTextBoxValue(opt) + DELIMIT2;
     }
-    for (i=0;i<14;i++){
+    for (i = 0; i < 14; i++) {
         var opt = $("OPT_SOL_ADD" + i);
         strSave += cgetTextBoxValue(opt) + DELIMIT2;
     }
     strSave += cgetCheckBoxValue($("OPT_BLD_SOL")) + DELIMIT2;; //自動造兵するかのフラグ
 
-    strSave += cgetTextBoxValue($("OPT_BLD_WOOD"))  + DELIMIT2; 
-    strSave += cgetTextBoxValue($("OPT_BLD_STONE")) + DELIMIT2; 
-    strSave += cgetTextBoxValue($("OPT_BLD_IRON"))  + DELIMIT2; 
-    strSave += cgetTextBoxValue($("OPT_BLD_RICE"))  + DELIMIT2; 
+    strSave += cgetTextBoxValue($("OPT_BLD_WOOD"))  + DELIMIT2;
+    strSave += cgetTextBoxValue($("OPT_BLD_STONE")) + DELIMIT2;
+    strSave += cgetTextBoxValue($("OPT_BLD_IRON"))  + DELIMIT2;
+    strSave += cgetTextBoxValue($("OPT_BLD_RICE"))  + DELIMIT2;
 
-    for (i=0;i<14;i++){
+    for (i = 0; i < 14; i++) {
         if ((i == 10) || (i == 11)) {
             strSave += "0" + DELIMIT2;
         } else {
@@ -3083,7 +3082,7 @@ function SaveInifacBox(vId){
             }
         }
     }
-    for (i=0;i<14;i++){
+    for (i = 0; i < 14; i++) {
         var opt = $("OPT_BG_LV" + i);
         if (cgetTextBoxValue(opt) > 10) {
             strSave += "10" + DELIMIT2;
@@ -3091,12 +3090,13 @@ function SaveInifacBox(vId){
             strSave += cgetTextBoxValue(opt) + DELIMIT2;
         }
     }
-    strSave += cgetCheckBoxValue($("OPT_BKBG_CHK")) + DELIMIT2;; //自動武器・防具強化するかのフラグ
+    strSave += cgetCheckBoxValue($("OPT_BKBG_CHK")) + DELIMIT2; //自動武器・防具強化するかのフラグ
     strSave += cgetCheckBoxValue($("OPT_SHIGEN")) + DELIMIT2;
-    GM_setValue(HOST+PGNAME+vId, strSave);
+    GM_setValue(HOST + PGNAME + vId, strSave);
 }
+
 //拠点単位の設定の読み込み
-function Load_OPT(vId){
+function Load_OPT(vId) {
 
     debugLog("=== Start Load_OPT ===");
     var src = GM_getValue(HOST+PGNAME+vId, "");
@@ -3110,9 +3110,13 @@ function Load_OPT(vId){
         OPT_KIFU = 0;
         OPT_RISE_KIFU_MAX = 0;
         OPT_RISE_KIFU = 0;
-        for(i=1; i<=40; i++){ OPT_DOME[i]     = 0;}
-        for(i=0; i<=22; i++){ OPT_CHKBOX[i]   = 0;}
-        for(i=0; i<=22; i++){ OPT_CHKBOXLV[i] = "0";}
+        for (i = 1; i <= 40; i++) {
+            OPT_DOME[i] = 0;
+        }
+        for (i = 0; i <= 22; i++) {
+            OPT_CHKBOX[i] = 0;
+            OPT_CHKBOXLV[i] = "0";
+        }
 
         //市場変換処理用 （本拠地情報にデータがある）
         var villages = loadVillages(HOST+PGNAME);
@@ -3150,8 +3154,14 @@ function Load_OPT(vId){
         OPT_MAXLV = 6;
 
         // 兵作成情報
-        for (i=0;i<14;i++){ OPT_SOL_MAX[i] = 0; OPT_SOL_MAX[i]  = 0; };
-        for (i=0;i<14;i++){ OPT_SOL_ADD[i] = 0;     OPT_SOL_ADD[i]  = 0; };
+        for (i = 0; i < 14; i++) {
+            OPT_SOL_MAX[i] = 0;
+            OPT_SOL_MAX[i] = 0;
+        }
+        for (i = 0; i < 14; i++) {
+            OPT_SOL_ADD[i] = 0;
+            OPT_SOL_ADD[i] = 0;
+        }
         OPT_BLD_SOL   = 0;
         OPT_BLD_WOOD  = 0;
         OPT_BLD_STONE = 0;
@@ -3163,11 +3173,15 @@ function Load_OPT(vId){
         OPT_BLD_IRON  = 0;
         OPT_BLD_RICE  = 0;
 
-        for (i=0;i<14;i++){ OPT_BK_LV[i] = 0; OPT_BK_LV[i]  = 0; };
-        for (i=0;i<14;i++){ OPT_BG_LV[i] = 0; OPT_BG_LV[i]  = 0; };
+        for (i = 0; i < 14; i++) {
+            OPT_BK_LV[i] = 0;
+            OPT_BK_LV[i]  = 0;
+        }
+        for (i = 0; i < 14; i++) {
+            OPT_BG_LV[i] = 0;
+            OPT_BG_LV[i]  = 0;
+        }
         OPT_BKBG_CHK  = 0;
-
-        //      SaveInifacBox(vId); // 拠点情報の保存
 
         return;
     } else {
@@ -3176,29 +3190,26 @@ function Load_OPT(vId){
         OPT_MAX_LV = Temp[0];
         var Temp2 = Temp[1].split(DELIMIT2);
         var i;
-        for(i=0; i<=22;i++){
-            if(Temp2[i] == ""){return;}
+        for (i = 0; i <= 22; i++) {
+            if (Temp2[i] == "") {return;}
             OPT_CHKBOX[i] = forInt(Temp2[i]);
         }
         //糧村化
-        if(Temp2[28] == ""){return;}
+        if (Temp2[28] == "") {return;}
         OPT_KATEMURA = forInt(Temp2[28]);
         OPT_SHIGEN = forInt(Temp2[166]);
         OPT_SOUKO_MAX = forInt(Temp2[29]);
 
         //自動寄付
-        if(Temp2[30] == ""){return;}
+        if (Temp2[30] == "") {return;}
         OPT_KIFU = forInt(Temp2[30]);
         OPT_RISE_KIFU_MAX = forInt(Temp2[31]);
         OPT_RISE_KIFU = forInt(Temp2[32]);
 
-        //自動内政 by nottisan ここから追加
-        // ＠＠　追加　＠＠
-        for (i=1;i<=40;i++){
+        for (i = 1; i <= 40; i++) {
             OPT_DOME[i]  = forInt(Temp2[33 + i]);
         }
-        // @@ 2011.06.22
-        for (i=0; i <= 22; i++){
+        for (i = 0; i <= 22; i++) {
             OPT_CHKBOXLV[i] = forInt(Temp2[74 + i]);
         }
 
@@ -3243,11 +3254,11 @@ function Load_OPT(vId){
         if (OPT_MAXLV == undefined || OPT_MAXLV > 15) { OPT_MAXLV = 6; }
 
         // 兵作成情報
-        for (i=0;i<14;i++){ 
+        for (i = 0; i < 14; i++) {
             OPT_SOL_MAX[i] = forInt(Temp2[104 + i]);
             if (isNaN(OPT_SOL_MAX[i])) { OPT_SOL_MAX[i]  = 0; };
         }
-        for (i=0;i<14;i++){
+        for (i = 0; i < 14; i++) {
             OPT_SOL_ADD[i] = forInt(Temp2[118 + i]);
             if (isNaN(OPT_SOL_ADD[i])) { OPT_SOL_ADD[i]  = 0; };
         }
@@ -3263,12 +3274,12 @@ function Load_OPT(vId){
         if (isNaN(OPT_BLD_IRON))  { OPT_BLD_IRON  = 0; };
         if (isNaN(OPT_BLD_RICE))  { OPT_BLD_RICE  = 0; };
 
-        for (i=0;i<14;i++){
+        for (i = 0; i < 14; i++) {
             OPT_BK_LV[i] = forInt(Temp2[137 + i]);
             if (isNaN(OPT_BK_LV[i])) { OPT_BK_LV[i]  = 0; };
         }
 
-        for (i=0;i<14;i++){
+        for (i = 0; i < 14; i++) {
             OPT_BG_LV[i] = forInt(Temp2[151 + i]);
             if (isNaN(OPT_BG_LV[i])) { OPT_BG_LV[i]  = 0; };
 
@@ -3285,35 +3296,34 @@ function getUserProf(htmldoc) {
         '//*[@id="gray02Wrapper"]//table/tbody/tr',
         htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     var isLandList = false;
-    for (var i=0; i<landElems.snapshotLength; i++) {
+    for (var i = 0; i < landElems.snapshotLength; i++) {
         var item = landElems.snapshotItem(i);
-        
+
         if (!isLandList) {
-            // 2012.01.11 新プロフィール画面対応
             var childElement = getChildElement(item, 0);
             if (childElement && trim(childElement.innerHTML) === "名前") {
-                //          if (trim(getChildElement(item, 0).innerHTML) == "名前") {
                 isLandList = true;
             }
             continue;
         }
-        
+
         //名前項目を取得
         var nameElem = getChildElement(getChildElement(item, 0), 0);
         var name = trim(nameElem.innerHTML);
         var url = nameElem.href;
-        
+
         //座標項目を取得
-        //var xy = "(" + getChildElement(item, 1).innerHTML + ")";
         var xy = "(" + getChildElement(item, 1).innerHTML.match(/-?[0-9]+\,-?[0-9]+/i) + ")";
-        
+
 
         //人口項目を取得
         var popul = getChildElement(item, 2).innerHTML;
-        
+
         //拠点じゃなければ終了
-        if (!isNumeric(popul)) break;
-        
+        if (!isNumeric(popul)) {
+            break;
+        }
+
         //データマージ
         var newVil = new Array();
         newVil[IDX_ACTIONS] = new Array();
@@ -3328,8 +3338,7 @@ function getUserProf(htmldoc) {
         newVil[IDX_BASE_ID]=getParameter2(url, "village_id");
         newVillages.push(newVil);
     }
-    
-    //保存
+
     saveVillages(HOST+PGNAME, newVillages);
 }
 
@@ -3340,30 +3349,30 @@ function newLoadVillages() {
 //拠点情報を読み出し
 function loadVillages(hostname) {
     var ret = new Array();
-    
+
     var src = GM_getValue(hostname, "");
     if (src == "") return ret;
-    
+
     var villages = src.split(DELIMIT1);
     for (var i = 0; i < villages.length; i++) {
         var fields = villages[i].split(DELIMIT2);
-        
+
         ret[i] = new Array();
         ret[i][IDX_XY] = fields[IDX_XY];
         ret[i][IDX_BASE_NAME] = fields[IDX_BASE_NAME];
         ret[i][IDX_URL] = fields[IDX_URL];
         ret[i][IDX_BASE_ID] = fields[IDX_BASE_ID];
-        
+
         ret[i][IDX_ACTIONS] = new Array();
         if (fields[IDX_ACTIONS] == "") continue;
         var actions = fields[IDX_ACTIONS].split(DELIMIT3);
         for (var j = 0; j < actions.length; j++) {
             ret[i][IDX_ACTIONS][j] = new Array();
             if (actions[j] == "") continue;
-            
+
             var item = actions[j].split(DELIMIT4);
             if (item[IDX2_TYPE] == undefined) item[IDX2_TYPE] = "C";
-            
+
             ret[i][IDX_ACTIONS][j][IDX2_STATUS] = item[IDX2_STATUS];
             ret[i][IDX_ACTIONS][j][IDX2_TIME] = item[IDX2_TIME];
             ret[i][IDX_ACTIONS][j][IDX2_TYPE] = item[IDX2_TYPE];
@@ -3383,7 +3392,7 @@ function saveVillages(hostname, newData) {
         var villageData = newData[i];
         var actions = villageData[IDX_ACTIONS];
         var actions_array = [];
-        for(var j = 0; j < actions.length; j ++) {
+        for (var j = 0; j < actions.length; j ++) {
             var action = actions[j];
             var status = action[IDX2_STATUS];
             var level = null;
@@ -3392,10 +3401,10 @@ function saveVillages(hostname, newData) {
             var act = matched[1];
             var name = matched[2];
             matched = status.match(/<strong>(\d+)/);
-            if(matched) {
+            if (matched) {
                 level = parseInt(matched[1]);
             }
-            
+
             var type = null;
             switch(action[IDX2_TYPE]) {
             case "C":
@@ -3407,7 +3416,7 @@ function saveVillages(hostname, newData) {
             default:
                 type = 'unknown';
             }
-            
+
             var action_hash = {
                 action: act,
                 target: name,
@@ -3440,7 +3449,7 @@ function saveVillages(hostname, newData) {
         hash_array.push(hash);
         newDataStr[i] = genDelimitString(villageData, DELIMIT2);
     }
-    if(newDataStr.length==0){
+    if (newDataStr.length == 0) {
         return ;
     }
     //Greasemondey領域へ永続保存
@@ -3452,7 +3461,7 @@ function saveVillages(hostname, newData) {
 //デリミタ区切り文字列生成
 function genDelimitString(dataArray, delimiter) {
     var ret = "";
-    for (var i=0; i < dataArray.length; i++) {
+    for (var i = 0; i < dataArray.length; i++) {
         if (dataArray[i] != undefined) ret += dataArray[i];
         if (i < dataArray.length-1) ret += delimiter;
     }
@@ -3465,7 +3474,7 @@ function getParameter(key) {
     if (str.length < 2) {
         return "";
     }
-    
+
     var params = str[1].split("&");
     for (var i = 0; i < params.length; i++) {
         var keyVal = params[i].split("=");
@@ -3476,7 +3485,6 @@ function getParameter(key) {
     return "";
 }
 
-//先頭ゼロ付加
 function padZero(num) {
     var result;
     if (num < 10) {
@@ -3486,16 +3494,19 @@ function padZero(num) {
     }
     return result;
 }
-//先頭ゼロ除去
+
 function trimZero(str) {
     var res = str.replace(/^0*/, "");
-    if (res == "") res = "0";
+    if (res == "") {
+        res = "0";
+    }
     return res;
 }
 
-//空白除去
 function trim(str) {
-    if (str == undefined) return "";
+    if (str == undefined) {
+        return "";
+    }
     return str.replace(/^[ 　\t\r\n]+|[ 　\t\r\n]+$/g, "");
 }
 
@@ -3510,7 +3521,7 @@ function isNumeric(num) {
 //子Element取得
 function getChildElement(parentNode, position) {
     var current = 0;
-    for (var i = 0; i < parentNode.childNodes.length; i++){
+    for (var i = 0; i < parentNode.childNodes.length; i++) {
         var childNode = parentNode.childNodes[i];
         if (childNode.nodeType == 1) {
             if (current == position) {
@@ -3519,7 +3530,7 @@ function getChildElement(parentNode, position) {
             current++;
         }
     }
-    
+
     return undefined;
 }
 
@@ -3534,28 +3545,28 @@ function computeTime(clock) {
     var sec = parseInt(trimZero(
                            clock.replace(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$3")));
     if (isNaN(sec)) sec = 0;
-    
+
     var now = new Date();
     var resTime = new Date();
     resTime.setHours(now.getHours() + hour);
     resTime.setMinutes(now.getMinutes() + min);
     resTime.setSeconds(now.getSeconds() + sec);
-    
+
     return resTime;
 }
 
 //日時文字列編集（yyyy/mm/dd hh:mm:ss）
 function generateDateString(date) {
-    var res = "" + date.getFullYear() + "/" + padZero(date.getMonth() + 1) + 
-        "/" + padZero(date.getDate()) + " " + padZero(date.getHours()) + ":" + 
+    var res = "" + date.getFullYear() + "/" + padZero(date.getMonth() + 1) +
+        "/" + padZero(date.getDate()) + " " + padZero(date.getHours()) + ":" +
         padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
     return res;
 }
 
 //日時文字列編集2（mm/dd hh:mm:ss）
 function generateDateString2(date) {
-    var res = "" + padZero(date.getMonth() + 1) + "/" + padZero(date.getDate()) + 
-        " " + padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + 
+    var res = "" + padZero(date.getMonth() + 1) + "/" + padZero(date.getDate()) +
+        " " + padZero(date.getHours()) + ":" + padZero(date.getMinutes()) +
         ":" + padZero(date.getSeconds());;
     return res;
 }
@@ -3563,46 +3574,43 @@ function generateDateString2(date) {
 //残時間文字列編集
 function generateWaitTimeString(time1, time2) {
     var result = "";
-    
+
     var waitTimeSec = Math.ceil((time1.getTime() - time2.getTime()) / 1000);
-    if ( waitTimeSec < 0 ) { waitTimeSec = 0; }
+    if (waitTimeSec < 0) { waitTimeSec = 0; }
     result += Math.floor(waitTimeSec / (60*60));
     result += ":";
     result += padZero(Math.floor((waitTimeSec % (60*60)) / 60));
     result += ":";
     result += padZero(waitTimeSec % 60);
-    
+
     return result;
 }
 
-function ccreateTextBox(container, id, def, text, title, size, left )
+function ccreateTextBox(container, id, def, text, title, size, left)
 {
     left += 2;
     var dv = d.createElement("div");
     dv.style.padding = "2px";
     dv.style.paddingLeft= left + "px";
-    //  dv.style.paddingTop    = "7px";
-    //  dv.style.paddingBottom = "2px";
     dv.title = title;
     var tb = d.createElement("input");
     tb.type = "text";
     tb.id = id;
     tb.value = def;
     tb.size = size;
-    //  tb.style.verticalAlign = "middle";
     tb.style.textAlign = "right";
     tb.style.paddingRight = "3px";
 
     var tx = d.createTextNode(text);
     tx.title = title;
-    
+
     dv.appendChild(tx);
     dv.appendChild(tb);
     container.appendChild(dv);
     return tb;
 }
-// ＠＠　ここから　＠＠
-function ccreateText(container, id, text, left )
+
+function ccreateText(container, id, text, left)
 {
     left += 2;
     var dv = d.createElement("div");
@@ -3615,12 +3623,11 @@ function ccreateText(container, id, text, left )
     lb.style.verticalAlign = "middle";
     var tx = d.createTextNode(text);
     tx.fontsize = "9px";
-    lb.appendChild( tx );
+    lb.appendChild(tx);
 
     dv.appendChild(lb);
     container.appendChild(dv);
 }
-// ＠＠　ここまで　＠＠
 
 function jcreateCheckBox(container, id, def, text, title, left) {
     left += 2;
@@ -3631,16 +3638,15 @@ function jcreateCheckBox(container, id, def, text, title, left) {
     if (def) {
         cb.attr("checked", true);
     }
-    
+
     var lb = j$("<label>").attr("html-for", id).css({"vertical-align": "middle"}).text(text);
-    
+
     div.append(cb).append(lb);
     container.append(div);
     return cb;
 }
 
-function ccreateCheckBox(container, id, def, text, title, left )
-{
+function ccreateCheckBox(container, id, def, text, title, left) {
     left += 2;
     var dv = d.createElement("div");
     dv.style.padding = "1px";
@@ -3651,15 +3657,15 @@ function ccreateCheckBox(container, id, def, text, title, left )
     cb.style.verticalAlign = "middle";
     cb.id = id;
     cb.value = 1;
-    if( def ) cb.checked = true;
-    
+    if (def) cb.checked = true;
+
     var lb = d.createElement("label");
     lb.htmlFor = id;
     lb.style.verticalAlign = "middle";
-    
+
     var tx = d.createTextNode(text);
-    lb.appendChild( tx );
-    
+    lb.appendChild(tx);
+
     dv.appendChild(cb);
     dv.appendChild(lb);
     container.appendChild(dv);
@@ -3689,8 +3695,7 @@ function jcreateButton(container, text, title, func, width, top) {
     return btn;
 }
 
-function ccreateButton(container, text, title, func, width, top)
-{
+function ccreateButton(container, text, title, func, width, top) {
     var btn = d.createElement("input");
     btn.style.padding = "0px";
     btn.type = "button";
@@ -3713,22 +3718,20 @@ function ccreateButton(container, text, title, func, width, top)
     return btn;
 }
 
-function cgetCheckBoxValue(id)
-{
+function cgetCheckBoxValue(id) {
     var c = id;
-    if( !c ) return 0;
-    if( !c.checked ) return 0;
+    if (!c) return 0;
+    if (!c.checked) return 0;
     return 1;
 }
 
-function cgetTextBoxValue(id)
-{
+function cgetTextBoxValue(id) {
     var c = id;
-    if( !c ) return "";
+    if (!c) return "";
     return c.value;
 }
-function ccreateComboBox(container, id, sels, def, text, title, left )
-{
+
+function ccreateComboBox(container, id, sels, def, text, title, left) {
     left += 2;
     var dv = d.createElement("div");
     dv.style.padding = "1px";
@@ -3736,13 +3739,13 @@ function ccreateComboBox(container, id, sels, def, text, title, left )
     dv.title = title;
     var sel = d.createElement("select");
     sel.id = id;
-    for(var i=0; i<sels.length; i++){
+    for (var i = 0; i < sels.length; i++) {
         var opt = d.createElement("option");
         opt.value = sels[i];
         opt.appendChild(d.createTextNode(sels[i]));
         sel.appendChild(opt);
     }
-    if( def ) sel.value = def;
+    if (def) sel.value = def;
 
     var tx = d.createTextNode(text);
     tx.title = title;
@@ -3752,9 +3755,9 @@ function ccreateComboBox(container, id, sels, def, text, title, left )
     container.appendChild(dv);
     return sel;
 }
-function cgetComboBoxValue(id){
+function cgetComboBoxValue(id) {
     var c = id;
-    if( !c ) return "";
+    if (!c) return "";
     return c.value;
 }
 
@@ -3763,22 +3766,24 @@ function getSoldier() {
     debugLog("=== Start getSoldier ===");
 
     var tables = document.evaluate('//*[@class="status village-bottom"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    var Temp = tables.snapshotItem(0).innerHTML.substring(tables.snapshotItem(0).innerHTML.lastIndexOf(" ")+1);
+    var Temp = tables.snapshotItem(0).innerHTML.substring(tables.snapshotItem(0).innerHTML.lastIndexOf(" ") + 1);
     aa = Temp.split("/");
     var now_Soldier = aa[0];
     var max_Soldier = aa[1];
 
     // 造兵指示がない場合はスキップ
-    if (OPT_BLD_SOL == 0) { return; }
+    if (OPT_BLD_SOL == 0) {
+        return;
+    }
 
-    var tid = $w(function() { 
+    var tid = $w(function() {
                      count_soldiers(function(total) {
                                         make_all_soldiers(total, high_soldiers);
                                     });
                  });
 }
 
-function sumMaxSoldier(type){
+function sumMaxSoldier(type) {
     var SoldierCost = [
         [   1,   1,   1,   1],
         [  11,   1,  11,  61],  // 301 剣兵
@@ -3804,10 +3809,10 @@ function sumMaxSoldier(type){
     var make_max = temp0[1] - temp0[0]; // 最大作成可能兵数
 
     type = type - 300;
-    var wood = parseInt( $("wood").innerHTML, 10 );
-    var stone = parseInt( $("stone").innerHTML, 10 );
-    var iron = parseInt( $("iron").innerHTML, 10 );
-    var rice = parseInt( $("rice").innerHTML, 10 );
+    var wood = parseInt($("wood").innerHTML, 10);
+    var stone = parseInt($("stone").innerHTML, 10);
+    var iron = parseInt($("iron").innerHTML, 10);
+    var rice = parseInt($("rice").innerHTML, 10);
 
     countWood  = parseInt((wood  - OPT_BLD_WOOD)  / SoldierCost[type][0]);
     countStone = parseInt((stone - OPT_BLD_STONE) / SoldierCost[type][1]);
@@ -3833,9 +3838,9 @@ function OverFlowPrevention() {
     var area = new Array();
     area = get_area();
 
-    for(i=0;i<area.length;i++){
+    for (i = 0; i < area.length; i++) {
         //市場の座標を取得
-        if(area[i].name == "市場") {
+        if (area[i].name == "市場") {
             var Temp = area[i].xy.split(",");
             ichiba_x = Temp[0];
             ichiba_y = Temp[1];
@@ -3843,32 +3848,40 @@ function OverFlowPrevention() {
         }
     }
 
-    if(ichiba_x < 0) { return; }
+    if (ichiba_x < 0) { return; }
 
     // 現在の状態
     var RES_NOW = [];
-    RES_NOW["wood"]     = parseInt( $("wood").innerHTML,     10 );  // 資源：木
-    RES_NOW["stone"]    = parseInt( $("stone").innerHTML,    10 );  // 資源：石
-    RES_NOW["iron"]     = parseInt( $("iron").innerHTML,     10 );  // 資源：鉄
-    RES_NOW["rice"]     = parseInt( $("rice").innerHTML,     10 );  // 資源：糧
-    RES_NOW["storagemax"]   = parseInt( $("rice_max").innerHTML, 10 );  // 倉庫容量
+    RES_NOW["wood"]     = parseInt($("wood").innerHTML,     10);  // 資源：木
+    RES_NOW["stone"]    = parseInt($("stone").innerHTML,    10);  // 資源：石
+    RES_NOW["iron"]     = parseInt($("iron").innerHTML,     10);  // 資源：鉄
+    RES_NOW["rice"]     = parseInt($("rice").innerHTML,     10);  // 資源：糧
+    RES_NOW["storagemax"]   = parseInt($("rice_max").innerHTML, 10);  // 倉庫容量
 
     var OverFlowLimit  = Math.floor(RES_NOW["storagemax"] * 0.95);      // 限界容量（倉庫の95%）
     var ChangeSigenNum = Math.floor(RES_NOW["storagemax"] * 0.05);      // 変換量（倉庫の5%）
 
     // 資源：木石鉄が限界を超えている場合
-    if ( (RES_NOW["wood"] > OverFlowLimit) && (RES_NOW["stone"] > OverFlowLimit) && (RES_NOW["iron"] > OverFlowLimit) ) {
+    if ((RES_NOW["wood"] > OverFlowLimit) && (RES_NOW["stone"] > OverFlowLimit) && (RES_NOW["iron"] > OverFlowLimit)) {
         var max_sigen = 0;
-        if (RES_NOW["wood"]  > max_sigen) { max_sigen = RES_NOW["wood"];  ChangeSigenNum = Math.floor(RES_NOW["wood"]  * 0.01); }
-        if (RES_NOW["stone"] > max_sigen) { max_sigen = RES_NOW["stone"]; ChangeSigenNum = Math.floor(RES_NOW["stone"] * 0.01); }
-        if (RES_NOW["iron"]  > max_sigen) { max_sigen = RES_NOW["iron"];  ChangeSigenNum = Math.floor(RES_NOW["iron"]  * 0.01); }
+        if (RES_NOW["wood"]  > max_sigen) {
+            max_sigen = RES_NOW["wood"];
+            ChangeSigenNum = Math.floor(RES_NOW["wood"]  * 0.01);
+        }
+        if (RES_NOW["stone"] > max_sigen) {
+            max_sigen = RES_NOW["stone"];
+            ChangeSigenNum = Math.floor(RES_NOW["stone"] * 0.01);
+        }
+        if (RES_NOW["iron"]  > max_sigen) {
+            max_sigen = RES_NOW["iron"];
+            ChangeSigenNum = Math.floor(RES_NOW["iron"]  * 0.01);
+        }
 
-
-        if(RES_NOW["wood"] == max_sigen) {
-            changeResorceToResorce(WOOD,  ChangeSigenNum, RICE, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["stone"] == max_sigen) {
-            changeResorceToResorce(STONE, ChangeSigenNum, RICE, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["iron"] == max_sigen) {
+        if (RES_NOW["wood"] == max_sigen) {
+            changeResorceToResorce(WOOD,  ChangeSigenNum, RICE, ichiba_x, ichiba_y);
+        } else if (RES_NOW["stone"] == max_sigen) {
+            changeResorceToResorce(STONE, ChangeSigenNum, RICE, ichiba_x, ichiba_y);
+        } else if (RES_NOW["iron"] == max_sigen) {
             changeResorceToResorce(IRON,  ChangeSigenNum, RICE, ichiba_x, ichiba_y);
         }
 
@@ -3880,10 +3893,10 @@ function OverFlowPrevention() {
         if (RES_NOW["stone"] < min_sigen) { min_sigen = RES_NOW["stone"]; }
         if (RES_NOW["iron"]  < min_sigen) { min_sigen = RES_NOW["iron"]; }
 
-        if(RES_NOW["stone"] == min_sigen) {
-            changeResorceToResorce(WOOD, ChangeSigenNum, STONE, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["iron"] == min_sigen) {
-            changeResorceToResorce(WOOD, ChangeSigenNum, IRON, ichiba_x, ichiba_y); 
+        if (RES_NOW["stone"] == min_sigen) {
+            changeResorceToResorce(WOOD, ChangeSigenNum, STONE, ichiba_x, ichiba_y);
+        } else if (RES_NOW["iron"] == min_sigen) {
+            changeResorceToResorce(WOOD, ChangeSigenNum, IRON, ichiba_x, ichiba_y);
         }
     }
 
@@ -3894,10 +3907,10 @@ function OverFlowPrevention() {
         if (RES_NOW["wood"]  < min_sigen) { min_sigen = RES_NOW["wood"]; }
         if (RES_NOW["iron"]  < min_sigen) { min_sigen = RES_NOW["iron"]; }
 
-        if(RES_NOW["wood"] == min_sigen) {
-            changeResorceToResorce(STONE, ChangeSigenNum, WOOD, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["iron"] == min_sigen) {
-            changeResorceToResorce(STONE, ChangeSigenNum, IRON, ichiba_x, ichiba_y); 
+        if (RES_NOW["wood"] == min_sigen) {
+            changeResorceToResorce(STONE, ChangeSigenNum, WOOD, ichiba_x, ichiba_y);
+        } else if (RES_NOW["iron"] == min_sigen) {
+            changeResorceToResorce(STONE, ChangeSigenNum, IRON, ichiba_x, ichiba_y);
         }
     }
 
@@ -3908,10 +3921,10 @@ function OverFlowPrevention() {
         if (RES_NOW["wood"]  < min_sigen) { min_sigen = RES_NOW["wood"]; }
         if (RES_NOW["stone"] < min_sigen) { min_sigen = RES_NOW["stone"]; }
 
-        if(RES_NOW["wood"] == min_sigen) {
-            changeResorceToResorce(IRON, ChangeSigenNum, WOOD, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["stone"] == min_sigen) {
-            changeResorceToResorce(IRON, ChangeSigenNum, STONE, ichiba_x, ichiba_y); 
+        if (RES_NOW["wood"] == min_sigen) {
+            changeResorceToResorce(IRON, ChangeSigenNum, WOOD, ichiba_x, ichiba_y);
+        } else if (RES_NOW["stone"] == min_sigen) {
+            changeResorceToResorce(IRON, ChangeSigenNum, STONE, ichiba_x, ichiba_y);
         }
     }
 
@@ -3923,11 +3936,11 @@ function OverFlowPrevention() {
         if (RES_NOW["stone"] < min_sigen) { min_sigen = RES_NOW["stone"]; }
         if (RES_NOW["iron"]  < min_sigen) { min_sigen = RES_NOW["iron"]; }
 
-        if(RES_NOW["wood"] == min_sigen) {
-            changeResorceToResorce(RICE, ChangeSigenNum, WOOD, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["stone"] == min_sigen) {
-            changeResorceToResorce(RICE, ChangeSigenNum, STONE, ichiba_x, ichiba_y); 
-        } else if(RES_NOW["iron"] == min_sigen) {
+        if (RES_NOW["wood"] == min_sigen) {
+            changeResorceToResorce(RICE, ChangeSigenNum, WOOD, ichiba_x, ichiba_y);
+        } else if (RES_NOW["stone"] == min_sigen) {
+            changeResorceToResorce(RICE, ChangeSigenNum, STONE, ichiba_x, ichiba_y);
+        } else if (RES_NOW["iron"] == min_sigen) {
             changeResorceToResorce(RICE, ChangeSigenNum, IRON, ichiba_x, ichiba_y);
         }
     }
@@ -3945,9 +3958,9 @@ function ichibaChange(vId) {
 
     var area = new Array();
     area = get_area();
-    for(i=0;i<area.length;i++){
+    for (i = 0; i < area.length; i++) {
         //市場の座標を取得
-        if(area[i].name == "市場") {
+        if (area[i].name == "市場") {
             var Temp = area[i].xy.split(",");
             ichiba_x = Temp[0];
             ichiba_y = Temp[1];
@@ -3955,44 +3968,41 @@ function ichibaChange(vId) {
         }
     }
 
-    if(ichiba_x < 0) {
+    if (ichiba_x < 0) {
         delShopList(vId);
     } else {
-        // 市場がある村ID・座標・レベルを保管
-        addShopList(vId,ichiba_lv,ichiba_x,ichiba_y);
+        addShopList(vId, ichiba_lv, ichiba_x, ichiba_y);
     }
 
-    if(OPT_ICHIBA != 1) {
+    if (OPT_ICHIBA != 1) {
         //alert("市場自動変換未指定");
         return;
     }
 
-
     var RES_NOW = [];
-    RES_NOW["wood"] = parseInt( $("wood").innerHTML, 10 );
-    RES_NOW["stone"] = parseInt( $("stone").innerHTML, 10 );
-    RES_NOW["iron"] = parseInt( $("iron").innerHTML, 10 );
-    RES_NOW["rice"] = parseInt( $("rice").innerHTML, 10 );
-    RES_NOW["storagemax"] = parseInt( $("rice_max").innerHTML, 10 );
+    RES_NOW["wood"] = parseInt($("wood").innerHTML, 10);
+    RES_NOW["stone"] = parseInt($("stone").innerHTML, 10);
+    RES_NOW["iron"] = parseInt($("iron").innerHTML, 10);
+    RES_NOW["rice"] = parseInt($("rice").innerHTML, 10);
+    RES_NOW["storagemax"] = parseInt($("rice_max").innerHTML, 10);
 
     var CHG_NOW = [];
     CHG_NOW["wood"] = 1;
     CHG_NOW["stone"] = 1;
     CHG_NOW["iron"] = 1;
 
-    // @@ 2011.06.22 設定上限が0以下の場合倉庫上限に変更
     if (OPT_MAX_WOOD  < 1) { OPT_MAX_WOOD  = RES_NOW["storagemax"]; }
     if (OPT_MAX_STONE < 1) { OPT_MAX_STONE = RES_NOW["storagemax"]; }
     if (OPT_MAX_IRON  < 1) { OPT_MAX_IRON  = RES_NOW["storagemax"]; }
 
     if (RES_NOW["wood"]  >= OPT_MAX_WOOD) { CHG_NOW["wood"]  = 0; }
-    if (RES_NOW["stone"] >= OPT_MAX_STONE){ CHG_NOW["stone"] = 0; }
+    if (RES_NOW["stone"] >= OPT_MAX_STONE) { CHG_NOW["stone"] = 0; }
     if (RES_NOW["iron"]  >= OPT_MAX_IRON) { CHG_NOW["iron"]  = 0; }
 
     // 全部上限を超えていて
-    if ( ( CHG_NOW["wood"] + CHG_NOW["stone"] + CHG_NOW["iron"] ) == 0 ) {
+    if ((CHG_NOW["wood"] + CHG_NOW["stone"] + CHG_NOW["iron"]) == 0) {
         // 自動寄付も未設定の場合全部変換対象にする
-        if ( OPT_KIFU == 0 ) {
+        if (OPT_KIFU == 0) {
             CHG_NOW["wood"] = 1;
             CHG_NOW["stone"] = 1;
             CHG_NOW["iron"] = 1;
@@ -4000,23 +4010,23 @@ function ichibaChange(vId) {
     }
 
     //糧が指定量より多いかチェック
-    if(RES_NOW["rice"] < OPT_RISE_MAX) {
-        return;
-    }
-    if( OPT_RISE_MAX == 0) {
-        return;
-    }
+    if (RES_NOW["rice"] < OPT_RISE_MAX) return;
+    if (OPT_RISE_MAX == 0) return;
 
-    // 一番市場レベルの高い拠点へジャンプ 2012.04.13
-    var shoplist = cloadData(HOST+"ShopList","[]",true,true);
-    if (shoplist.length == 0) { return; }
-    shoplist.sort( function(a,b) { if (a[1] < b[1]) return 1; if (a[1] > b[1]) return -1; return 0;});
+    // 一番市場レベルの高い拠点へジャンプ 
+    var shoplist = cloadData(HOST + "ShopList", "[]", true, true);
+    if (shoplist.length == 0) return;
+    shoplist.sort(function(a, b) {
+                      if (a[1] < b[1]) return 1;
+                      if (a[1] > b[1]) return -1;
+                      return 0;
+                  });
     if (vId != shoplist[0].vId) {
         // 一番市場のレベルの高い拠点へ移動
         var villages = loadVillages(HOST+PGNAME);
         var nextIndex = -1;
-        for(var i=0; i<villages.length;i++){
-            if(shoplist[0].vId == villages[i][IDX_XY]){
+        for (var i = 0; i < villages.length; i++) {
+            if (shoplist[0].vId == villages[i][IDX_XY]) {
                 nextIndex = i;
                 break;
             }
@@ -4028,43 +4038,38 @@ function ichibaChange(vId) {
         return;
     }
 
-    if(OPT_ICHIBA_PATS[0] == OPT_ICHIBA_PA){
-
-        if (OPT_TO_WOOD+OPT_TO_STONE+OPT_TO_IRON == 0) {
+    if (OPT_ICHIBA_PATS[0] == OPT_ICHIBA_PA) {
+        if (OPT_TO_WOOD + OPT_TO_STONE + OPT_TO_IRON == 0) {
             return;
         }
 
         var min_sigen = 9999999999;
 
-
-        if((OPT_TO_WOOD  > 0) && (RES_NOW["wood"]  < min_sigen && CHG_NOW["wood"] == 1)) { min_sigen = RES_NOW["wood"] };
-        if((OPT_TO_STONE > 0) && (RES_NOW["stone"] < min_sigen && CHG_NOW["stone"] == 1)) { min_sigen = RES_NOW["stone"]; }
-        if((OPT_TO_IRON  > 0) && (RES_NOW["iron"]  < min_sigen && CHG_NOW["iron"] == 1)) { min_sigen = RES_NOW["iron"]; }
+        if ((OPT_TO_WOOD  > 0) && (RES_NOW["wood"]  < min_sigen && CHG_NOW["wood"] == 1)) { min_sigen = RES_NOW["wood"]; }
+        if ((OPT_TO_STONE > 0) && (RES_NOW["stone"] < min_sigen && CHG_NOW["stone"] == 1)) { min_sigen = RES_NOW["stone"]; }
+        if ((OPT_TO_IRON  > 0) && (RES_NOW["iron"]  < min_sigen && CHG_NOW["iron"] == 1)) { min_sigen = RES_NOW["iron"]; }
 
         //糧から他の資源に返還開始
-        if((OPT_TO_WOOD > 0) && ( RES_NOW["wood"] == min_sigen )) {
+        if ((OPT_TO_WOOD > 0) && (RES_NOW["wood"] == min_sigen)) {
             changeResorceToResorce(RICE, OPT_TO_WOOD, WOOD, ichiba_x, ichiba_y);
-        } else if((OPT_TO_STONE > 0) && ( RES_NOW["stone"] == min_sigen )) {
+        } else if ((OPT_TO_STONE > 0) && (RES_NOW["stone"] == min_sigen)) {
             changeResorceToResorce(RICE, OPT_TO_STONE, STONE, ichiba_x, ichiba_y);
-        } else if((OPT_TO_IRON > 0) && ( RES_NOW["iron"] == min_sigen )) {
+        } else if ((OPT_TO_IRON > 0) && (RES_NOW["iron"] == min_sigen)) {
             changeResorceToResorce(RICE, OPT_TO_IRON, IRON, ichiba_x, ichiba_y);
         }
         return;
-    }else{
+    } else {
 
-        if(OPT_RISE_MAX < OPT_TO_WOOD+OPT_TO_STONE+OPT_TO_IRON){
-            //          alert("変換する総合計より糧の値を大きくしてください。");
-        }else{
-            if(CHG_NOW["wood"]          == 1)   {
-                changeResorceToResorce(RICE, OPT_TO_WOOD,       WOOD,       ichiba_x,   ichiba_y);
+        if (OPT_RISE_MAX >= OPT_TO_WOOD + OPT_TO_STONE + OPT_TO_IRON) {
+            if (CHG_NOW["wood"] == 1) {
+                changeResorceToResorce(RICE, OPT_TO_WOOD, WOOD, ichiba_x, ichiba_y);
             }
-            if(CHG_NOW["stone"]         == 1)   {
-                changeResorceToResorce(RICE, OPT_TO_STONE,  STONE,  ichiba_x,   ichiba_y);
+            if (CHG_NOW["stone"] == 1) {
+                changeResorceToResorce(RICE, OPT_TO_STONE, STONE, ichiba_x, ichiba_y);
             }
-            if(CHG_NOW["iron"]  == 1)   {
-                changeResorceToResorce(RICE, OPT_TO_IRON,       IRON,       ichiba_x,   ichiba_y);
+            if (CHG_NOW["iron"] == 1) {
+                changeResorceToResorce(RICE, OPT_TO_IRON, IRON, ichiba_x, ichiba_y);
             }
-
         }
         return;
     }
@@ -4072,7 +4077,7 @@ function ichibaChange(vId) {
     function addShopList(vId,lv,x,y) {
         var flg = 0;
         var shoplist = cloadData(HOST+"ShopList","[]",true,true);
-        for (var i=0 ; i<shoplist.length ; i++) {
+        for (var i = 0; i < shoplist.length; i++) {
             if (shoplist[i].vId == vId) {
                 shoplist[i].vId = vId;
                 shoplist[i].lv = lv;
@@ -4081,35 +4086,33 @@ function ichibaChange(vId) {
                 flg = 1;
             }
         }
-        if (flg == 0){
-            shoplist.push({"vId":vId, "lv":lv, "x":x, "y":y });
+        if (flg == 0) {
+            shoplist.push({"vId": vId, "lv": lv, "x": x, "y": y});
         }
-        csaveData(HOST+"ShopList",shoplist,true,true);
-        // 市場情報が更新されたら表示しなおし
-        if ( is_stay_mode() ) {
+        csaveData(HOST + "ShopList", shoplist, true, true);
+        if (is_stay_mode()) {
             reopen();
         }
     }
 
     function delShopList(vId) {
         var shoplist = cloadData(HOST+"ShopList","[]",true,true);
-        for (var i=0;i<shoplist.length;i++){
+        for (var i = 0; i < shoplist.length; i++) {
             if (shoplist[i].vId == vId) {
                 shoplist.splice(i,1);
                 csaveData(HOST+"ShopList",shoplist,true,true);
             }
         }
-        // 市場情報が更新されたら表示しなおし
-        if ( is_stay_mode() ) {
+
+        if (is_stay_mode()) {
             reopen();
         }
     }
 }
 
-//実変換処理通信部 @@
 function changeResorceToResorce(from, tc, to, x, y) {
 
-    var c={};
+    var c = {};
     c['x'] = parseInt(x);
     c['y'] = parseInt(y);
     c['change_btn'] = encodeURIComponent("はい");
@@ -4118,8 +4121,8 @@ function changeResorceToResorce(from, tc, to, x, y) {
     c['tf_id'] = parseInt(from);
     c['tt_id'] = parseInt(to);
     c['ssid'] = j$.cookie('SSID');
-    j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(x) + "&y=" + parseInt(y) + "#ptop",c,function(){});
-    var tid = $w(function(){
+    j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(x) + "&y=" + parseInt(y) + "#ptop", c, function() {});
+    var tid = $w(function() {
                      location.reload(false);
                  });
 
@@ -4130,20 +4133,17 @@ function autoDonate() {
 
     debugLog("=== Start autoDonate ===");
 
-    if(OPT_KIFU != 1) {
-        //alert("自動寄付未指定");
+    if (OPT_KIFU != 1) {
         return;
     }
 
     //糧が指定量より多いかチェック
-    if($("rice").innerHTML < OPT_RISE_KIFU_MAX) {
+    if ($("rice").innerHTML < OPT_RISE_KIFU_MAX) {
         return;
     }
 
 
     sendDonate(OPT_RISE_KIFU);
-    //@@@
-
 }
 
 //寄付処理通信部
@@ -4155,8 +4155,8 @@ function sendDonate(rice) {
     c['iron'] = 0;
     c['rice'] = parseInt(rice);
     c['contribution'] = 1;
-    j$.post("http://"+HOST+"/alliance/level.php",c,function(){});
-    var tid = $w(function(){
+    j$.post("http://"+HOST+"/alliance/level.php", c, function() {});
+    var tid = $w(function() {
                      location.reload(false);
                  });
 }
@@ -4168,48 +4168,48 @@ function Auto_Domestic() {
 
     DomesticFlg = false;
 
-    var tid = $w(function(){
+    var tid = $w(function() {
                      GM_xmlhttpRequest(
                          {
-                             method: "GET", 
+                             method: "GET",
                              url: "http://" + HOST + "/card/domestic_setting.php",
                              headers: {"Content-type":"text/html"},
                              overrideMimeType: 'text/html; charset=utf-8',
-                             onload: function(x){
-                                 
+                             onload: function(x) {
+
                                  var htmldoc = document.createElement("html");
                                  htmldoc.innerHTML = x.responseText;
-                                 
+
                                  var skillElem = document.evaluate('//td[@class="skill"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                                 for(i = 0; i < skillElem.snapshotLength; i++){
+                                 for (i = 0; i < skillElem.snapshotLength; i++) {
                                      var skillTag = trim(skillElem.snapshotItem(i).innerHTML);
                                      var AutoSkillFlg = 0;
-                                     
-                                     for(z = 1; z < DASkill.length; z++){
-                                         if( (OPT_DOME[z]==1) && ( (skillTag.indexOf(DASkill[z],0) > 1)) ){
+
+                                     for (z = 1; z < DASkill.length; z++) {
+                                         if ((OPT_DOME[z]==1) && ((skillTag.indexOf(DASkill[z],0) > 1))) {
                                              var link = skillTag.substring(skillTag.indexOf("href=",0)+6,skillTag.indexOf("\"",skillTag.indexOf("href=",0)+7));
                                              do {
                                                  link = link.replace(/&amp;/,"&");
                                              } while(link.indexOf("&amp;",0) > 1)
-                                             
+
                                              DomesticFlg    = true;
-                                             
+
                                              GM_xmlhttpRequest(
                                                  {
                                                      method:"GET",
                                                      url:"http://" + HOST + link,
                                                      headers:{"Content-type":"text/html"},
                                                      overrideMimeType:'text/html; charset=utf-8',
-                                                     onload:function(x){
+                                                     onload: function(x) {
                                                          debugLog("内政スキル使用");
                                                          if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
                                                          if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
-                                                         
+
                                                          getSoldier();               // 自動造兵処理
                                                          autoLvup();             // 自動武器・防具強化
                                                          ichibaChange(vId);          // 市場処理
                                                          autoDonate();               // 自動寄付処理
-                                                         
+
                                                          DomesticFlg = false;
                                                      }
                                                  });
@@ -4227,12 +4227,12 @@ function Auto_Domestic() {
                                  debugLog("内政スキル未使用");
                                  if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
                                  if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
-                                 
+
                                  getSoldier();               // 自動造兵処理
                                  autoLvup();             // 自動武器・防具強化
                                  ichibaChange(vId);          // 市場処理
                                  autoDonate();               // 自動寄付処理
-                                 
+
                              }
                          });
                  });
@@ -4286,47 +4286,7 @@ if ((typeof GM_getValue == 'undefined') || (GM_getValue('a', 'b') == undefined))
     };
 }
 
-function jcreateCheckBox0(container, id, def, text, title, left, villages) {
-    left += 2;
-    
-    var cb = j$("<input>").attr("type", "checkbox").attr("id", id).css("vertical-align", "middle");
-    
-    cb.attr("checked", def);
-    cb.change(function() {
-                  for (var i = 0; i < villages.length; i++) {
-                      GM_setValue(HOST+PGNAME+"OPT_CHKBOX_AVC_" + i, document.getElementById('OPT_CHKBOX_AVC_' + i).checked);
-                  }
-              });
-    container.append(cb);
-    return cb;
-}
-
-function ccreateCheckBox0(container, id, def, text, title, left, villages)
-{
-    left += 2;
-
-    var cb = d.createElement("input");
-    cb.type = "checkbox";
-    cb.style.verticalAlign = "middle";
-    cb.id = id;
-    //cb.value = 1;
-    //if( def ) cb.checked = true;
-    cb.checked  = def;
-    cb.addEventListener("change", 
-                        // @@@
-                        function() {
-                            for (var i = 0; i < villages.length; i++) {
-                                GM_setValue(HOST+PGNAME+"OPT_CHKBOX_AVC_" + i, document.getElementById('OPT_CHKBOX_AVC_' + i).checked);
-                            }
-                        }, true);
-
-    container.appendChild(cb);
-    return cb;
-}
-
-// 2011.06.22
-function ccreateCheckBoxKai2(container, id, def, text, title, left )
-{
+function ccreateCheckBoxKai2(container, id, def, text, title, left) {
 
     left += 2;
     var dv = d.createElement("div");
@@ -4342,15 +4302,15 @@ function ccreateCheckBoxKai2(container, id, def, text, title, left )
 
     var def2 = id  + ""  + "[" + def + "]";
 
-    if( eval(def2) ) cb.checked = true;
-    
+    if (eval(def2)) cb.checked = true;
+
     var lb = d.createElement("label");
     lb.htmlFor = id;
     lb.style.verticalAlign = "middle";
-    
+
     var tx = d.createTextNode(text);
     tx.fontSize = "10px";
-    lb.appendChild( tx );
+    lb.appendChild(tx);
     var tb = d.createElement("input");
     tb.type = "text";
     tb.id = id + "LV" + def;
@@ -4359,7 +4319,7 @@ function ccreateCheckBoxKai2(container, id, def, text, title, left )
     tb.style.textAlign = "right";
     tb.style.paddingRight = "3px";
     tb.size = 4;
-    
+
     dv.appendChild(cb);
     dv.appendChild(lb);
     dv.appendChild(tb);
@@ -4376,12 +4336,10 @@ function JSSleep(sec) {
         }
     }
 }
-///////////////////////////////////////////////
-// Time 部分の追加
-///////////////////////////////////////////////
+
 function sortAction(actions) {
     actions.sort(function(val1, val2) {
-                     var diff = (new Date(val1[IDX2_TIME])).getTime() 
+                     var diff = (new Date(val1[IDX2_TIME])).getTime()
                          - (new Date(val2[IDX2_TIME])).getTime();
                      return diff;
                  });
@@ -4396,12 +4354,12 @@ function getVillageActions() {
         '//*[@id="basepoint"]/span[@class="basename"]',
         document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     data[IDX_BASE_NAME] = trim(baseNameElem.snapshotItem(0).innerHTML);
-    
+
     //座標を取得
     var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
                                    document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     data[IDX_XY] = trim(xyElem.snapshotItem(0).innerHTML);
-    
+
     //建設情報を取得
     var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li',
                                         document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -4409,7 +4367,7 @@ function getVillageActions() {
     for (var i = 0; i < actionsElem.snapshotLength; i++) {
         var paItem = actionsElem.snapshotItem(i);
         var newAction = new Array();
-        
+
         //ステータス
         var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var buildStatus;
@@ -4424,35 +4382,23 @@ function getVillageActions() {
                 buildStatus = "削除:" + trim(buildStatusElem.snapshotItem(0).innerHTML);
             }
         } else {
-            /*
-             buildStatusElem = document.evaluate('./span[@class="buildStatus"]', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-             if (buildStatusElem.snapshotItem(0).innerHTML.match(/強化/)) {
-             continue;
-             }
-             var tempStr1 = buildStatusElem.snapshotItem(0).innerHTML.split("を");
-             buildStatus = "研究所:" + tempStr1[0];
-             newAction[IDX2_DELETE] = false;
-             */
             continue;
         }
         newAction[IDX2_ROTATION] = 0;
         newAction[IDX2_TYPE] = TYPE_CONSTRUCTION;
         newAction[IDX2_STATUS] = buildStatus;
-        
+
         //施設建設完了時刻
         var buildClockElem = document.evaluate('./span[@class="buildClock"]', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var clock = buildClockElem.snapshotItem(0).innerHTML;
         newAction[IDX2_TIME] = generateDateString(computeTime(clock));
-
-        //      console.log(generateDateString(computeTime(clock)));
-
         actions1.push(newAction);
     }
-    
+
     //建設情報を永続保存
     data[IDX_ACTIONS] = actions1;
     saveVillage(data, TYPE_CONSTRUCTION);
-    
+
     //行軍情報を取得
     var actionsElem = document.evaluate(
         '//*[@id="action"]/div[@class="floatInner"]/ul/li',
@@ -4464,13 +4410,13 @@ function getVillageActions() {
         newAction[IDX2_TYPE] = TYPE_MARCH;
         newAction[IDX2_DELETE] = false;
         newAction[IDX2_ROTATION] = 0;
-        
+
         //ステータス
         var statusElem = document.evaluate('./a',
                                            paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var status = trim(statusElem.snapshotItem(0).innerHTML);
         newAction[IDX2_STATUS] = "行軍:" + status;
-        
+
         //完了時刻
         var buildClockElem = document.evaluate('./span',
                                                paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -4479,11 +4425,11 @@ function getVillageActions() {
 
         actions2.push(newAction);
     }
-    
+
     //行軍情報を永続保存
     data[IDX_ACTIONS] = actions2;
     saveVillage(data, TYPE_MARCH);
-    if ( is_stay_mode() ) {
+    if (is_stay_mode()) {
         reopen();
     }
 }
@@ -4491,17 +4437,17 @@ function getVillageActions() {
 //拠点情報を保存
 function saveVillage(newData, type) {
     var allData = loadVillages(location.hostname+PGNAME);
-    
+
     //新旧データをマージ
     var exists = false;
     for (var i = 0; i < allData.length; i++) {
         var villageData = allData[i];
-        
+
         //作業リスト更新
         if (villageData[IDX_XY] == newData[IDX_XY]) {
             exists = true;
             villageData[IDX_BASE_NAME] = newData[IDX_BASE_NAME];
-            
+
             var actions = villageData[IDX_ACTIONS];
             for (var j = actions.length - 1; j >= 0; j--) {
                 if (actions[j][IDX2_TYPE] != type) continue;
@@ -4511,7 +4457,7 @@ function saveVillage(newData, type) {
             }
             villageData[IDX_ACTIONS] = actions.concat(newData[IDX_ACTIONS]);
         }
-        
+
         allData[i] = villageData;
     }
     if (!exists) allData.push(newData);
@@ -4521,9 +4467,9 @@ function saveVillage(newData, type) {
 
 function jcreateActionDiv(action, now, baseXY, host) {
     var type = action[IDX2_TYPE].charAt(0);
-    
+
     var actionDiv = j$("<div>");
-    if ( action[IDX2_DELETE] == "true" ) {
+    if (action[IDX2_DELETE] == "true") {
         actionDiv.css("background-color", "#BBDDDD");
     }
 
@@ -4537,32 +4483,27 @@ function jcreateActionDiv(action, now, baseXY, host) {
     var finishTime = new Date(action[IDX2_TIME]);
     text += " (あと" + generateWaitTimeString(finishTime, now) + ")";
     text += action[IDX2_STATUS] + " ";
-   
+
     var textSpan = j$("<span>").text(text);
     actionDiv.append(textSpan);
-    
+
     if (actionTime < now) {
         var del_link = j$("<a>").attr("title", "確認済にして削除します").attr("href", "#").css("color", "#E86D61").text("済");
-        
         var key = host + DELIMIT1 + baseXY + DELIMIT1 + action[IDX2_TIME];
-        del_link.click(function(e){
+        del_link.click(function(e) {
                           deleteAction(key);
                       });
         actionDiv.append(del_link);
     }
-    
+
     return actionDiv;
 }
 
 //各作業行生成
 function createActionDiv(action, nowTime, baseXy, host) {
     var type = action[IDX2_TYPE].charAt(0);
-    //  if (getDispMode(type) == DISP_MODE_NONE) {
-    //      return undefined;
-    //  }
-
     var actionDiv = document.createElement("div");
-    if ( action[IDX2_DELETE] == "true" ) {
+    if (action[IDX2_DELETE] == "true") {
         actionDiv.style.backgroundColor = "#BBDDDD";
     }
     //作業完了背景色
@@ -4575,15 +4516,13 @@ function createActionDiv(action, nowTime, baseXy, host) {
     var textSpan = document.createElement("span");
     var text = "";
     text += action[IDX2_TIME].replace(/^[0-9]{4}\//, "");
-    //  if (getDispWaitTime()) {
     var finishTime = new Date(action[IDX2_TIME]);
     text += " (あと" + generateWaitTimeString(finishTime, nowTime) + ")";
-    //  }
     text += " ";
     text += action[IDX2_STATUS] + " ";
     textSpan.innerHTML = text;
     actionDiv.appendChild(textSpan);
-    
+
     //作業完了行の個別削除リンク
     if (actionTime < nowTime) {
         var delLink = document.createElement("a");
@@ -4591,15 +4530,17 @@ function createActionDiv(action, nowTime, baseXy, host) {
         delLink.href = "javascript:void(0);";
         delLink.style.color = "#E86D61";
         delLink.innerHTML = "済";
-        
+
         var key = host + DELIMIT1 + baseXy + DELIMIT1 + action[IDX2_TIME];
-        delLink.addEventListener("click", 
+        delLink.addEventListener("click",
                                  (function(key_) {
-                                      return function() { deleteAction(key_); }
+                                      return function() {
+                                          deleteAction(key_);
+                                      };
                                   })(key), true);
         actionDiv.appendChild(delLink);
     }
-    
+
     return actionDiv;
 }
 
@@ -4608,11 +4549,10 @@ function confirmTimer() {
     var hosts = getTargetHosts();
     for (var ii = 0; ii < hosts.length; ii++) {
         var baseTime = new Date();
-        //      var baseTime = new Date(document.getElementById("openTime").innerHTML);
         var villages = loadVillages(hosts[ii] + PGNAME);
         for (var i = 0; i < villages.length; i++) {
             var actions = villages[i][IDX_ACTIONS];
-            for (var j = actions.length - 1; j >=0 ; j--) {
+            for (var j = actions.length - 1; j >= 0; j--) {
                 var actionTime = new Date(actions[j][IDX2_TIME]);
                 if (actionTime <= baseTime) {
                     actions.splice(j, 1);
@@ -4620,16 +4560,15 @@ function confirmTimer() {
             }
             villages[i][IDX_ACTIONS] = actions;
         }
-        
+
         //保存
         saveVillages(hosts[ii] + PGNAME, villages);
     }
-    
+
     j$("#bab-main .action-finished").remove();
     j$("#bab-main .action-deleted").remove();
 
-    //更新後内容で表示　2013.01.10 ???
-    if ( is_stay_mode() ) {
+    if (is_stay_mode()) {
         reopen();
     }
 
@@ -4656,7 +4595,7 @@ function deleteAction(key) {
         for (var i = 0; i < villages.length; i++) {
             for (var j = 0; j < villages[i][IDX_ACTIONS].length; j++) {
                 var action = villages[i][IDX_ACTIONS][j];
-                var curKey = hosts[ii] + DELIMIT1 + 
+                var curKey = hosts[ii] + DELIMIT1 +
                     villages[i][IDX_XY] + DELIMIT1 + action[IDX2_TIME];
                 if (key == curKey) {
                     exists = true;
@@ -4665,11 +4604,11 @@ function deleteAction(key) {
                 }
             }
         }
-        
+
         //見つかったら更新
         if (exists) {
             saveVillages(hosts[ii] + PGNAME, villages);
-            if ( is_stay_mode() ) {
+            if (is_stay_mode()) {
                 reopen();
             }
             return;
@@ -4681,7 +4620,7 @@ function deleteAction(key) {
 function getTrainingSoldier(htmldoc) {
     var data = getMyVillage();
     data[IDX_ACTIONS] = new Array();
-    var tt={};
+    var tt = {};
     //施設名
     var facilityName = "";
     var h2Elem = document.evaluate('//*[@id="gray02Wrapper"]/h2', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -4697,12 +4636,12 @@ function getTrainingSoldier(htmldoc) {
     var mSolTypeT = document.evaluate('//table[@class="commonTables"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     if (mSolTypeT.snapshotLength > 2) {
         var mSolType = document.evaluate('//*[@class="mainTtl"]',mSolTypeT.snapshotItem(1), null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for(var r=1;r < mSolType.snapshotLength;r++) {
-            tt[r-1] = new Array()
-            tt[r-1] = mSolType.snapshotItem(r).innerHTML
+        for (var r = 1; r < mSolType.snapshotLength; r++) {
+            tt[r-1] = new Array();
+            tt[r-1] = mSolType.snapshotItem(r).innerHTML;
             var endflg = false;
             if (r > 1) {
-                for (var q=0;q<r-1;q++) {
+                for (var q = 0; q < r - 1; q++) {
                     if (tt[q] == mSolType.snapshotItem(r).innerHTML) {
                         endflg = true;
                         break;
@@ -4724,7 +4663,7 @@ function getTrainingSoldier(htmldoc) {
     }
 
     //作業中情報取得
-    var idx = 0; 
+    var idx = 0;
     while (1) {
         var actionType = TYPE_FACILITY + facilityName;
 
@@ -4733,12 +4672,12 @@ function getTrainingSoldier(htmldoc) {
             saveVillage(data, actionType);      // 研究所で未研究の場合過去の研究情報の削除
             break;
         }
-        
+
         var mainTtls = document.evaluate('../../../tr/th[@class="mainTtl"]', clockElem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         if (mainTtls.snapshotLength == 0) break;
         var clock = trim(clockElem.innerHTML);
         if (clock == "") break;
-        
+
         var mainTtlElem = mainTtls.snapshotItem(idx);
         if (mainTtlElem == undefined) break;
         var status = trim(mainTtlElem.innerHTML);
@@ -4748,72 +4687,69 @@ function getTrainingSoldier(htmldoc) {
 
         data[IDX_ACTIONS][idx] = new Array();
 
-        if (facilityName == "鍛冶場" || facilityName == "防具工場" || facilityName == "研究所") { 
+        if (facilityName == "鍛冶場" || facilityName == "防具工場" || facilityName == "研究所") {
             data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status;
         } else {
             try {
-
                 data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + "(" + mSolNum.snapshotItem(8 + mSolTypeNum + (mSolTypeNum * 5) + (idx * 4) - (1 * maxLv)).innerHTML + ")";
-            }catch(e) {
+            } catch(e) {
                 data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + " (error)";
             }
-
         }
+
         data[IDX_ACTIONS][idx][IDX2_TIME] = generateDateString(computeTime(clock));
         data[IDX_ACTIONS][idx][IDX2_TYPE] = actionType;
         data[IDX_ACTIONS][idx][IDX2_DELETE] = false;
         data[IDX_ACTIONS][idx][IDX2_ROTATION] = 0;
-        
+
         idx++;
     }
-
-    //  saveVillage(data, actionType);  2012.09.06 ちょっちオミット
 }
 
 function getMyVillage() {
     var ret = new Array();
-    
-    var xy=getMyXY();
-    if(! xy){
+
+    var xy = getMyXY();
+    if (!xy) {
         return ret;
     }
     var allData = loadVillages(location.hostname + PGNAME);
     for (var i = 0; i < allData.length; i++) {
         var villageData = allData[i];
-        if (villageData[IDX_XY] == "("+xy+")") {
+        if (villageData[IDX_XY] == "(" + xy + ")") {
             ret[IDX_XY] = villageData[IDX_XY];
             ret[IDX_BASE_NAME] = villageData[IDX_BASE_NAME];
             return ret;
         }
     }
-    
+
     return ret;
 }
 
 function getMyXY() {
     var d = document;
-    var $x = function(xp,dc) {
+    var $x = function(xp, dc) {
         return document.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     };
 
     var gnaviorgNav = d.getElementById("gnavi");
-    if(gnaviorgNav) {
+    if (gnaviorgNav) {
         var nowLoc = $x('id("gnavi")//a[contains(@href,"map.php")]');
-    }else{
+    } else {
         var nowLoc = $x('id("gNav")//a[contains(@href,"map.php")]');
     }
 
     if (!nowLoc) return null;
 
     var xy = nowLoc.href.match(/x=([\-0-9]+)&y=([\-0-9]+)/i);
-    if( xy ) {
+    if (xy) {
         return xy[1]+","+xy[2];
     }
 }
 
 function get_using_skill_all() {
     var name = null;
-    var level = null;    
+    var level = null;
     var text = j$("div.base-skill span a").text();
     var matches = text.match(/(.+?):?\s*(.+)\((.+)\)/);
     var chara = matches[1] === '--' ? null : matches[1];
@@ -4858,17 +4794,17 @@ function getDomesticSkill(htmldoc) {
         data[IDX_ACTIONS][i][IDX2_DELETE] = false;
         data[IDX_ACTIONS][i][IDX2_ROTATION] = 0;
     }
-    
+
     // 回復中
     var dom = document.createElement("html");
     var RecoveryCheck = document.evaluate('//table[@class="general"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (var z = 0; z < RecoveryCheck.snapshotLength; z++){
+    for (var z = 0; z < RecoveryCheck.snapshotLength; z++) {
         if (RecoveryCheck.snapshotItem(z).innerHTML.match("内政中")) {
             dom.innerHTML = "<table>" + RecoveryCheck.snapshotItem(z).innerHTML + "</table>";
             // 内政武将名
             var Name = document.evaluate('//td/a[@class="thickbox"]', dom, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(1).innerHTML;
             var RecoverySkill = document.evaluate('//td[@class="recovery"]', dom, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-            for (var x=0;x<RecoverySkill.snapshotLength;x++) {
+            for (var x = 0; x < RecoverySkill.snapshotLength; x++) {
                 i += 1;
                 data[IDX_ACTIONS][i] = new Array();
                 var SkillName  = RecoverySkill.snapshotItem(x).innerHTML.split("<")[0];         // スキル名
@@ -4884,7 +4820,7 @@ function getDomesticSkill(htmldoc) {
         }
     }
     saveVillage(data, TYPE_DOMESTIC);
-    if ( is_stay_mode() ) {
+    if (is_stay_mode()) {
         reopen();
     }
 }
@@ -4902,7 +4838,7 @@ function changeReverseMode(value) {
 
 //次回完了時刻取得
 function getNextTime(hostname, baseTime) {
-    
+
     //一番早い作業完了時刻を取得
     var startTime = new Date("2099/12/31 23:59:59");
     var nextTime = startTime;
@@ -4920,10 +4856,10 @@ function getNextTime(hostname, baseTime) {
             }
         }
     }
-    
+
     //作業中がなければ何もしない
     if (nextTime == startTime) nextTime = undefined;
-    
+
     return nextTime;
 }
 
@@ -4941,22 +4877,19 @@ function escapeXPathExpr(text) {
     if (matches) {
         if (matches.length == 1) {
             return esc(matches[0]);
-        }
-        else {
+        } else {
             var results = [];
             for (var i = 0; i < matches.length; i ++) {
                 results.push(esc(matches[i]));
             }
             return 'concat(' + results.join(', ') + ')';
         }
-    }
-    else {
+    } else {
         return '""';
     }
 }
 
-function forInt(num,def){
-    //  console.log(num + " : " + def);
+function forInt(num,def) {
     if (def == undefined) {     def = 0;    }
     if (isNaN(parseInt(num))) {
         return def;
