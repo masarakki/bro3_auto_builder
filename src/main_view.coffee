@@ -76,7 +76,9 @@ class MainView
             j$("#next-time", main).hide()
 
         villages = newLoadVillages()
-
+        trigger_enable_checkbox = (checkbox, x, y) ->
+            checkbox.click (e) ->
+                GM_setValue "enable_auto_build_#{x}_#{y}", this.checked
         for village, i in villages
             actions = for action in village.actions
                 name = "#{action.action}:#{action.target}"
@@ -103,10 +105,8 @@ class MainView
 
             village_info = j$.tmpl(village_template, village_params)
             enable_checkbox = j$(".name input:eq(0)", village_info).attr("village_index", i)
-            enable_checkbox.attr("checked", "checked") if GM_getValue("#{HOST}#{PGNAME}OPT_CHKBOX_AVC_#{i}", false)
-            enable_checkbox.click (e) ->
-                village_index = j$(this).attr 'village_index'
-                GM_setValue "#{HOST}#{PGNAME}OPT_CHKBOX_AVC_#{village_index}", this.checked
+            enable_checkbox.attr("checked", "checked") if GM_getValue("enable_auto_build_#{village.position.x}_#{village.position.y}", false)
+            trigger_enable_checkbox(enable_checkbox, village.position.x, village.position.y)
             j$(".updates", village_info).append(updates)
             ((village) ->
                 j$(".actions button:eq(0)", village_info).click (e) ->
@@ -136,6 +136,8 @@ class MainView
                 when 3 then '作成完了'
                 when 4 then '破棄中'
             village_info.attr("id", "reserved_#{village.x}_#{village.y}")
+            enable_checkbox = j$(".name input:eq(0)", village_info).attr("village_index", i)
+            trigger_enable_checkbox(enable_checkbox, village.x, village.y)
             j$(".updates", village_info).text "#{status}: #{type}"
             ((village) ->
                 j$(".updates", village_info).append j$("<button>").text("削除").click (e) ->
