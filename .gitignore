@@ -1,2 +1,4 @@
 build
 .sass-cache
+vendor
+.bundle
