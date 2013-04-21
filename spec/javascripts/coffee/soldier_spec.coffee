@@ -22,3 +22,6 @@ describe "Soldier", ->
             expect(Soldier.soldiers(Soldier.TYPE_HIGH).length).toEqual 5
             expect(Soldier.soldiers(Soldier.TYPE_CAR).length).toEqual 6
             expect(Soldier.soldiers(Soldier.TYPE_KEN).length).toEqual 7
+
+        it '.types', ->
+            expect(Soldier.types.length).toEqual 4

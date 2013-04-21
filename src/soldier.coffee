@@ -5,6 +5,12 @@ class Soldier
     @TYPE_KEN = 1
     @TYPE_CAR = 2
     @TYPE_HIGH = 3
+    @types = [
+        {id: @TYPE_HIGH, desc: '上級のみ'}
+        {id: @TYPE_CAR,  desc: '上級+車'}
+        {id: @TYPE_KEN,  desc: '上級+車+剣'}
+        {id: @TYPE_ALL,  desc: '全て'}
+    ]
 
     @_soldiers = [
         new Soldier '剣兵', @TYPE_KEN, 1, '練兵所'
