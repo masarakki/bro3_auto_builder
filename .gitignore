@@ -2,3 +2,4 @@ build
 .sass-cache
 vendor
 .bundle
+spec/javascripts/js
