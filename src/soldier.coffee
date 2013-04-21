@@ -1,7 +1,6 @@
 class Soldier
-    constructor: (@name, @highclass, @id, @builder, @no_weapon = false, @current = 0, @unit_max = 0, @add_unit = 0) ->
-    unit_id: ->
-        @id + 300
+    constructor: (@name, @highclass, @id, @builder, @no_weapon = false, @current = 0) ->
+        @unit_id = 300 + @id
 
 init_soldiers = ->
     soldiers = [
@@ -19,7 +18,6 @@ init_soldiers = ->
     ]
 
     high_soldiers = (soldier for soldier in soldiers when soldier.highclass)
-
     [soldiers, high_soldiers]
 
 [soldiers, high_soldiers] = init_soldiers()
