@@ -15,3 +15,7 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -r $(BUILD_DIR)
+
+build_for_travis:
+	coffee -b -o build -c src
+	coffee -b -o spec/javascripts/js -c spec/javascripts/coffee

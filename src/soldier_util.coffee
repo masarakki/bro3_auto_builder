@@ -40,7 +40,7 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
                         return j$.ajax {
                             url: "http://#{HOST}/facility/facility.php"
                             type: "POST"
-                            data: { x: builder.x, y: builder.y, unit_id: soldier.unit_id(), count: request_num }
+                            data: { x: builder.x, y: builder.y, unit_id: soldier.unit_id, count: request_num }
                             success: (res) ->
                                 update_creating_soldiers res
                                 callback j$(res)
