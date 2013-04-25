@@ -3,17 +3,21 @@
     %span.title Auto Builder
     %span.version by masarakki
   .button-box
-    %button ${reload_status}
-    %button 確認済み
-    %button 閉じる
+    %button#bab-main-reload-status ${reload_status}
+    %button#bab-main-confirm 確認済み
+    %button#bab-main-close 閉じる
     %label
       常駐
-      %input#stay(name="stay" type="checkbox")
+      %input#bab-main-stay-mode(name="stay" type="checkbox")
     %span
       巡回時間
-      %select#round-time(name="round_time")
+      %select#bab-main-round-time(name="round_time")
         - @round_times.each do |time|
           %option(value=time)= "#{time} sec"
+    %span
+      兵士モード
+      %select#bab-main-soldier-type(name="soldier_type")
+
   #next-time
     次回:
     %span#next-at
