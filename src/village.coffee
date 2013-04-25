@@ -1,6 +1,6 @@
 class Village
     constructor: ->
-        [_, @x, @y] = for num in trim(j$("#basepoint .xy").text()).match /\((-?\d+),(-?\d+)\)/
+        [_, @x, @y] = for num in trim(jQuery("#basepoint .xy").text()).match /\((-?\d+),(-?\d+)\)/
             parseInt num
 
         @id = parseInt getVillageID("(#{@x},#{@y})")
@@ -20,7 +20,7 @@ class Village
 
         areas = for num in [0..(len - 1)]
             item = results.snapshotItem(num)
-            coords = j$(item).attr('coords').match(/(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+)/)
+            coords = jQuery(item).attr('coords').match(/(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+),(-?\d+)/)
             x = Math.min(Math.min(coords[1], coords[3]), Math.min(coords[5], coords[7]))
             y = Math.min(Math.min(coords[2], coords[4]), Math.min(coords[6], coords[8]))
             y_index = (y + 1) / 25
@@ -50,10 +50,10 @@ class Village
         (building for building in @buildings when building.x == x and building.y == y)[0]
     build_at: (building_id, x, y) ->
         building_id = @building_ids[building_id] unless typeof building_id is 'number'
-        j$.ajax {
+        jQuery.ajax {
             url: "http://#{HOST}/facility/build.php"
             method: "POST"
-            data: {village_id: @id, x: x, y: y, id: building_id, ssid: j$.cookie('SSID') }
+            data: {village_id: @id, x: x, y: y, id: building_id, ssid: jQuery.cookie('SSID') }
             success: (res) ->
                 location.reload false
         }
@@ -76,7 +76,7 @@ class Village
                 if 0 <= x < 7 and 0 <= y < 7
                     neighers.push @at(x, y)
             shigens = (neigher.name for neigher in neighers when neigher.name is '森林' or neigher.name is '岩山' or neigher.name is '鉄鉱山')
-            shigen = j$.unique shigens
+            shigen = jQuery.unique shigens
             if shigen.length == 1
                 building_id = switch shigen[0]
                     when '森林' then '伐採所'
@@ -87,17 +87,17 @@ class Village
 class Building
     constructor: (@name, @x, @y, @level) ->
     html: (callback) ->
-        j$.ajax {
+        jQuery.ajax {
             method: 'GET'
             url: "/facility/facility.php"
             data: { x: @x, y: @y }
             success: (res) ->
-                callback j$(res)
+                callback jQuery(res)
         }
     destroy: ->
         html (html) ->
-            ssid = j$("[name=ssid]", html)[0].value
-            j$.ajax {
+            ssid = jQuery("[name=ssid]", html)[0].value
+            jQuery.ajax {
                 url: "/facility/facility.php"
                 method: 'POST'
                 data: {x: @x, y: @y, ssid: ssid, remove: '建物を壊す'}

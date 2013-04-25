@@ -17,16 +17,16 @@ main = ->
     global_status = new Status
 
     # zIndex(重なり順序）の修正
-    j$("div#status div#status_left").css({"z-index":"0"})
-    j$("#menu_container").css({"z-index":"980"})
-    j$("div#map-scroll").css({"z-index": "150"})
-    j$("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"})
+    jQuery("div#status div#status_left").css({"z-index":"0"})
+    jQuery("#menu_container").css({"z-index":"980"})
+    jQuery("div#map-scroll").css({"z-index": "150"})
+    jQuery("a#cur01, a#cur02, a#cur03, a#cur04, a#double-cur01, a#double-cur02, a#double-cur03, a#double-cur04").css({"z-index":"460"})
 
     init_url_params()
 
-    j$("#mixi_ad_head").hide()
-    j$("#mixi_ad_groups").hide()
-    j$(".brNews").hide()
+    jQuery("#mixi_ad_head").hide()
+    jQuery("#mixi_ad_groups").hide()
+    jQuery(".brNews").hide()
 
     addOpenLinkHtml()
     reopen() if is_stay_mode()
@@ -53,7 +53,7 @@ main = ->
     OPT_BUILD_VID = GM_getValue "#{HOST}#{PGNAME}OPT_BUILD_VID", ""
 
     if location.pathname == "/village.php"
-        vId = trim j$("#basepoint .xy").text()
+        vId = trim jQuery("#basepoint .xy").text()
 
         Load_OPT vId
         if OPT_BUILD_VID != getVillageID(vId)
@@ -88,7 +88,7 @@ main = ->
             nName = nText.snapshotItem(0).innerHTML.split ":"
             if skill_info.chara
                 # 内政武将がセットされている場合
-                j$.get "http://#{HOST}/card/domestic_setting.php#ptop", (x) ->
+                jQuery.get "http://#{HOST}/card/domestic_setting.php#ptop", (x) ->
                     htmldoc = document.createElement "html"
                     htmldoc.innerHTML = x
                     getDomesticSkill htmldoc   # 内政スキル使用チェック
@@ -104,7 +104,7 @@ main = ->
         if lab
             try
                 # 研究所チェック
-                j$.html (res) ->
+                jQuery.html (res) ->
                     getTrainingSoldier(res);
                     check_skill()
             catch error

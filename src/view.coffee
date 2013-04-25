@@ -37,7 +37,7 @@ create_box = (header_func, body_func) ->
     box.appendChild body_tr
     box
 
-j$(document).ready ->
+jQuery(document).ready ->
     left = Math.max GM_getValue(location.hostname + PGNAME + "_popup_left", 150), 0
     top  = Math.max GM_getValue(location.hostname + PGNAME + "_popup_top", 150), 0
 
