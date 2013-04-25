@@ -20,7 +20,7 @@ class MainView
             reload_status: if @config.auto_reload() then '巡回中' else '停止中'
         }
 
-        main = j$.tmpl(main_template, template_values).css {
+        main = jQuery.tmpl(main_template, template_values).css {
             top: @top
             left: @left
         }
@@ -32,7 +32,7 @@ class MainView
         before = {x: 0, y: 0}
         self = this
         main.mousedown (e) ->
-            return true unless j$.inArray(e.target.tagName, ['SELECT', 'INPUT', 'BUTTON']) == -1
+            return true unless jQuery.inArray(e.target.tagName, ['SELECT', 'INPUT', 'BUTTON']) == -1
             moving = true
             before = {
                 x: e.pageX - parseInt(this.style.left, 10)
@@ -41,7 +41,7 @@ class MainView
             e.preventDefault()
             false
 
-        j$(document).mousemove (e) ->
+        jQuery(document).mousemove (e) ->
             return true unless moving
             left = e.pageX - before.x
             top = e.pageY - before.y
@@ -50,30 +50,36 @@ class MainView
             GM_setValue(location.hostname + PGNAME + "_popup_top", top);
             false
 
-        j$(document).mouseup (e) ->
+        jQuery(document).mouseup (e) ->
             moving = false
             false
 
-        j$(".button-box button:eq(0)", main).click (e) ->
-            self.toggle_reload_button(j$(this))
-        j$(".button-box button:eq(1)", main).click (e) ->
+        jQuery(".button-box #bab-main-reload-status", main).click (e) ->
+            self.toggle_reload_button(jQuery(this))
+        jQuery(".button-box #bab-main-confirm", main).click (e) ->
             confirmTimer()
-        j$(".button-box button:eq(2)", main).click (e) ->
+        jQuery(".button-box #bab-main-close", main).click (e) ->
             main.hide()
-        j$(".button-box input", main).attr("checked", "checked") if @config.stay_mode()
-        j$(".button-box input", main).change (e) ->
+        jQuery(".button-box #bab-main-stay-mode", main).attr("checked", "checked") if @config.stay_mode()
+        jQuery(".button-box #bab-main-stay-mode", main).change (e) ->
             self.config.update_stay_mode this.checked
-        j$(".button-box select", main).val @config.round_time()
-        j$(".button-box select", main).change (e) ->
-            self.config.update_round_time j$(this).val()
+
+        jQuery(".button-box #bab-main-round-time", main).val(@config.round_time()).change (e) ->
+            self.config.update_round_time jQuery(this).val()
+
+        soldier_type_select = jQuery(".button-box #bab-main-soldier-type", main)
+        for soldier_type in Soldier.types
+            soldier_type_select.append jQuery("<option>").val(soldier_type.id).text(soldier_type.desc)
+        soldier_type_select.val(@config.soldier_type()).change (e) ->
+            self.config.update_soldier_type jQuery(this).val()
 
         now = new Date
         next_time = getNextTime(location.hostname, now);
         if next_time
-            j$("#next-at", main).text generateDateString2(next_time)
-            j$("#after-by", main).text generateWaitTimeString(next_time, now)
+            jQuery("#next-at", main).text generateDateString2(next_time)
+            jQuery("#after-by", main).text generateWaitTimeString(next_time, now)
         else
-            j$("#next-time", main).hide()
+            jQuery("#next-time", main).hide()
 
         villages = newLoadVillages()
         trigger_enable_checkbox = (checkbox, x, y) ->
@@ -98,21 +104,21 @@ class MainView
                     at: action.at
                     status: status
                 }
-            updates = j$.tmpl(updates_template, actions)
+            updates = jQuery.tmpl(updates_template, actions)
             village_params = {
                 name: village.name
             }
 
-            village_info = j$.tmpl(village_template, village_params)
-            enable_checkbox = j$(".name input:eq(0)", village_info).attr("village_index", i)
+            village_info = jQuery.tmpl(village_template, village_params)
+            enable_checkbox = jQuery(".name input:eq(0)", village_info).attr("village_index", i)
             enable_checkbox.attr("checked", "checked") if GM_getValue("enable_auto_build_#{village.position.x}_#{village.position.y}", false)
             trigger_enable_checkbox(enable_checkbox, village.position.x, village.position.y)
-            j$(".updates", village_info).append(updates)
+            jQuery(".updates", village_info).append(updates)
             ((village) ->
-                j$(".actions button:eq(0)", village_info).click (e) ->
+                jQuery(".actions button:eq(0)", village_info).click (e) ->
                     openInifacBox "(#{village.position.x},#{village.position.y})"
             )(village)
-            village_info.appendTo j$("#villages", main)
+            village_info.appendTo jQuery("#villages", main)
 
         del_list = (village) ->
             lists = cloadData HOST + "ReserveList", "[]", true, true
@@ -127,7 +133,7 @@ class MainView
             village_params = {
                 name: "(#{village.x}, #{village.y})"
             }
-            village_info = j$.tmpl(village_template, village_params)
+            village_info = jQuery.tmpl(village_template, village_params)
             type = if village.kind == 220 then '村' else '砦'
             status = switch village.status
                 when 0 then '作成失敗'
@@ -136,18 +142,18 @@ class MainView
                 when 3 then '作成完了'
                 when 4 then '破棄中'
             village_info.attr("id", "reserved_#{village.x}_#{village.y}")
-            enable_checkbox = j$(".name input:eq(0)", village_info).attr("village_index", i)
+            enable_checkbox = jQuery(".name input:eq(0)", village_info).attr("village_index", i)
             trigger_enable_checkbox(enable_checkbox, village.x, village.y)
-            j$(".updates", village_info).text "#{status}: #{type}"
+            jQuery(".updates", village_info).text "#{status}: #{type}"
             ((village) ->
-                j$(".updates", village_info).append j$("<button>").text("削除").click (e) ->
+                jQuery(".updates", village_info).append jQuery("<button>").text("削除").click (e) ->
                     del_list(village)
-                    j$("#reserved_#{village.x}_#{village.y}").remove()
+                    jQuery("#reserved_#{village.x}_#{village.y}").remove()
             )(village)
 
-            j$(".actions button:eq(0)", village_info).click (e) ->
+            jQuery(".actions button:eq(0)", village_info).click (e) ->
                 openInifacBox "(#{village.x},#{village.y})"
-            village_info.appendTo j$("#villages", main)
+            village_info.appendTo jQuery("#villages", main)
 
-        main.appendTo j$("body")
+        main.appendTo jQuery("body")
 

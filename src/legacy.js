@@ -2747,11 +2747,11 @@ function addInifacHtml(vId) {
     tr_shigen.appendChild(td_shigen);
 
     // ==== 自動兵産設定 ====
-    var soldier_box = create_soldier_box(get_soldiers());
+    var soldier_box = create_soldier_box(soldiers());
 
     // ===== 自動 武器・防具強化 ====
 
-    var blacksmith_box = create_blacksmith_box(get_soldiers());
+    var blacksmith_box = create_blacksmith_box(soldiers());
 
     // ===== 残す資源量 ====
 
@@ -3778,7 +3778,7 @@ function getSoldier() {
 
     var tid = $w(function() {
                      count_soldiers(function(total) {
-                                        make_all_soldiers(total, high_soldiers);
+                                        make_all_soldiers(total, soldiers());
                                     });
                  });
 }
