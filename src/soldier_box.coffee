@@ -27,7 +27,7 @@ create_soldier_box = (soldiers)->
     ccreateText controls, "dummy", "　", 0
     ccreateButton controls, "作成中止", "", ->
         for soldier in soldiers
-            j$("#OPT_SOL_ADD#{soldier.id}").val("0");
+            jQuery("#OPT_SOL_ADD#{soldier.id}").val("0");
 
     header = (td) ->
         ccreateCheckBox td, "OPT_BLD_SOL", OPT_BLD_SOL, " 自動造兵", "", 0

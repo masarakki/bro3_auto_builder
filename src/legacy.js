@@ -257,7 +257,7 @@ function debugLog(mes) {
     }
 };
 
-j$(document).ready(function () {
+jQuery(document).ready(function () {
   var css = GM_getResourceText("style");
   GM_addStyle(css);
 });
@@ -1193,7 +1193,7 @@ function autoLvup() {
                                        c['x'] = parseInt(_x);
                                        c['y'] = parseInt(_y);
                                        c['unit_id'] = parseInt(Buki[0][3]);
-                                       j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function() {});
+                                       jQuery.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(_x) + "&y=" + parseInt(_y) + "#ptop",c,function() {});
                                    }
                                }
                                make_loop(loop + 1);
@@ -1321,7 +1321,7 @@ function setVillageFacility() {
     Reload_Flg = 0;
 
     // 拠点の状況を調査（削除中なら処理しない）
-    j$.get("http://"+HOST+"/facility/facility.php?x=3&y=3#ptop", function(x) {
+    jQuery.get("http://"+HOST+"/facility/facility.php?x=3&y=3#ptop", function(x) {
                var htmldoc = document.createElement("html");
                htmldoc.innerHTML = x;
                var rmtime = htmldoc.innerHTML.match(/(村を削除中です。|砦を削除中です。)[^\d]*(\d+-\d+-\d+ \d+:\d+:\d+)に完了します。/);
@@ -1382,8 +1382,8 @@ function setVillageFacility() {
                                c['x']=parseInt(Temp[0]);
                                c['y']=parseInt(Temp[1]);
                                c['village_id']=getVillageID(vId);
-                               c['ssid']=j$.cookie('SSID');
-                               j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                               c['ssid']=jQuery.cookie('SSID');
+                               jQuery.post("http://"+HOST+"/facility/build.php", c, function() {});
                                $w(function() {
                                       location.reload(false);
                                   });
@@ -1593,8 +1593,8 @@ function setVillageFacility2() {
                     c['x']=parseInt(Temp[0]);
                     c['y']=parseInt(Temp[1]);
                     c['village_id']=getVillageID(vId);
-                    c['ssid']=j$.cookie('SSID');
-                    j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                    c['ssid']=jQuery.cookie('SSID');
+                    jQuery.post("http://"+HOST+"/facility/build.php", c, function() {});
                     $w(function() {
                            location.reload(false);
                        });
@@ -1604,8 +1604,8 @@ function setVillageFacility2() {
                         c['y']=parseInt(Temp[1]);
                         c['id']=242;
                         c['village_id']=getVillageID(vId);
-                        c['ssid']=j$.cookie('SSID');
-                        j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                        c['ssid']=jQuery.cookie('SSID');
+                        jQuery.post("http://"+HOST+"/facility/build.php", c, function() {});
                         $w(function() {
                                location.reload(false);
                            });
@@ -1614,8 +1614,8 @@ function setVillageFacility2() {
                         c['y']=parseInt(Temp[1]);
                         c['id']=215;
                         c['village_id']=getVillageID(vId);
-                        c['ssid']=j$.cookie('SSID');
-                        j$.post("http://"+HOST+"/facility/build.php", c, function() {});
+                        c['ssid']=jQuery.cookie('SSID');
+                        jQuery.post("http://"+HOST+"/facility/build.php", c, function() {});
                         $w(function() {
                                location.reload(false);
                            });
@@ -1921,7 +1921,7 @@ function addOpenLinkHtml() {
 
 //建築設定画面を開く
 function openIniBilderBox() {
-    j$("#bab-main").show();
+    jQuery("#bab-main").show();
 }
 
 //LvUP対象施設設定画面を開く
@@ -3631,15 +3631,15 @@ function ccreateText(container, id, text, left)
 
 function jcreateCheckBox(container, id, def, text, title, left) {
     left += 2;
-    var div = j$("<div>").css({"padding": "1px", "padding-left": left + "px"}).attr("title", title);
+    var div = jQuery("<div>").css({"padding": "1px", "padding-left": left + "px"}).attr("title", title);
 
-    var cb = j$("<input>").attr("type", "checkbox").css({"vertical-align": "middle"}).attr("id", id).val(1);
+    var cb = jQuery("<input>").attr("type", "checkbox").css({"vertical-align": "middle"}).attr("id", id).val(1);
 
     if (def) {
         cb.attr("checked", true);
     }
 
-    var lb = j$("<label>").attr("html-for", id).css({"vertical-align": "middle"}).text(text);
+    var lb = jQuery("<label>").attr("html-for", id).css({"vertical-align": "middle"}).text(text);
 
     div.append(cb).append(lb);
     container.append(div);
@@ -3673,7 +3673,7 @@ function ccreateCheckBox(container, id, def, text, title, left) {
 }
 
 function jcreateButton(container, text, title, func, width, top) {
-    var btn = j$("<input>").css(
+    var btn = jQuery("<input>").css(
         {
             "padding": "0px",
             "height": "22px",
@@ -4120,8 +4120,8 @@ function changeResorceToResorce(from, tc, to, x, y) {
     c['st'] = 1;
     c['tf_id'] = parseInt(from);
     c['tt_id'] = parseInt(to);
-    c['ssid'] = j$.cookie('SSID');
-    j$.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(x) + "&y=" + parseInt(y) + "#ptop", c, function() {});
+    c['ssid'] = jQuery.cookie('SSID');
+    jQuery.post("http://"+HOST+"/facility/facility.php?x=" + parseInt(x) + "&y=" + parseInt(y) + "#ptop", c, function() {});
     var tid = $w(function() {
                      location.reload(false);
                  });
@@ -4155,7 +4155,7 @@ function sendDonate(rice) {
     c['iron'] = 0;
     c['rice'] = parseInt(rice);
     c['contribution'] = 1;
-    j$.post("http://"+HOST+"/alliance/level.php", c, function() {});
+    jQuery.post("http://"+HOST+"/alliance/level.php", c, function() {});
     var tid = $w(function() {
                      location.reload(false);
                  });
@@ -4468,7 +4468,7 @@ function saveVillage(newData, type) {
 function jcreateActionDiv(action, now, baseXY, host) {
     var type = action[IDX2_TYPE].charAt(0);
 
-    var actionDiv = j$("<div>");
+    var actionDiv = jQuery("<div>");
     if (action[IDX2_DELETE] == "true") {
         actionDiv.css("background-color", "#BBDDDD");
     }
@@ -4484,11 +4484,11 @@ function jcreateActionDiv(action, now, baseXY, host) {
     text += " (あと" + generateWaitTimeString(finishTime, now) + ")";
     text += action[IDX2_STATUS] + " ";
 
-    var textSpan = j$("<span>").text(text);
+    var textSpan = jQuery("<span>").text(text);
     actionDiv.append(textSpan);
 
     if (actionTime < now) {
-        var del_link = j$("<a>").attr("title", "確認済にして削除します").attr("href", "#").css("color", "#E86D61").text("済");
+        var del_link = jQuery("<a>").attr("title", "確認済にして削除します").attr("href", "#").css("color", "#E86D61").text("済");
         var key = host + DELIMIT1 + baseXY + DELIMIT1 + action[IDX2_TIME];
         del_link.click(function(e) {
                           deleteAction(key);
@@ -4565,8 +4565,8 @@ function confirmTimer() {
         saveVillages(hosts[ii] + PGNAME, villages);
     }
 
-    j$("#bab-main .action-finished").remove();
-    j$("#bab-main .action-deleted").remove();
+    jQuery("#bab-main .action-finished").remove();
+    jQuery("#bab-main .action-deleted").remove();
 
     if (is_stay_mode()) {
         reopen();
@@ -4750,7 +4750,7 @@ function getMyXY() {
 function get_using_skill_all() {
     var name = null;
     var level = null;
-    var text = j$("div.base-skill span a").text();
+    var text = jQuery("div.base-skill span a").text();
     var matches = text.match(/(.+?):?\s*(.+)\((.+)\)/);
     var chara = matches[1] === '--' ? null : matches[1];
     if (matches[2] !== '--') {

@@ -1,10 +1,10 @@
 build_village = (x, y, type, funcs) ->
-    j$.ajax {
+    jQuery.ajax {
         url: "/facility/select_type.php"
         data: {x: x, y: y}
         success: (res) ->
             if res.match /この領地を拠点にする/
-                j$.ajax {
+                jQuery.ajax {
                     url: "/facility/select_type.php"
                     data: {x: x, y: y, mode: 'build', type: type}
                     success: (res2) ->

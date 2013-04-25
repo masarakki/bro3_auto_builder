@@ -31,8 +31,8 @@ create_blacksmith_box = (soldiers)->
     ccreateText controls, "dummy", "　", 0
     ccreateButton controls, "初期化", "", ->
         for soldier in soldiers
-            j$("#OPT_BG_LV#{soldier.id}").val(0)
-            j$("#OPT_BK_LV#{soldier.id}").val(0)
+            jQuery("#OPT_BG_LV#{soldier.id}").val(0)
+            jQuery("#OPT_BK_LV#{soldier.id}").val(0)
 
     header = (td) ->
         ccreateCheckBox td, "OPT_BKBG_CHK", OPT_BKBG_CHK, " 自動武器・防具強化", "", 0
