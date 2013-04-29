@@ -15,15 +15,13 @@ var OPT_BLD_STONE = 0;
 var OPT_BLD_IRON  = 0;
 var OPT_BLD_RICE  = 0;
 var OPT_BLD_SOL = 0;
-var sort_priority = [];
 var OPT_BKBG_CHK = 0;
 
 OPT_BK_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 OPT_BG_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 //巡回用
-var tidMain2;
-var tidMain3;
+var timer;
 var nextURL;
 var nextNAME;
 //寄付用
@@ -1654,11 +1652,11 @@ function forwardNextVillage(vId) {
     var waitTime = nextTime - nowTime;
     var roundTime = 0;
 
-    clearInterval(tidMain2);
+    clearInterval(timer);
 
     if ((ShopFlg == true) && (ShopURL != "")) {
         roundTime = 10 * 1000;
-        tidMain2 = $w(function() {
+        timer = $w(function() {
                           location.href = ShopURL;
                       }, roundTime);
     }
@@ -1696,7 +1694,7 @@ function forwardNextVillage(vId) {
                         if (vcURL!=undefined) {
                             saveVillages(HOST+PGNAME, villages);
                             roundTime = 5 * 1000;
-                            tidMain2 = $w(function() {
+                            timer = $w(function() {
                                               location.href = vcURL;
                                           }, roundTime);
                         }
@@ -1705,7 +1703,7 @@ function forwardNextVillage(vId) {
             }
         }
     }
-    if (tidMain2 == undefined) {
+    if (timer == undefined) {
         //一番早い作業完了時刻を取得
         var startTime = new Date("2099/12/31 23:59:59");
         var nextTime = startTime;
@@ -1733,19 +1731,19 @@ function forwardNextVillage(vId) {
             if (nextURL == "") {
                 // 次回建築完了予定がない場合は通常巡回処理
                 roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                tidMain2 = $w(function() {
+                timer = $w(function() {
                                   location.href = vcURL;
                               }, roundTime);
             } else {
                 if (parseInt(OPT_ROUND_TIME1) * 1000 > nTime) {
                     roundTime = (nextTime - nowTime + 10000);
-                    tidMain2 = $w(function() {
+                    timer = $w(function() {
                                       location.href = nextURL;
                                   }, roundTime);
                 } else {
                     // 通常巡回処理
                     roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                    tidMain2 = $w(function() {
+                    timer = $w(function() {
                                       location.href = vcURL;
                                   }, roundTime);
                 }
@@ -1896,8 +1894,7 @@ function openIniBilderBox() {
 
 //LvUP対象施設設定画面を開く
 function openInifacBox(vId) {
-    clearInterval(tidMain2);
-    clearInterval(tidMain3);
+    clearInterval(timer);
     closeInifacBox();
     addInifacHtml(vId);
 }
@@ -2815,11 +2812,11 @@ function addInifacHtml(vId) {
     ccreateButton(td711, "保存", "設定内容を保存します", function() {
                       SaveInifacBox(ABfacContainer.getAttribute('vId'));
                       closeInifacBox();
-                      clearInterval(tidMain2);
+                      clearInterval(timer);
                   });
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
                       closeInifacBox();
-                      clearInterval(tidMain2);
+                      clearInterval(timer);
                   });
 
 
