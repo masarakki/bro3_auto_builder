@@ -2842,14 +2842,12 @@ function addInifacHtml(vId) {
 
     ccreateButton(td711, "保存", "設定内容を保存します", function() {
                       SaveInifacBox(ABfacContainer.getAttribute('vId'));
-                      alert("保存しました");
+                      closeInifacBox();
+                      clearInterval(tidMain2);
                   });
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
                       closeInifacBox();
                       clearInterval(tidMain2);
-                      tidMain2 = $w(function() {
-                                        location.reload();
-                                    });
                   });
 
 
