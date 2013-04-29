@@ -17,19 +17,6 @@ var OPT_BLD_RICE  = 0;
 var OPT_BLD_SOL = 0;
 var sort_priority = [];
 var OPT_BKBG_CHK = 0;
-var make_no = [];
-// 兵種,       No,研究済,作成可能兵数,現在の兵数,最大兵数,現兵数との差,x,y
-make_no["剣兵"]     = ["剣兵"    ,301,     0,           0,         0,       0,          0,0,0];
-make_no["槍兵"]     = ["槍兵"    ,303,     0,           0,         1,       0,          0,0,0];
-make_no["弓兵"]     = ["弓兵"    ,308,     0,           0,         2,       0,          0,0,0];
-make_no["騎兵"]     = ["騎兵"    ,305,     0,           0,         3,       0,          0,0,0];
-make_no["矛槍兵"]   = ["矛槍兵"  ,304,     0,           0,         4,       0,          0,0,0];
-make_no["弩兵"]     = ["弩兵"    ,309,     0,           0,         5,       0,          0,0,0];
-make_no["近衛騎兵"] = ["近衛騎兵",307,     0,           0,         6,       0,          0,0,0];
-make_no["斥候"]     = ["斥候"    ,310,     0,           0,         7,       0,          0,0,0];
-make_no["斥候騎兵"] = ["斥候騎兵",311,     0,           0,         8,       0,          0,0,0];
-make_no["衝車"]     = ["衝車"    ,312,     0,           0,         9,       0,          0,0,0];
-make_no["投石機"]   = ["投石機"  ,313,     0,           0,        10,       0,          0,0,0];
 
 OPT_BK_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 OPT_BG_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -3817,7 +3804,7 @@ function sumMaxSoldier(type) {
     if (MaxSoldir > countRice)  { MaxSoldir = countRice; }
 
     if (make_max < MaxSoldir) { MaxSoldir = make_max; }     // 滞在可能上限を超えないこと
-    return MaxSoldir;
+    return parseInt(MaxSoldir);
 }
 
 // 資源オーバーフロー防止処理
