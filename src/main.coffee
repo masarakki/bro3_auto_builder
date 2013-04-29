@@ -107,3 +107,5 @@ main = ->
     if location.pathname == "/facility/facility.php"
         update_creating_soldiers document.getElementById("container").innerHTML
 
+jQuery(window).ready ->
+    main()

@@ -238,8 +238,6 @@ var reopen = function() {
     openIniBilderBox();
 };
 
-main();
-
 function log() {
     unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments));
 };
