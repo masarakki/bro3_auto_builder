@@ -52,13 +52,6 @@ var OPT_TO_WOOD = 10000; //木に変換する糧
 var OPT_TO_STONE = 10000; //石に変換する糧
 var OPT_TO_IRON = 10000; //鉄に変換する糧
 
-//グローバル変数
-var MOUSE_DRAGGING = false;
-var MOUSE_OFFSET_X;
-var MOUSE_OFFSET_Y;
-var MOUSE_DRAGGING_WINDOW = 0;
-var ALERT_TIME;
-
 var OPT_MAX_WOOD = 0;           // 木の最大保持量
 var OPT_MAX_STONE = 0;      // 石の最大保持量
 var OPT_MAX_IRON = 0;           // 鉄の最大保持量
