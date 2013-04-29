@@ -1,5 +1,3 @@
-var fontstyle = "bold 10px 'ＭＳ ゴシック'";
-
 var DEBUG = false;
 
 var COLOR_FRAME = "#333333";    // 枠背景色
@@ -79,9 +77,6 @@ var OPT_ROUND_TIME2 = 10;   // 巡回時間(sec)
 var Reload_Flg = 0;
 var OPT_BUILD_VID;
 
-
-var INTERVAL  = 1000;
-var INTERVAL2 = 2000;
 var HOST = location.hostname;
 var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524";
 var TIMEOUT_URL = "/false/login_sessionout.php";
@@ -189,7 +184,7 @@ var $e = function(e, t, f) {
 
 var $w = function(func, interval) {
     if (interval == undefined) {
-        interval = INTERVAL;
+        interval = 1000;
     }
     return unsafeWindow.setTimeout(func, interval);
 };
@@ -231,8 +226,6 @@ var DASkill = [ "■■■■",
 // 市場変換用
 var ShopURL = "";
 var ShopFlg = false;
-
-var DBG_Flg = false;
 
 var reopen = function() {
     openIniBilderBox();
@@ -2355,7 +2348,6 @@ function addInifacHtml(vId) {
     ABfacContainer.style.border = "solid 2px black";
     ABfacContainer.style.left = popupLeft + "px";
     ABfacContainer.style.top = popupTop + "px";
-    ABfacContainer.style.font = fontstyle;
     ABfacContainer.style.padding = "2px";
     ABfacContainer.style.MozBorderRadius = "4px";
     ABfacContainer.style.zIndex = 999;
@@ -2364,16 +2356,19 @@ function addInifacHtml(vId) {
     d.body.appendChild(ABfacContainer);
 
     $e(ABfacContainer, "mousedown", function(event) {
-           if (event.target != $("ABfacContainer")) return false;
+           if (event.target != $("ABfacContainer"))
+               return false;
            g_MD = "ABfacContainer";
            g_MX = event.pageX-parseInt(this.style.left,10);
            g_MY = event.pageY-parseInt(this.style.top,10);
            event.preventDefault();
        });
     $e(d, "mousemove", function(event) {
-           if (g_MD != "ABfacContainer") return true;
+           if (g_MD != "ABfacContainer")
+               return true;
            var ABfacContainer = $("ABfacContainer");
-           if (!ABfacContainer) return true;
+           if (!ABfacContainer)
+               return true;
            var popupLeft = event.pageX - g_MX;
            var popupTop  = event.pageY - g_MY;
            ABfacContainer.style.left = popupLeft + "px";
