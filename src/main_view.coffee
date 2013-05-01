@@ -88,6 +88,7 @@ class MainView
         for village, i in villages
             actions = for action in village.actions
                 name = "#{action.action}:#{action.target}"
+                name += " / #{action.user} #{action.skill_name}" if action.user && action.skill_name
                 name += "(LV#{action.level})" if action.level
                 finish_at = Date.parse action.at
                 status = 'working'

@@ -3392,9 +3392,11 @@ function saveVillages(hostname, newData) {
         var actions_array = [];
         for (var j = 0; j < actions.length; j ++) {
             var action = actions[j];
-            var status = action[IDX2_STATUS];
+            var status = action[0];
             var level = null;
             var matched = null;
+            var user = null;
+            var skill_name = null;
             matched = status.match(/(.+?):([^\(]+)/);
             var act = matched[1];
             var name = matched[2];
@@ -3402,7 +3404,12 @@ function saveVillages(hostname, newData) {
             if (matched) {
                 level = parseInt(matched[1]);
             }
-
+            matched = status.match(/\((.+)：(.+)LV(.+)\)/);
+            if (matched) {
+                user = matched[1];
+                skill_name = matched[2];
+                level = matched[3];
+            }
             var type = null;
             switch(action[IDX2_TYPE]) {
             case "C":
@@ -3419,6 +3426,8 @@ function saveVillages(hostname, newData) {
                 action: act,
                 target: name,
                 level: level,
+                user: user,
+                skill_name: skill_name,
                 at: action[IDX2_TIME],
                 type: type,
                 alerted: action[IDX2_ALERTED],
