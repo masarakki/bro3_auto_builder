@@ -1141,7 +1141,6 @@ function autoLvup() {
                                var htmldoc = document.createElement("html");
                                htmldoc.innerHTML = x.responseText;
                                // 鍛冶場・防具工場情報の取得
-                               getTrainingSoldier(htmldoc);
                                if (is_stay_mode()) {
                                    reopen();
                                }
@@ -4357,119 +4356,143 @@ function sortAction(actions) {
 function getVillageActions() {
     var data = new Array();
     //拠点名を取得
-    var baseNameElem = document.evaluate(
-        '//*[@id="basepoint"]/span[@class="basename"]',
-        document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    data[IDX_BASE_NAME] = trim(baseNameElem.snapshotItem(0).innerHTML);
-
-    //座標を取得
-    var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
-                                   document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    data[IDX_XY] = trim(xyElem.snapshotItem(0).innerHTML);
+    var doc = jQuery(document);
+    var village_name = trim(jQuery("#basepoint .basename", doc).text());
+    var xy = trim(jQuery("#basepoint .xy", doc).text());
+    data[IDX_BASE_NAME] = village_name;
+    data[IDX_XY] = xy;
 
     //建設情報を取得
     var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li',
                                         document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    var actions1 = new Array();
-    for (var i = 0; i < actionsElem.snapshotLength; i++) {
-        var paItem = actionsElem.snapshotItem(i);
+    var updates = [];
+    var actions = null;
+
+    actions = jQuery("#actionLog ul li", doc);
+    for (var i = 0; i < actions.length; i++) {
+        var matched;
+        var action = actions[i];
         var newAction = new Array();
 
         //ステータス
-        var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        var buildStatus;
-        if (buildStatusElem.snapshotLength > 0) {
-            //施設建設
-            var buildstr = trim(document.evaluate('./span[@class="buildStatus"]', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0).innerHTML).substr(0,2);
-            if (buildstr == "建設") {
-                newAction[IDX2_DELETE] = false;
-                buildStatus = "建設:" + trim(buildStatusElem.snapshotItem(0).innerHTML);
-            } else {
-                newAction[IDX2_DELETE] = true;
-                buildStatus = "削除:" + trim(buildStatusElem.snapshotItem(0).innerHTML);
-            }
-        } else {
-            continue;
-        }
+        var build_status = trim(jQuery(".buildStatus", action).text());
+        var build_str = "";
+        var build_type = build_status.substr(0, 2);
+
         newAction[IDX2_ROTATION] = 0;
         newAction[IDX2_TYPE] = TYPE_CONSTRUCTION;
-        newAction[IDX2_STATUS] = buildStatus;
-
-        //施設建設完了時刻
-        var buildClockElem = document.evaluate('./span[@class="buildClock"]', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        var clock = buildClockElem.snapshotItem(0).innerHTML;
-        newAction[IDX2_TIME] = generateDateString(computeTime(clock));
-        actions1.push(newAction);
+        
+        if (build_type === "建設") {
+            newAction[IDX2_DELETE] = false;
+            build_str = "建設:" + trim(jQuery(".buildStatus a").text());
+        } else if (build_type === "削除") {
+            newAction[IDX2_DELETE] = true;
+            build_str = "建設:" + trim(jQuery(".buildStatus a").text());
+        } else if (matched = build_status.match(/(.+)の(.+)を強化/)) {
+            if (matched[2] === "武器") {
+                build_str = "鍛冶場:";
+            } else {
+                build_str = "防具工場:";
+            }
+            newAction[IDX2_TYPE] = TYPE_FACILITY;
+            build_str += matched[1] + "の" + matched[2] + "を強化中";
+            newAction[IDX2_DELETE] = false;
+        } else if (matched = build_status.match(/(.+)を研究中/)) {
+            newAction[IDX2_TYPE] = TYPE_FACILITY;
+            newAction[IDX2_DELETE] = false;
+            build_str = "研究所:" + matched[1] + "を研究中";
+        }
+        
+        newAction[IDX2_STATUS] = build_str;
+        newAction[IDX2_TIME] = generateDateString(computeTime(trim(jQuery(".buildClock", action).text())));
+        updates.push(newAction);
     }
 
-    //建設情報を永続保存
-    data[IDX_ACTIONS] = actions1;
-    saveVillage(data, TYPE_CONSTRUCTION);
-
-    //行軍情報を取得
-    var actionsElem = document.evaluate(
-        '//*[@id="action"]/div[@class="floatInner"]/ul/li',
-        document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    var actions2 = new Array();
-    for (var i = 0; i < actionsElem.snapshotLength; i++) {
-        var paItem = actionsElem.snapshotItem(i);
+    actions = jQuery(".floadInner ul li", doc);
+    for (var i = 0; i < actions.length; i++) {
+        var action = actions[i];
         var newAction = new Array();
         newAction[IDX2_TYPE] = TYPE_MARCH;
         newAction[IDX2_DELETE] = false;
         newAction[IDX2_ROTATION] = 0;
 
         //ステータス
-        var statusElem = document.evaluate('./a',
-                                           paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        var status = trim(statusElem.snapshotItem(0).innerHTML);
+        var status = trim(jQuery("a", action).text());
         newAction[IDX2_STATUS] = "行軍:" + status;
+        newAction[IDX2_TIME] = generateDateString(computeTime(trim(jQuery('span', action).text())));
 
-        //完了時刻
-        var buildClockElem = document.evaluate('./span',
-                                               paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        var clock = buildClockElem.snapshotItem(0).innerHTML;
-        newAction[IDX2_TIME] = generateDateString(computeTime(clock));
-
-        actions2.push(newAction);
+        updates.push(newAction);
     }
 
     //行軍情報を永続保存
-    data[IDX_ACTIONS] = actions2;
-    saveVillage(data, TYPE_MARCH);
+    data[IDX_ACTIONS] = updates;
+    //    saveVillage(data, TYPE_MARCH);
+    saveVillageTypes(data, [TYPE_MARCH, TYPE_CONSTRUCTION, TYPE_FACILITY]);
+//    saveVillage(data, null);
     if (is_stay_mode()) {
         reopen();
     }
 }
 
-//拠点情報を保存
-function saveVillage(newData, type) {
-    var allData = loadVillages(location.hostname+PGNAME);
+function saveVillageForce(new_data) {
+    var villages = loadVillages(location.hostname + PGNAME);
+    for (var i = 0; i < villages.length; i++) {
+        var village = villages[i];
+        
+        if (village[IDX_XY] == new_data[IDX_XY]) {
+            village[IDX_BASE_NAME] = new_data[IDX_BASE_NAME];
+            var actions = village[IDX_ACTIONS];
+            for (var act_i = 0; act_i < actions.length; act_i++) {
+                var action = actions[act_i];
+                console.log(action);
+            }
+        }
+    }
+}
 
-    //新旧データをマージ
+function saveVillageTypes(new_data, types) {
+    var all_data = loadVillages(location.hostname+PGNAME);
+    for (var i = 0; i < types.length; i++) {
+        all_data = mergeVillageData(all_data, new_data, types[i]);
+    }
+    saveVillages(HOST + PGNAME, all_data);
+}
+
+function mergeVillageData(allData, newData, type) {
     var exists = false;
     for (var i = 0; i < allData.length; i++) {
         var villageData = allData[i];
-
+        
         //作業リスト更新
         if (villageData[IDX_XY] == newData[IDX_XY]) {
             exists = true;
             villageData[IDX_BASE_NAME] = newData[IDX_BASE_NAME];
 
             var actions = villageData[IDX_ACTIONS];
-            for (var j = actions.length - 1; j >= 0; j--) {
-                if (actions[j][IDX2_TYPE] != type) continue;
-                var endTime = new Date(actions[j][IDX2_TIME]);
-                var nowTime = new Date();
-                if (isNaN(endTime.valueOf()) || endTime > nowTime) actions.splice(j, 1);
+            var new_actions = [];
+            for (var j = 0; j < actions.length; j++) {
+                if (actions[j][IDX2_TYPE].substr(0, 1) !== type)
+                    new_actions.push(actions[j]);
             }
-            villageData[IDX_ACTIONS] = actions.concat(newData[IDX_ACTIONS]);
+            for (var j = 0; j < newData[IDX_ACTIONS].length; j++) {
+                if (newData[IDX_ACTIONS][j][IDX2_TYPE] === type) {
+                    new_actions.push(newData[IDX_ACTIONS][j]);
+                }
+            }
+            villageData[IDX_ACTIONS] = new_actions;
         }
 
         allData[i] = villageData;
     }
     if (!exists) allData.push(newData);
-    //Greasemonkey領域へ永続保存
-    saveVillages(HOST+PGNAME, allData);
+    return allData;
+}
+
+//拠点情報を保存
+function saveVillage(new_data, type) {
+    var all_data = loadVillages(location.hostname+PGNAME);
+    all_data = mergeVillageData(all_data, new_data, type);
+    saveVillages(HOST + PGNAME, all_data);
 }
 
 function jcreateActionDiv(action, now, baseXY, host) {
@@ -4620,92 +4643,6 @@ function deleteAction(key) {
             }
             return;
         }
-    }
-}
-
-//施設内作業中取得
-function getTrainingSoldier(htmldoc) {
-    var data = getMyVillage();
-    data[IDX_ACTIONS] = new Array();
-    var tt = {};
-    //施設名
-    var j = jQuery(htmldoc);
-    var facilityName = jQuery('h2', j).text();
-
-    // 作成数の兵数と兵種
-    var mSolName = jQuery("th.mainTtl", j);
-    var mSolNum = jQuery(".commonTables td", j);
-    // 作成できる兵種の種類数
-
-    var mSolTypeT = jQuery("table.commonTables", j);
-    if (mSolTypeT.length > 2) {
-        var mSolType = jQuery(".mainTtl", mSolTypeT[1]);
-        for (var r = 1; r < mSolType.length; r++) {
-            tt[r-1] = new Array();
-            tt[r-1] = mSolType[r].innerHTML;
-            var endflg = false;
-            if (r > 1) {
-                for (var q = 0; q < r - 1; q++) {
-                    if (tt[q] == mSolType[r].innerHTML) {
-                        endflg = true;
-                        break;
-                    }
-                }
-            }
-            if (endflg) {
-                var mSolTypeNum = r - 1;
-                break;
-            }
-        }
-    }
-    // 施設が最大レベルかの判断
-    if (jQuery(".lvupFacility .main", j).text().match("最大レベル")) {
-        maxLv = 3;
-    } else {
-        maxLv = 0;
-    }
-
-    //作業中情報取得
-    var idx = 0;
-    while (1) {
-        var actionType = TYPE_FACILITY + facilityName;
-
-        var clockElem = document.evaluate('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
-        if (clockElem == undefined) {
-            saveVillage(data, actionType);      // 研究所で未研究の場合過去の研究情報の削除
-            break;
-        }
-
-        var mainTtls = document.evaluate('../../../tr/th[@class="mainTtl"]', clockElem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        if (mainTtls.snapshotLength == 0) break;
-        var clock = trim(clockElem.innerHTML);
-        if (clock == "") break;
-
-        var mainTtlElem = mainTtls.snapshotItem(idx);
-        if (mainTtlElem == undefined) break;
-        var status = trim(mainTtlElem.innerHTML);
-        if (status == "") break;
-
-        var actionType = TYPE_FACILITY + facilityName;
-
-        data[IDX_ACTIONS][idx] = new Array();
-
-        if (facilityName == "鍛冶場" || facilityName == "防具工場" || facilityName == "研究所") {
-            data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status;
-        } else {
-            try {
-                data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + "(" + mSolNum.snapshotItem(8 + mSolTypeNum + (mSolTypeNum * 5) + (idx * 4) - (1 * maxLv)).innerHTML + ")";
-            } catch(e) {
-                data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + " (error)";
-            }
-        }
-
-        data[IDX_ACTIONS][idx][IDX2_TIME] = generateDateString(computeTime(clock));
-        data[IDX_ACTIONS][idx][IDX2_TYPE] = actionType;
-        data[IDX_ACTIONS][idx][IDX2_DELETE] = false;
-        data[IDX_ACTIONS][idx][IDX2_ROTATION] = 0;
-
-        idx++;
     }
 }
 
