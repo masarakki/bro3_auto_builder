@@ -3404,7 +3404,7 @@ function saveVillages(hostname, newData) {
             if (matched) {
                 level = parseInt(matched[1]);
             }
-            matched = status.match(/\((.+)：(.+)LV(.+)\)/);
+            matched = status.match(/\((.+):(.+)LV(.+)\)/);
             if (matched) {
                 user = matched[1];
                 skill_name = matched[2];
@@ -4793,7 +4793,7 @@ function getDomesticSkill(htmldoc) {
     var skill = get_using_skill_all();
     if (skill.name) {
         i += 1;
-        var status = "内政:使用(" + skill.name + ")";
+        var status = "内政:使用(" + skill.chara + ":" + skill.name + "LV" + skill.level + ")";
         data[IDX_ACTIONS][i] = new Array();
         data[IDX_ACTIONS][i][IDX2_STATUS] = status;
         data[IDX_ACTIONS][i][IDX2_TIME] = generateDateString(computeTime(skill.time));
@@ -4816,8 +4816,7 @@ function getDomesticSkill(htmldoc) {
                 data[IDX_ACTIONS][i] = new Array();
                 var SkillName  = RecoverySkill.snapshotItem(x).innerHTML.split("<")[0];         // スキル名
                 var SkillRTime = RecoverySkill.snapshotItem(x).innerHTML.split('>')[2].substr(0,8);     // 回復時間
-                var status = "回復";
-                status = "内政:" + status + "(" + trim(Name) + "：" + SkillName + ")";
+                var status = "内政:回復(" + trim(Name) + ":" + SkillName + ")";
                 data[IDX_ACTIONS][i][IDX2_STATUS] = status;
                 data[IDX_ACTIONS][i][IDX2_TIME] = generateDateString(computeTime(SkillRTime));
                 data[IDX_ACTIONS][i][IDX2_TYPE] = TYPE_DOMESTIC;
