@@ -74,8 +74,6 @@ try_create_soldiers = (soldiers, village, current_soldier_counts, using_skill, c
         next_tick soldiers, current_soldier_counts, capacity, succeeded
 
 make_all_soldiers = (current_soldier_counts) ->
-    soldiers = get_soldiers()
-
     capacity = ( ->
         matches = jQuery(".status.village-bottom").text().match /(\d+)\/(\d+)/
         parseInt(matches[2]) - parseInt(matches[1]);
@@ -85,4 +83,4 @@ make_all_soldiers = (current_soldier_counts) ->
     return unless capacity > 0
 
     village = new Village
-    try_create_soldiers soldiers, village, current_soldier_counts, using_skill, capacity, false
+    try_create_soldiers soldiers(), village, current_soldier_counts, using_skill, capacity, false
