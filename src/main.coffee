@@ -103,12 +103,12 @@ main = ->
 
         if lab
             try
-                # 研究所チェック
-                jQuery.html (res) ->
+                lab.html (res) ->
                     getTrainingSoldier(res);
                     check_skill()
             catch error
                 forwardNextVillage(vId)
+                check_skill()
         else
             check_skill()
 

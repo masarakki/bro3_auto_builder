@@ -4629,27 +4629,24 @@ function getTrainingSoldier(htmldoc) {
     data[IDX_ACTIONS] = new Array();
     var tt = {};
     //施設名
-    var facilityName = "";
-    var h2Elem = document.evaluate('//*[@id="gray02Wrapper"]/h2', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    if (h2Elem.getSnapshotLength != 0) {
-        facilityName = trim(h2Elem.snapshotItem(0).innerHTML);
-    }
+    var j = jQuery(htmldoc);
+    var facilityName = jQuery('h2', j).text();
+
     // 作成数の兵数と兵種
-    var mSolName = document.evaluate('//th[@class="mainTtl"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    //  var mSolNum = document.evaluate('//td',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    var mSolNum = document.evaluate('//*[@class="commonTables"]//td',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var mSolName = jQuery("th.mainTtl", j);
+    var mSolNum = jQuery(".commonTables td", j);
     // 作成できる兵種の種類数
 
-    var mSolTypeT = document.evaluate('//table[@class="commonTables"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    if (mSolTypeT.snapshotLength > 2) {
-        var mSolType = document.evaluate('//*[@class="mainTtl"]',mSolTypeT.snapshotItem(1), null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for (var r = 1; r < mSolType.snapshotLength; r++) {
+    var mSolTypeT = jQuery("table.commonTables", j);
+    if (mSolTypeT.length > 2) {
+        var mSolType = jQuery(".mainTtl", mSolTypeT[1]);
+        for (var r = 1; r < mSolType.length; r++) {
             tt[r-1] = new Array();
-            tt[r-1] = mSolType.snapshotItem(r).innerHTML;
+            tt[r-1] = mSolType[r].innerHTML;
             var endflg = false;
             if (r > 1) {
                 for (var q = 0; q < r - 1; q++) {
-                    if (tt[q] == mSolType.snapshotItem(r).innerHTML) {
+                    if (tt[q] == mSolType[r].innerHTML) {
                         endflg = true;
                         break;
                     }
@@ -4662,8 +4659,7 @@ function getTrainingSoldier(htmldoc) {
         }
     }
     // 施設が最大レベルかの判断
-    var commentNum = document.evaluate('//*[@class="lvupFacility"]/*[@class="main"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    if (commentNum.snapshotItem(0).innerHTML.match("最大レベル")) {
+    if (jQuery(".lvupFacility .main", j).text().match("最大レベル")) {
         maxLv = 3;
     } else {
         maxLv = 0;
