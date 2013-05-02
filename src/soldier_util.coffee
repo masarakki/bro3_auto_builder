@@ -1,6 +1,6 @@
 count_soldiers = (callback) ->
     total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    keys = for soldier in soldiers
+    keys = for soldier in soldiers()
         soldier.name
     add_soldier_count = (add) ->
         for num, i in add
@@ -47,6 +47,7 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
                         }
                     else
                         return callback()
+            return callback()
 
 try_create_soldiers = (soldiers, village, current_soldier_counts, using_skill, capacity, succeeded = false) ->
     next_tick = (soldiers, current_soldier_counts, capacity, succeeded) ->
