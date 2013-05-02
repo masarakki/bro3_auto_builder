@@ -4646,6 +4646,101 @@ function deleteAction(key) {
     }
 }
 
+//施設内作業中取得
+function getTrainingSoldier(htmldoc) {
+    var data = getMyVillage();
+    data[IDX_ACTIONS] = new Array();
+    var tt = {};
+    //施設名
+    var facilityName = "";
+    var h2Elem = document.evaluate('//*[@id="gray02Wrapper"]/h2', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    if (h2Elem.getSnapshotLength != 0) {
+        facilityName = trim(h2Elem.snapshotItem(0).innerHTML);
+    }
+    // 作成数の兵数と兵種
+    var mSolName = document.evaluate('//th[@class="mainTtl"]',htmldoc, null,
+                                     XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var mSolNum = document.evaluate('//*[@class="commonTables"]//td',htmldoc, null,
+                                    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    // 作成できる兵種の種類数
+
+    var mSolTypeT = document.evaluate('//table[@class="commonTables"]',htmldoc, null,
+                                      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    if (mSolTypeT.snapshotLength > 2) {
+        var mSolType = document.evaluate('//*[@class="mainTtl"]',mSolTypeT.snapshotItem(1), null,
+                                         XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for (var r = 1; r < mSolType.snapshotLength; r++) {
+            tt[r-1] = new Array();
+            tt[r-1] = mSolType.snapshotItem(r).innerHTML;
+            var endflg = false;
+            if (r > 1) {
+                for (var q = 0; q < r - 1; q++) {
+                    if (tt[q] == mSolType.snapshotItem(r).innerHTML) {
+                        endflg = true;
+                        break;
+                    }
+                }
+            }
+            if (endflg) {
+                var mSolTypeNum = r - 1;
+                break;
+            }
+        }
+    }
+    // 施設が最大レベルかの判断
+    var commentNum = document.evaluate('//*[@class="lvupFacility"]/*[@class="main"]', htmldoc, null,
+                                       XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    if (commentNum.snapshotItem(0).innerHTML.match("最大レベル")) {
+        maxLv = 3;
+    } else {
+        maxLv = 0;
+    }
+    //作業中情報取得
+    var idx = 0;
+    while (1) {
+        var actionType = TYPE_FACILITY + facilityName;
+        var clockElem = document.evaluate('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc,
+                                          null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
+        if (clockElem == undefined) {
+            saveVillage(data, actionType);      // 研究所で未研究の場合過去の研究情報の削除
+            break;
+        }
+
+        var mainTtls = document.evaluate('../../../tr/th[@class="mainTtl"]', clockElem, null,
+                                         XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        if (mainTtls.snapshotLength == 0) break;
+        var clock = trim(clockElem.innerHTML);
+        if (clock == "") break;
+
+        var mainTtlElem = mainTtls.snapshotItem(idx);
+        if (mainTtlElem == undefined) break;
+        var status = trim(mainTtlElem.innerHTML);
+        if (status == "") break;
+
+        var actionType = TYPE_FACILITY + facilityName;
+        data[IDX_ACTIONS][idx] = new Array();
+
+        if (facilityName == "鍛冶場" || facilityName == "防具工場" || facilityName == "研究所") {
+            data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status;
+        } else {
+            try {
+                data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + "(" +
+                    mSolNum.snapshotItem(8 + mSolTypeNum + (mSolTypeNum * 5) +
+                                         (idx * 4) - (1 * maxLv)).innerHTML + ")";
+            } catch(e) {
+                data[IDX_ACTIONS][idx][IDX2_STATUS] = facilityName + ":" + status + " (error)";
+            }
+        }
+
+        data[IDX_ACTIONS][idx][IDX2_TIME] = generateDateString(computeTime(clock));
+        data[IDX_ACTIONS][idx][IDX2_TYPE] = actionType;
+        data[IDX_ACTIONS][idx][IDX2_DELETE] = false;
+        data[IDX_ACTIONS][idx][IDX2_ROTATION] = 0;
+
+        idx++;
+    }
+}
+
 function getMyVillage() {
     var ret = new Array();
 
