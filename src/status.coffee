@@ -5,8 +5,8 @@ class Status
         @iron = parseInt jQuery("#iron").text()
         @rice = parseInt jQuery("#rice").text()
         [@current_famous, @max_famous] = (->
-            text = $x('id("status_left")/img[contains(@src,"ico_fame.gif")]').nextSibling
-            matches = text.nodeValue.match /\s*(\d+)\s*\/\s*(\d+)\s*/
+            text = jQuery("#status_left img[src$='ico_fame.gif']").get(0).nextSibling.nodeValue
+            matches = text.match /\s*(\d+)\s*\/\s*(\d+)\s*/
             [parseInt(matches[1]), parseInt(matches[2])]
         )()
 
