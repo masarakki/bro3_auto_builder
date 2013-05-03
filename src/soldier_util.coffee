@@ -34,7 +34,7 @@ try_create_soldier = (builder, soldier, request_num, using_skill, callback) ->
             for soldier_type in soldier_types
                 key = soldier_type.textContent
                 if key == soldier.name
-                    enable_soldier_count = parseInt(sumMaxSoldier(make_no[key][1]));
+                    enable_soldier_count = sumMaxSoldier soldier.unit_id
                     if enable_soldier_count > request_num
                         console.log "request to create #{soldier.name} #{request_num}"
                         return jQuery.ajax {
