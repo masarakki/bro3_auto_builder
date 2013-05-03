@@ -16,6 +16,9 @@ var OPT_BLD_IRON  = 0;
 var OPT_BLD_RICE  = 0;
 var OPT_BLD_SOL = 0;
 var OPT_BKBG_CHK = 0;
+var escape_mode = 0;
+var escape_x = null;
+var escape_y = null;
 
 OPT_BK_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 OPT_BG_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
@@ -3059,6 +3062,10 @@ function SaveInifacBox(vId) {
     }
     strSave += cgetCheckBoxValue($("OPT_BKBG_CHK")) + DELIMIT2; //自動武器・防具強化するかのフラグ
     strSave += cgetCheckBoxValue($("OPT_SHIGEN")) + DELIMIT2;
+    strSave += cgetCheckBoxValue($("escape_mode")) + DELIMIT2;
+    strSave += cgetTextBoxValue($("escape_x")) + DELIMIT2;
+    strSave += cgetTextBoxValue($("escape_y")) + DELIMIT2;
+
     GM_setValue(HOST + PGNAME + vId, strSave);
 }
 
@@ -3084,7 +3091,9 @@ function Load_OPT(vId) {
             OPT_CHKBOX[i] = 0;
             OPT_CHKBOXLV[i] = "0";
         }
-
+        escape_mode = 0;
+        escape_x = 0;
+        escape_y = 0;
         //市場変換処理用 （本拠地情報にデータがある）
         var villages = loadVillages(HOST+PGNAME);
         var src2 = GM_getValue(HOST+PGNAME+villages[0][IDX_XY], "");
@@ -3166,7 +3175,11 @@ function Load_OPT(vId) {
         OPT_KATEMURA = forInt(Temp2[28]);
         OPT_SHIGEN = forInt(Temp2[166]);
         OPT_SOUKO_MAX = forInt(Temp2[29]);
-
+        
+        escape_mode = Temp2[167];
+        escape_x = Temp2[168];
+        escape_y = Temp2[169];
+        
         //自動寄付
         if (Temp2[30] == "") {return;}
         OPT_KIFU = forInt(Temp2[30]);

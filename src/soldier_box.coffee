@@ -13,6 +13,7 @@ create_soldier_box = (soldiers)->
 
     titles = d.createElement 'td'
     controls = d.createElement 'td'
+    escape = d.createElement 'td'
 
     titles.style.padding = '3px'
     titles.style.verticalAlign = 'bottom'
@@ -20,6 +21,10 @@ create_soldier_box = (soldiers)->
     ccreateText titles, "dummy", "　", 0
     ccreateText titles, "dummy", "　兵数上限", 0
     ccreateText titles, "dummy", "　作成単位", 0
+
+    ccreateCheckBox escape, "escape_mode", escape_mode, "退避モード", "", 0
+    ccreateTextBox escape, "escape_x", escape_x, "x ", "", 4, 0
+    ccreateTextBox escape, "escape_y", escape_x, "y ", "", 4, 0
 
     controls.style.padding = '3px'
     controls.style.verticalAlign = 'bottom'
@@ -36,6 +41,7 @@ create_soldier_box = (soldiers)->
         for soldier in soldiers
             body.appendChild make_soldier_row(soldier)
         body.appendChild controls
+        body.appendChild escape
 
     create_box header, content
 
