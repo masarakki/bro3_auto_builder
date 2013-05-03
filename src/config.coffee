@@ -26,10 +26,10 @@ class Config
         GM_getValue @round_time_key, 60
 
     update_round_time: (value) ->
-        GM_setValue @round_time_key, value
+        GM_setValue @round_time_key, parseInt(value)
 
     soldier_type: ->
         GM_getValue @soldier_type_key, 0
 
     update_soldier_type: (value) ->
-        GM_setValue @soldier_type_key, value
+        GM_setValue @soldier_type_key, parseInt(value)

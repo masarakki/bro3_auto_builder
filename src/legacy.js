@@ -1,5 +1,3 @@
-var fontstyle = "bold 10px 'ＭＳ ゴシック'";
-
 var DEBUG = false;
 
 var COLOR_FRAME = "#333333";    // 枠背景色
@@ -17,28 +15,13 @@ var OPT_BLD_STONE = 0;
 var OPT_BLD_IRON  = 0;
 var OPT_BLD_RICE  = 0;
 var OPT_BLD_SOL = 0;
-var sort_priority = [];
 var OPT_BKBG_CHK = 0;
-var make_no = [];
-// 兵種,       No,研究済,作成可能兵数,現在の兵数,最大兵数,現兵数との差,x,y
-make_no["剣兵"]     = ["剣兵"    ,301,     0,           0,         0,       0,          0,0,0];
-make_no["槍兵"]     = ["槍兵"    ,303,     0,           0,         1,       0,          0,0,0];
-make_no["弓兵"]     = ["弓兵"    ,308,     0,           0,         2,       0,          0,0,0];
-make_no["騎兵"]     = ["騎兵"    ,305,     0,           0,         3,       0,          0,0,0];
-make_no["矛槍兵"]   = ["矛槍兵"  ,304,     0,           0,         4,       0,          0,0,0];
-make_no["弩兵"]     = ["弩兵"    ,309,     0,           0,         5,       0,          0,0,0];
-make_no["近衛騎兵"] = ["近衛騎兵",307,     0,           0,         6,       0,          0,0,0];
-make_no["斥候"]     = ["斥候"    ,310,     0,           0,         7,       0,          0,0,0];
-make_no["斥候騎兵"] = ["斥候騎兵",311,     0,           0,         8,       0,          0,0,0];
-make_no["衝車"]     = ["衝車"    ,312,     0,           0,         9,       0,          0,0,0];
-make_no["投石機"]   = ["投石機"  ,313,     0,           0,        10,       0,          0,0,0];
 
 OPT_BK_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 OPT_BG_LV = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 //巡回用
-var tidMain2;
-var tidMain3;
+var timer;
 var nextURL;
 var nextNAME;
 //寄付用
@@ -51,13 +34,6 @@ var OPT_RISE_MAX = 30000; //市場変換開始する糧の量
 var OPT_TO_WOOD = 10000; //木に変換する糧
 var OPT_TO_STONE = 10000; //石に変換する糧
 var OPT_TO_IRON = 10000; //鉄に変換する糧
-
-//グローバル変数
-var MOUSE_DRAGGING = false;
-var MOUSE_OFFSET_X;
-var MOUSE_OFFSET_Y;
-var MOUSE_DRAGGING_WINDOW = 0;
-var ALERT_TIME;
 
 var OPT_MAX_WOOD = 0;           // 木の最大保持量
 var OPT_MAX_STONE = 0;      // 石の最大保持量
@@ -86,9 +62,6 @@ var OPT_ROUND_TIME2 = 10;   // 巡回時間(sec)
 var Reload_Flg = 0;
 var OPT_BUILD_VID;
 
-
-var INTERVAL  = 1000;
-var INTERVAL2 = 2000;
 var HOST = location.hostname;
 var PGNAME = "_Auto_Bilder_5zen_v1.21_20120524";
 var TIMEOUT_URL = "/false/login_sessionout.php";
@@ -196,7 +169,7 @@ var $e = function(e, t, f) {
 
 var $w = function(func, interval) {
     if (interval == undefined) {
-        interval = INTERVAL;
+        interval = 1000;
     }
     return unsafeWindow.setTimeout(func, interval);
 };
@@ -239,13 +212,9 @@ var DASkill = [ "■■■■",
 var ShopURL = "";
 var ShopFlg = false;
 
-var DBG_Flg = false;
-
 var reopen = function() {
     openIniBilderBox();
 };
-
-main();
 
 function log() {
     unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments));
@@ -1683,11 +1652,11 @@ function forwardNextVillage(vId) {
     var waitTime = nextTime - nowTime;
     var roundTime = 0;
 
-    clearInterval(tidMain2);
+    clearInterval(timer);
 
     if ((ShopFlg == true) && (ShopURL != "")) {
         roundTime = 10 * 1000;
-        tidMain2 = $w(function() {
+        timer = $w(function() {
                           location.href = ShopURL;
                       }, roundTime);
     }
@@ -1725,7 +1694,7 @@ function forwardNextVillage(vId) {
                         if (vcURL!=undefined) {
                             saveVillages(HOST+PGNAME, villages);
                             roundTime = 5 * 1000;
-                            tidMain2 = $w(function() {
+                            timer = $w(function() {
                                               location.href = vcURL;
                                           }, roundTime);
                         }
@@ -1734,7 +1703,7 @@ function forwardNextVillage(vId) {
             }
         }
     }
-    if (tidMain2 == undefined) {
+    if (timer == undefined) {
         //一番早い作業完了時刻を取得
         var startTime = new Date("2099/12/31 23:59:59");
         var nextTime = startTime;
@@ -1762,19 +1731,19 @@ function forwardNextVillage(vId) {
             if (nextURL == "") {
                 // 次回建築完了予定がない場合は通常巡回処理
                 roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                tidMain2 = $w(function() {
+                timer = $w(function() {
                                   location.href = vcURL;
                               }, roundTime);
             } else {
                 if (parseInt(OPT_ROUND_TIME1) * 1000 > nTime) {
                     roundTime = (nextTime - nowTime + 10000);
-                    tidMain2 = $w(function() {
+                    timer = $w(function() {
                                       location.href = nextURL;
                                   }, roundTime);
                 } else {
                     // 通常巡回処理
                     roundTime = parseInt(OPT_ROUND_TIME1) * 1000;
-                    tidMain2 = $w(function() {
+                    timer = $w(function() {
                                       location.href = vcURL;
                                   }, roundTime);
                 }
@@ -1925,8 +1894,7 @@ function openIniBilderBox() {
 
 //LvUP対象施設設定画面を開く
 function openInifacBox(vId) {
-    clearInterval(tidMain2);
-    clearInterval(tidMain3);
+    clearInterval(timer);
     closeInifacBox();
     addInifacHtml(vId);
 }
@@ -2364,7 +2332,6 @@ function addInifacHtml(vId) {
     ABfacContainer.style.border = "solid 2px black";
     ABfacContainer.style.left = popupLeft + "px";
     ABfacContainer.style.top = popupTop + "px";
-    ABfacContainer.style.font = fontstyle;
     ABfacContainer.style.padding = "2px";
     ABfacContainer.style.MozBorderRadius = "4px";
     ABfacContainer.style.zIndex = 999;
@@ -2373,16 +2340,19 @@ function addInifacHtml(vId) {
     d.body.appendChild(ABfacContainer);
 
     $e(ABfacContainer, "mousedown", function(event) {
-           if (event.target != $("ABfacContainer")) return false;
+           if (event.target != $("ABfacContainer"))
+               return false;
            g_MD = "ABfacContainer";
            g_MX = event.pageX-parseInt(this.style.left,10);
            g_MY = event.pageY-parseInt(this.style.top,10);
            event.preventDefault();
        });
     $e(d, "mousemove", function(event) {
-           if (g_MD != "ABfacContainer") return true;
+           if (g_MD != "ABfacContainer")
+               return true;
            var ABfacContainer = $("ABfacContainer");
-           if (!ABfacContainer) return true;
+           if (!ABfacContainer)
+               return true;
            var popupLeft = event.pageX - g_MX;
            var popupTop  = event.pageY - g_MY;
            ABfacContainer.style.left = popupLeft + "px";
@@ -2842,11 +2812,11 @@ function addInifacHtml(vId) {
     ccreateButton(td711, "保存", "設定内容を保存します", function() {
                       SaveInifacBox(ABfacContainer.getAttribute('vId'));
                       closeInifacBox();
-                      clearInterval(tidMain2);
+                      clearInterval(timer);
                   });
     ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
                       closeInifacBox();
-                      clearInterval(tidMain2);
+                      clearInterval(timer);
                   });
 
 
@@ -3831,7 +3801,7 @@ function sumMaxSoldier(type) {
     if (MaxSoldir > countRice)  { MaxSoldir = countRice; }
 
     if (make_max < MaxSoldir) { MaxSoldir = make_max; }     // 滞在可能上限を超えないこと
-    return MaxSoldir;
+    return parseInt(MaxSoldir);
 }
 
 // 資源オーバーフロー防止処理
