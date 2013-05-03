@@ -1,0 +1,792 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja" >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="ja" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="imagetoolbar" content="no" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/20130430-01/extend_project/w760/favicon.ico" type="image/x-icon" />
+<title>城  出兵(入力) - ブラウザ三国志</title>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/prototype.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/jquery-1.2.6.js"></script>
+<script type="text/javascript">
+jQuery.noConflict();
+var j$ = jQuery;
+</script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/gettext.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/common.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/thickbox/thickbox.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/uitabs/ui.core.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/uitabs/ui.tabs.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/resorces.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/clock.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/map.js"></script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/facility.js"></script>
+<script type="text/javascript">
+<!--
+function http_wrap(url) {
+	if (-1 != url.indexOf("/village.php?_v_id=")) {
+		location.href = '/village_change.php?village_id' + url.substring(url.indexOf("="), url.length);
+	} else {
+		location.href = url;
+	}
+}
+// -->
+</script>
+<script type="text/javascript" src="/20130430-01/extend_project/w760/js/comment.js"></script>
+
+<link rel="stylesheet" href="/20130430-01/extend_project/w760/js/uitabs/ui.tabs.css" type="text/css" media="print, projection, screen" />
+<link rel="stylesheet" href="/20130430-01/extend_project/w760/js/thickbox/thickbox.css" type="text/css" />
+<link rel="stylesheet" href="/20130430-01/extend_project/w760/css/import_mixi_favorite_card.css" type="text/css" media="screen,tv" />
+<link rel="stylesheet" type="text/css" media="screen,tv" href="/20130430-01/extend_project/w760/css/ads.css" />
+<link rel="stylesheet" type="text/css" href="/20130430-01/extend_project/w760/css/gNav760.css"/>
+<link rel="stylesheet" type="text/css" href="/20130430-01/extend_project/w760/css/common_item.css"/>
+
+<link rel="stylesheet" href="/20130430-01/extend_project/w760/css/popup.css" type="text/css" media="screen,tv" />
+
+
+	<script type="text/javascript" src="/20130430-01/extend_project/w760/js/card.js"></script><link rel="stylesheet" href="/20130430-01/extend_project/w760/css/common_favorite_card_replace.css" type="text/css" />
+
+</head>
+<body onLoad="startClock();startMaterialUpTimer();addAnchorToAllLink();" id="deck" class="mixi">
+<a name="ptop" id="ptop" style="margin:0px; padding:0px;"></a>
+<span style="display: none;">
+	<span id="output_wood">3171</span>
+	<span id="output_stone">3047</span>
+	<span id="output_iron">2644</span>
+	<span id="output_rice">31517</span>
+</span>
+
+
+<div id="container">
+	<div id="header" class="clearfix">
+		<div id="header_top">
+			<div id="profileBtn">
+				<a href="/user/" title="プロフィール">プロフィール</a>
+			 </div>
+			<div id="comment">
+				<div id="commentList">
+<table>
+</table>
+				</div>
+				<div class="commentbtn">
+					<div class="btnReload">
+						<a href="#" onClick="get_chat_data('/alliance/chatif.php?', $('comment_str').value ,'06rvs76ci8es8vkt9n1dn6mac2');" >
+							<img src="/20130430-01/extend_project/w760/img/common/news/btn_comment_reload.png" alt="コメント欄を更新" title="コメント欄を更新" width="30" height="50" />
+						</a>
+					</div>
+					<div>
+						<a href="javascript:opencloseComment(true);">
+							<img src="/20130430-01/extend_project/w760/img/common/news/btn_comment.png" alt="コメント欄を表示" title="コメント欄を表示" width="60" height="33" />
+						</a>
+					</div>
+					<div class="btnCommentlist">
+						<a href="/alliance/chat_view.php">
+							<img src="/20130430-01/extend_project/w760/img/common/news/btn_comment_all.png" alt="コメント一覧へ" title="コメント一覧へ" width="60" height="16" />
+						</a>
+					</div>
+				</div>
+				<div id="input" class="display_false">
+					<div class="commentform">
+						<strong>コメント文:</strong>
+						<input name="comment_str" id="comment_str" class="commentField" type="text" maxlength="25" onKeyPress="if(isEnter(event)){post_data('/alliance/chatif.php?', $('comment_str').value ,'06rvs76ci8es8vkt9n1dn6mac2');}" />
+						<input name="送信" value="投稿する!!" class="commentSend" type="button" onClick="post_data('/alliance/chatif.php?', $('comment_str').value ,'06rvs76ci8es8vkt9n1dn6mac2');" />
+					</div>
+					<div class="commentclose">
+						<a href="javascript:opencloseComment(false);" title="戻る">
+							<img src="/20130430-01/extend_project/w760/img/common/news/btn_comment_back.png" alt="戻る" title="戻る" width="61" height="52" />
+						</a>
+					</div>
+				</div>
+			</div>
+			<div id="supportNavi">
+				<ul>
+					<li title="ヘルプ">
+						<a href="http://mixi.jp/navigate_to_external_site_from_appli.pl?app_id=6598&url=http%3A%2F%2Fm9.3gokushi.jp%2Fhelp%2Fhelp_menu.html&owner_uid=bc5omaszckfip&site_type=general" target="_blank" class="snavi_help fade">ヘルプ</a>
+					</li>
+
+					<li title="公式コミュニティ">
+						<a href="http://mixi.jp/view_community.pl?id=4494844" target="_blank" class="officialCommunity fade">公式コミュニティ</a>
+					</li>
+				</ul>
+			</div>
+
+           
+
+
+		</div>
+		<div id="header_bottom">
+					<div id="btn_area">
+				<div id="btn_area_box">
+					<a href="javascript:alert('現在のプレイ環境ではCPを購入することができません。\nmixiからゲームにログインし直した後、\n再度「CPを購入する」ボタンを押してください。')">
+					<img src="/20130430-01/extend_project/w760/img/common/hbtn_buycp.png" width="125" height="25" alt="CPを購入する" title="CPを購入する" />
+				</a>
+	                      <a href="/item/shop.php">
+                      <img src="/20130430-01/extend_project/w760/img/common/hbtn_itemshop.png" width="125" height="25" alt="アイテムショップ" title="アイテムショップ" />
+					</a>					
+  
+
+					<div style="float:left">
+						<a href="/busyodas/busyodas.php">
+							<img src="/20130430-01/extend_project/w760/img/common/hbtn_getbusho.png" width="125" height="25" alt="ブショーダスを引く" title="ブショーダスを引く" class="hbtn_last" />
+						</a>
+					</div>
+ 					<a href="/reward_vendor/reward_vendor.php">
+						<img src="/20130430-01/extend_project/w760/img/common/hbtn_reward_vendor.png" width="125" height="25" alt="新ヨロズダスを引く" title="新ヨロズダスを引く" />
+					</a>
+ 					<a href="/card/duel_redirect.php" title="ブショーデュエル">
+						<img src="/20130430-01/extend_project/w760/img/common/hbtn_bushoduel.png" width="125" height="25" alt="ブショーデュエル" title="ブショーデュエル" class="hbtn_last" />
+					</a>
+					<a href="/card/busyobook.php" title="武将図鑑を開く">
+						<img src="/20130430-01/extend_project/w760/img/common/hbtn_busyobook.png" width="125" height="25" alt="武将図鑑を開く" title="武将図鑑を開く" class="hbtn_last" />
+					</a>
+
+				<a href="/card/event_battle_top.php?scope=4" title="開催中イベント">
+					<img src="/20130430-01/extend_project/w760/img/common/hbtn_event.png" width="125" height="25" alt="開催中イベント" title="開催中イベント" class="hbtn_last" />
+				</a>
+
+				</div>
+			</div>
+			<div id="worldtime">
+				<dl class="world">
+				<dt>
+9ワールド				</dt>
+				<dd>サーバー時間<span id="server_time" style="display: none;">2013-05-03 18:25:56</span><span id="server_time_disp">18:25:56</span></dd>
+				</dl>
+			</div>
+			<div id="bptpcp_area">
+				<ul>
+					<li class="first_bpbtn">
+						<img src="/20130430-01/extend_project/w760/img/common/icon_header_bp.gif" width="17" height="17" alt="ブショーダスポイント" title="ブショーダスポイント" />
+						<span>185</span>
+					</li>
+					<li>
+						<img src="/20130430-01/extend_project/w760/img/common/icon_header_tp.gif" width="17" height="17" alt="トレードポイント" title="トレードポイント" />
+						<span>1821</span>
+					</li>
+					<li>
+					<img src="/20130430-01/extend_project/w760/img/common/icon_header_cp.gif" width="18" height="18" alt="チャージポイント" title="チャージポイント" />
+					<span>392</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="tabArea" class="clearfix">
+		<div id="gNav">
+			<ul>
+				<li class="gnavi01">
+					<a href="/village.php" title="都市">都市</a>
+				</li>
+				<li class="gnavi02">
+
+
+					<a href="/map.php?x=52&amp;y=234" title="全体地図">全体地図</a>
+				</li>
+				<li class="gnavi03">
+					<a href="/alliance/info.php?id=4499" title="同盟">同盟</a>
+				</li>
+				<li class="gnavi_deck">
+					<a href="/card/deck.php" title="デッキ">デッキ</a>
+				</li>
+                <li class="gnavi_item">
+                <a href="/item/" title="アイテム">アイテム</a></li>
+				<li class="gnavi04">
+ 					<a href="/user/ranking_top.php" title="統計">統計</a>
+ 				</li>
+				<li class="gnavi05new">
+					<a href="/report/list.php" title="報告書">報告書</a>
+				</li>
+				<li class="gnavi06">
+					<a href="/message/inbox.php" title="書簡">書簡</a>
+				</li>
+				<li class="gnavi_quest"><a href="/quest/" title="クエスト">クエスト</a></li>
+
+			</ul>
+		</div>
+	</div>
+
+		<div id="box" class="clearfix">
+		<div id="boxtop" class="clearfix">&nbsp;</div>
+			<div id="boxInner">
+				<div id="status" class="clearfix">
+					<div id="status_left">
+<div class="jusoku_wrap">
+	<img class="jusoku_ico" src="/20130430-01/extend_project/w760/img/common/jusoku_clock.png" align="middle" title="" alt="" />
+	<div class="jusoku_cnt" style="display: none;" wood="1036600" stone="1036600" iron="1036600" rice="1036600" charge_wood="3171" charge_stone="3047" charge_iron="2644" charge_rice="31517">
+		<h3>資源充足予想時刻</h3>
+		<ul>
+			<li class="ki">
+				<span></span>
+			</li>
+			<li class="ishi">
+				<span></span>
+			</li>
+			<li class="tetu">
+				<span></span>
+			</li>
+			<li class="kate">
+				<span></span>
+			</li>
+		</ul>
+		<b villageCount="8"></b>
+	</div>
+</div>
+						<img src="/20130430-01/extend_project/w760/img/common/ico_wood.gif" alt="木" title="木" align="middle" />&nbsp;
+							<span class="normal" id="wood">15041</span>&nbsp;/&nbsp;
+							<span id="wood_max">1036600</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+						<img src="/20130430-01/extend_project/w760/img/common/ico_stone.gif" alt="石" title="石" align="middle" />&nbsp;
+							<span class="normal" id="stone">2625</span>&nbsp;/&nbsp;
+							<span id="stone_max">1036600</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+						<img src="/20130430-01/extend_project/w760/img/common/ico_ingot.gif" alt="鉄" title="鉄" align="middle" />&nbsp;
+							<span class="normal" id="iron">3432</span>&nbsp;/&nbsp;
+							<span id="iron_max">1036600</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+						<img src="/20130430-01/extend_project/w760/img/common/ico_grain.gif" alt="糧" title="糧" align="middle" />&nbsp;
+							<span class="normal" id="rice">496071</span>&nbsp;/&nbsp;
+							<span id="rice_max">1036600</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+						<img src="/20130430-01/extend_project/w760/img/common/ico_fame.gif" alt="名声" title="名声" align="middle" />&nbsp;
+							25&nbsp;/&nbsp;224
+							<span class="sep">&nbsp;|&nbsp;</span>
+						<p class="status_bottom">
+							<img src="/20130430-01/extend_project/w760/img/common/ico_wood.gif" alt="木" align="middle" />&nbsp;
+								木  3106
+								<span class="increase">+65</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+							<img src="/20130430-01/extend_project/w760/img/common/ico_stone.gif" alt="石" align="middle" />&nbsp;
+								石  2941
+								<span class="increase">+106</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+							<img src="/20130430-01/extend_project/w760/img/common/ico_ingot.gif" alt="鉄" align="middle" />&nbsp;
+								鉄  2583
+								<span class="increase">+61</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+							<img src="/20130430-01/extend_project/w760/img/common/ico_grain.gif" alt="糧" align="middle" />&nbsp;
+								糧  23743
+								<span class="increase"> +7774</span>
+								<span class="sep">&nbsp;|&nbsp;</span>
+						</p>
+						<div id="statusIcon">
+							<a href="/user/status.php" title="敵襲">
+								<img src="/20130430-01/extend_project/w760/img/common/icon_header_status_no.gif" width="50" height="24" alt="敵襲" title="敵襲" />
+							</a>
+						</div>
+					</div>
+				</div>
+			<div id="wrapper" class="clearfix">
+				<div id="whiteWrapper" class="clearfix">
+
+
+<div id="gray02Wrapper" class="clearfix">
+<h2>出兵</h2>
+<ul id="statMenu">
+	<li><a href="../facility/castle.php">城トップ</a></li>
+	<li><a href="../facility/unit_status.php">兵士管理</a></li>
+	<li><a href="../facility/territory_status.php">領地管理</a></li>
+	<li>出兵</a></li>
+	<li><a href="../card/domestic_setting.php">内政設定</a></li>
+	<li><a href="../card/deck.php">デッキ</a></li>
+	<li><a href="../union/index.php">合成</a></li>
+	<li><a href="../card/trade.php">トレード</a></li>
+	<li><a href="../busyodas/busyodas_history.php">ブショーダス履歴</a></li>
+		<li class="last">
+		<a href="../union/union_history.php">合成履歴</a></li></ul>
+<form name="send_soldier_sample">
+<table class="commonTables w174">
+<tr>
+<th colspan="4" class="mainTtl">出兵元選択</th>
+</tr>
+<tr><td>
+<input type="radio" name="village" checked>hoge
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=114764&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo1
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=126379&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo2
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=218866&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo3
+</tr><tr><td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=382366&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo4
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=400620&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo5
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=24510&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">bar1
+<td>
+<input type="radio" name="village" id="village" value="/village_change.php?village_id=597643&amp;from=menu&amp;page=%2Ffacility%2Fcastle_send_troop.php%3Fx%3D51%26y%3D234%26mt%3Dbb" onclick="VillageChange(this);">foo6
+</tr></table>
+</form>
+<form action="/facility/castle_send_troop.php#ptop" method="post" name="input_troop">
+<input type="hidden" name="show_beat_bandit_flg" value="true" />
+<span class="notice">
+</span>
+
+<table class="commonTables">
+<tr><th class="mainTtl" colspan="2">出兵</th></tr>
+<tr><td colspan="2">
+
+<table class="innerTables">
+<tr>
+<th class="solClass">剣兵</th>
+<td>
+<input type="text" name="infantry_count" size="4" value="" id="infantry_count" /></td><td><span>(0)</span></td>
+</td>
+
+<th class="solClass">槍兵</th>
+<td><input type="text" name="spear_count" size="4" value="" id="spear_count" /></td><td>  <span>(0)</span></td>
+
+<th class="solClass">弓兵</th>
+<td><input type="text" name="archer_count" size="4" value="" id="archer_count" /></td><td>  <span>(0)</span></td>
+
+<th class="solClass">騎兵</th>
+<td><input type="text" name="cavalry_count" size="4" value="" id="cavalry_count" /></td><td>  <span>(0)</span></td>
+</tr>
+
+<tr>
+<th class="solClass">矛槍兵</th>
+<td><input type="text" name="halbert_count" size="4" value="" id="halbert_count" /></td><td>  <span>(0)</span></td>
+<th class="solClass">弩兵</th>
+<td><input type="text" name="crossbow_count" size="4" value="" id="crossbow_count" /></td><td>  <span>(0)</span></td>
+<th class="solClass">近衛騎兵</th>
+<td><input type="text" name="cavalry_guards_count" size="4" value="" id="cavalry_guards_count" /></td><td>  <span>(0)</span></td>
+<td colspan="3"></td>
+</tr>
+
+<tr>
+<th class="solClass">斥候</th>
+<td><input type="text" name="scout_count" size="4" value="" id="scout_count" /></td><td>  <span>(0)</span></td>
+
+<th class="solClass">斥候騎兵</th>
+<td><input type="text" name="cavalry_scout_count" size="4" value="" id="cavalry_scout_count" /></td><td>  <span>(0)</span></td>
+
+<th class="solClass">衝車</th>
+<td><input type="text" name="ram_count" size="4" value="" id="ram_count" /></td><td>  <span>(0)</span></td>
+
+<th class="solClass">投石機</th>
+<td><input type="text" name="catapult_count" size="4" value="" id="catapult_count" /></td><td>  <span>(0)</span></td>
+
+</tr>
+</table>
+
+<span class="notice">
+</span>
+</td></tr>
+
+<tr>
+<td class="w250">
+
+<input id="reinforcement" type="radio" name="radio_move_type" value="301" /> <label for="reinforcement">援軍</label><br />
+<input id="normal_attack" type="radio" name="radio_move_type" value="302" checked="checked" /> <label for="normal_attack">賊討伐</label><br />
+<input id="raid_attack" type="radio" name="radio_move_type" value="303"  /> <label for="raid_attack">強襲</label><br />
+<input id="scout" type="radio" name="radio_move_type" value="306"  disabled="disabled" /> <label for="scout">偵察</label><br />
+<span class="notice">
+</span>
+</td>
+<td>
+<!-- 村名:<input type="text" name="village_name" size="20" value="" />
+<br /> 
+または<br />
+-->
+出兵対象の村(座標)&nbsp;&nbsp;
+X:<input type="text" name="village_x_value" size="4" maxlength="4" value="51" />
+Y:<input type="text" name="village_y_value" size="4" maxlength="4" value="234" />
+<br />
+
+<span class="notice">
+</span>
+</td>
+
+</tr>
+
+</table>
+
+<ul class="reserveAttackMassages">
+</ul>
+
+<table class="commonTables commonTablesReserveAttack">
+	<tbody>
+		<tr>
+			<th class="solClass" rowspan="4">
+				出兵予約設定<br />
+				(0/3)
+			</th>
+			<td class="radioArea reserveTime">
+				<input id="reserve_type_time" type="radio" name="radio_reserve_type" value="1" />
+				<label for="reserve_type_time">到着時間で予約</label>
+			</td>
+			<td class="timeSelectArea">
+<select name="res_y">
+<option label="2013" value="2013">2013</option>
+<option label="2014" value="2014">2014</option>
+</select>
+年<select name="res_m">
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+<option label="10" value="10">10</option>
+<option label="11" value="11">11</option>
+<option label="12" value="12">12</option>
+</select>
+月<select name="res_d">
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+<option label="10" value="10">10</option>
+<option label="11" value="11">11</option>
+<option label="12" value="12">12</option>
+<option label="13" value="13">13</option>
+<option label="14" value="14">14</option>
+<option label="15" value="15">15</option>
+<option label="16" value="16">16</option>
+<option label="17" value="17">17</option>
+<option label="18" value="18">18</option>
+<option label="19" value="19">19</option>
+<option label="20" value="20">20</option>
+<option label="21" value="21">21</option>
+<option label="22" value="22">22</option>
+<option label="23" value="23">23</option>
+<option label="24" value="24">24</option>
+<option label="25" value="25">25</option>
+<option label="26" value="26">26</option>
+<option label="27" value="27">27</option>
+<option label="28" value="28">28</option>
+<option label="29" value="29">29</option>
+<option label="30" value="30">30</option>
+<option label="31" value="31">31</option>
+</select>
+日<select name="res_h">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+<option label="10" value="10">10</option>
+<option label="11" value="11">11</option>
+<option label="12" value="12">12</option>
+<option label="13" value="13">13</option>
+<option label="14" value="14">14</option>
+<option label="15" value="15">15</option>
+<option label="16" value="16">16</option>
+<option label="17" value="17">17</option>
+<option label="18" value="18">18</option>
+<option label="19" value="19">19</option>
+<option label="20" value="20">20</option>
+<option label="21" value="21">21</option>
+<option label="22" value="22">22</option>
+<option label="23" value="23">23</option>
+</select>
+時<select name="res_i1">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+</select>
+<select name="res_i2">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+</select>
+分<select name="res_s1">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+</select>
+<select name="res_s2">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+</select>
+秒
+			</td>
+		</tr>
+		<tr>
+			<td class="radioArea reserveGauge">
+				<input id="reserve_type_gauge" type="radio" name="radio_reserve_type" value="2" />
+				<label for="reserve_type_gauge">討伐ゲージで予約</label>
+			</td>
+			<td class="gaugeSelectArea">
+				<span>討伐ゲージが</span>
+				<select name="res_beat1">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+</select>
+
+				<select name="res_beat2">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+</select>
+
+				<select name="res_beat3">
+<option label="0" value="0">0</option>
+<option label="1" value="1">1</option>
+<option label="2" value="2">2</option>
+<option label="3" value="3">3</option>
+<option label="4" value="4">4</option>
+<option label="5" value="5">5</option>
+<option label="6" value="6">6</option>
+<option label="7" value="7">7</option>
+<option label="8" value="8">8</option>
+<option label="9" value="9">9</option>
+</select>
+
+				<span>以上になったら出兵</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="radioArea">
+				<input id="reserve_type_none" type="radio" name="radio_reserve_type" value="0"
+				checked="checked" />
+				<label for="reserve_type_none">予約しない</label>
+			</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				時間による出兵はサーバーの状況によって若干の誤差が発生する場合がございます。<br />あらかじめ御了承ください。
+				<p class="red">※予約した部隊が出兵する時に出兵予約機能アイテム又は<span class="cp">150</span>を消費します。</p>
+			</td>
+
+		</tr>
+	</tbody>
+</table>
+
+
+
+<table class="commonTables">
+<tr><th class="mainTtl">出兵する武将カード</th>
+</tr>
+<tr>
+  <td>
+<!--Experience-->
+<div class="experience">
+<div class="title"><table>
+  <tr>
+    <td><img src="/20130430-01/extend_project/w760/img/facility/hd_experience.gif" alt="経験値UP" /></td>
+    <td><p>未使用</p></td>
+  </tr>
+</table>
+</div>
+<div class="bushoList">
+
+
+    <table class="general" summary="武将">
+    <tr>
+      <th class="select">選択</th>
+     <td rowspan="4" class="illust"><a href="#TB_inline?height=340&amp;width=500&amp;inlineId=cardWindow_19050235" class="thickbox"><img src="/20130430-01/extend_project/w760/img/card/illust_thumb/1109_G048W33u.png" alt="詳細" title="詳細" /></a></td>
+      <th class="name">武将名</th>      <th class="status">武将ステータス</th>
+      <th class="skill">スキル[状態]</th>
+      </tr>
+    <tr>
+    <td rowspan="3">
+
+ 出兵中
+	  </td>
+	 <td rowspan="3"><a href="#TB_inline?height=340&amp;width=500&amp;inlineId=cardWindow_19050235" class="thickbox">夏侯覇</a><br /><br />      <strong>討</strong>300</td>
+      <td rowspan="3"><p><strong>LV</strong>57 <strong>HP</strong>100&nbsp;&nbsp;<strong>兵科:</strong>槍兵</p>
+        <p><strong>攻撃</strong>7781 <strong>知力</strong>9.00 <strong>速度</strong>10.0<br />
+          <strong>防御力</strong> 歩380 槍330 馬580 弓170</p></td>
+
+      <td class="use">趁火打劫LV5<span class="fs77">[使用中]</span></td>
+  	</tr>
+<tr>      <td class="disuse">槍兵防御LV2<span class="fs77">[使用不可]</span></td>
+  	</tr>
+<tr><td class="passive">槍兵の進攻LV5
+<span class="fs77">[自動発動]</span>
+</td>
+	</tr>
+</table>
+
+
+
+<div id="cardWindow_19050235" style="display:none;">
+<!-- *////////////////////////  == card ==  ////////////////////////* -->
+<div class="cardWrapper2col">
+	
+																																																														
+	
+<div class="card rarerity_r">
+<img src="/20130430-01/extend_project/w760/img/card/illust/1109_G048W33u.png" alt="illust" class="illust" />
+
+<div class="cardStatus_rarerity_r">
+<span class="rarerity_r">R</span>
+<span class="cost">2.5</span>
+<span class="name" title="かこうは">夏侯覇</span>
+<span class="level_r">57</span>
+<span class="soltype"><img src="/20130430-01/extend_project/w760/img/card/type/type_502_r.gif" alt="槍兵" title="槍兵" /></span>
+<span class="cardno">1109</span>
+<span class="status_hp">100/100</span>
+<span class="status_hp_bar"><img src="/20130430-01/extend_project/w760/img/card/common/img_status_hp.gif" alt="100/100" width="84" height="3" /></span>
+<span class="status_att">7781</span>
+<span class="status_int">9.00</span>
+<span class="status_wdef">380</span>
+<span class="status_sdef">330</span>
+<span class="status_bdef">170</span>
+<span class="status_rdef">580</span>
+<span class="status_speed">10.0</span>
+
+
+<span class="ex">経験値:246551 | 次のLVまで:374</span>
+</div></div>	<div class="card_back">
+
+<span class="name1">夏侯覇</span>
+<span class="name2">かこうは</span>
+<span class="country"><img src="/20130430-01/extend_project/w760/img/card/country/ico_1.gif" alt="蜀" title="蜀" /></span>
+<span class="score">246551</span>
+<span class="skillName1 ">攻:趁火打劫LV5</span>
+<div class="skill1">
+全ての兵士と武将の攻撃力が32.5%上昇し、持ち帰る資源が35%増加する　コストにより変動
+</div>
+<span class="skillName2 ">防:槍兵防御LV2</span>
+<div class="skill2">
+槍兵、矛槍兵、槍兵兵科の武将の防御力が25%上昇する　コストにより変動
+</div>
+<span class="skillName3 red">攻:槍兵の進攻LV5</span>
+<div class="skill3">
+槍兵、矛槍兵、槍兵兵科の武将の攻撃力が20%上昇する　自動で発動　コストにより変動
+</div>
+
+</div></div><!-- /div.cardWrapper2col -->
+<!-- *////////////////////////  == card_END ==  ////////////////////////* -->
+
+</div><!-- /cardWindow_19050235 -->
+
+
+
+<span class="notice">
+</span>
+
+
+</div>
+</div><!--/Experience-->
+
+
+</td>
+</tr>
+</table>
+
+<div class="controlArea">
+<input type="button" value="武将の出兵選択解除" onClick="unCheck();" />
+<input type="submit" name="btn_preview" value="次へ" />
+<input type="hidden" name="x" value="" />
+<input type="hidden" name="y" value="" />
+</div><!--/ controlArea -->
+
+<!-- 武将カード -->
+
+</form>
+
+</div><!-- /div#grayWrapper -->
+
+<script>
+j$(function() {
+	var refreshReserveType = function() {
+		var value = j$("input[name='radio_reserve_type']:checked").val()
+
+		if (value == "1") {
+			j$(".timeSelectArea select").removeClass("disabled").removeAttr("disabled");
+			j$(".gaugeSelectArea select").addClass("disabled").attr("disabled", "disabled");
+		} else if (value == "2") {
+			j$(".gaugeSelectArea select").removeClass("disabled").removeAttr("disabled");
+			j$(".timeSelectArea select").addClass("disabled").attr("disabled", "disabled");
+		} else {
+			j$(".commonTablesReserveAttack select").addClass("disabled").attr("disabled", "disabled");
+		}
+	};
+
+	j$("input[name='radio_reserve_type']").change(refreshReserveType);
+		if (j$.browser.msie) {
+		j$('input:radio').click(function() {
+			this.blur();
+			this.focus();
+		});
+	}
+
+	refreshReserveType();
+});
+-->
+</script>
+
+</div>
+
+<div class="footer_box">
+<h3>
+<img src="/20130430-01/extend_project/w760/img/common/icon_easydeploy_footer.gif" width="18" height="15" alt="簡易出兵先" title="簡易出兵先" />
+<span title="簡易出兵先">簡易出兵先</span>
+<span title="編集"><a href="/map_bookmark.php" class="edit" title="編集">編集</a></span>
+</h3>
+<select name="map_bookmark" id="map_bookmark" onChange="MapBookmarkSelectLink(this)">
+<option selected value="">選択してください<option value="/facility/castle_send_troop.php?x=52&amp;y=233">空き地52,233</option>
+</select>
+</div>
+
+
+
+
+
+
+
+
+</div></div></div>
+	<p class="copyright">
+	<img src="/20130430-01/extend_project/w760/img/common/hd_copyright.gif" alt="" />
+		          			<a href="http://mixi.jp/navigate_to_external_site_from_appli.pl?app_id=6598&url=http%3A%2F%2Fwww.3gokushi.jp%2Fpayment%2Ftransaction_mixi&owner_uid=bc5omaszckfip&site_type=general" target="_blank" style="color:black; margin-left: 20px;">[特定商取引法に基づく表示]</a>
+          			</p>
+
+
+
+ 
+<span style="display: none;">145</span>
+</div>
+</body>
+</html>
