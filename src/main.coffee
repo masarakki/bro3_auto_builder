@@ -101,16 +101,7 @@ main = ->
                 reopen() if is_stay_mode()
                 forwardNextVillage(vId)            # 次の拠点へ移動
 
-        if lab
-            try
-                # 研究所チェック
-                jQuery.html (res) ->
-                    getTrainingSoldier(res);
-                    check_skill()
-            catch error
-                forwardNextVillage(vId)
-        else
-            check_skill()
+        check_skill()
 
     # 兵士作成画面なら作成中兵士を取得
     if location.pathname == "/facility/facility.php"
