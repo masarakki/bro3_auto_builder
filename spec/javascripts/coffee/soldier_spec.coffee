@@ -1,10 +1,12 @@
 describe "Soldier", ->
     describe 'instance methods', ->
         beforeEach ->
-            @soldier = new Soldier('剣兵', Soldier.TYPE_KEN, 10, '練兵所')
+            @soldier = new Soldier('剣兵', 'infantry', Soldier.TYPE_KEN, 10, '練兵所')
 
         it '#name', ->
             expect(@soldier.name).toEqual '剣兵'
+        it '#en', ->
+            expect(@soldier.en).toEqual 'infantry'
         it '#type_flag', ->
             expect(@soldier.type_flag).toEqual Soldier.TYPE_KEN
         it '#id', ->
@@ -19,6 +21,7 @@ describe "Soldier", ->
     describe 'class methods', ->
         it '.soldiers', ->
             expect(Soldier.soldiers().length).toEqual 11
+            expect(Soldier.soldiers(Soldier.TYPE_ALL).length).toEqual 11
             expect(Soldier.soldiers(Soldier.TYPE_HIGH).length).toEqual 5
             expect(Soldier.soldiers(Soldier.TYPE_CAR).length).toEqual 6
             expect(Soldier.soldiers(Soldier.TYPE_KEN).length).toEqual 7
