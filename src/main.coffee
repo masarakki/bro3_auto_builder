@@ -78,6 +78,21 @@ main = ->
             ichibaChange vId           # 市場処理
             autoDonate()               # 自動寄付処理
 
+        if escape_mode && escape_x && escape_y
+            current_soldiers = {}
+            soldier_type_count = 0
+            for soldier in jQuery("#soldier div:eq(1) ul li")
+                matched = jQuery(soldier).text().match /(.+) (\d+)/
+                soldier_name = matched[1]
+                soldier_count = parseInt matched[2]
+                unless soldier_name == '武将'
+                    soldier_type_count += 1
+                    current_soldiers[soldier_name] = soldier_count
+            if soldier_type_count > 0
+                console.log "escape soldiers to (#{escape_x}, #{escape_y})"
+                console.log current_soldiers
+                Sally.execute({x: escape_x, y: escape_y}, current_soldiers, "援軍")
+
         # 研究所情報取得
         village = new Village
         lab = village.hash["研究所"]
