@@ -11,6 +11,7 @@ see 本家 [5zen/bro3_Auto_Bilder](http://github.com/5zen/bro3_Auto_Bilder)
 - [ ] ユニットテスト
 - [x] リストの表示なんとかする
 - [x] 資源村自動開拓
+- [x] 兵生成後に退避
 - [ ] 内政設定なんとかする
 - [ ] 内政官自動選択 自動出兵
 
