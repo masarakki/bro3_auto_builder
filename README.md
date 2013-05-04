@@ -19,10 +19,17 @@ see 本家 [5zen/bro3_Auto_Bilder](http://github.com/5zen/bro3_Auto_Bilder)
 - make
 - coffee-script
 
+### testing
+
+```
+$ bundle exec guard
+```
+
+
 ### build
 
 ```
 $ make
 ```
 
-build/bro3_auto_builder.user.js ができあがるのでそれをインストール
+bro3_auto_builder.user.js ができあがるのでそれをインストール
