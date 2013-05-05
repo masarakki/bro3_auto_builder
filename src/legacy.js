@@ -3373,50 +3373,54 @@ function saveVillages(hostname, newData) {
         var actions = villageData[IDX_ACTIONS];
         var actions_array = [];
         for (var j = 0; j < actions.length; j ++) {
-            var action = actions[j];
-            var status = action[0];
-            var level = null;
-            var matched = null;
-            var user = null;
-            var skill_name = null;
-            matched = status.match(/(.+?):([^\(]+)/);
-            var act = matched[1];
-            var name = matched[2];
-            matched = status.match(/<strong>(\d+)/);
-            if (matched) {
-                level = parseInt(matched[1]);
+            try{
+                var action = actions[j];
+                var status = action[0];
+                var level = null;
+                var matched = null;
+                var user = null;
+                var skill_name = null;
+                matched = status.match(/(.+?):([^\(]+)/);
+                var act = matched[1];
+                var name = matched[2];
+                matched = status.match(/<strong>(\d+)/);
+                if (matched) {
+                    level = parseInt(matched[1]);
+                }
+                matched = status.match(/\((.+):(.+)LV(.+)\)/);
+                if (matched) {
+                    user = matched[1];
+                    skill_name = matched[2];
+                    level = matched[3];
+                }
+                var type = null;
+                switch(action[IDX2_TYPE]) {
+                case "C":
+                    type = 'building';
+                    break;
+                case "D":
+                    type = 'skill';
+                    break;
+                default:
+                    type = 'unknown';
+                }
+                
+                var action_hash = {
+                    action: act,
+                    target: name,
+                    level: level,
+                    user: user,
+                    skill_name: skill_name,
+                    at: action[IDX2_TIME],
+                    type: type,
+                    alerted: action[IDX2_ALERTED],
+                    delete: action[IDX2_DELETE],
+                    rotation: action[IDX2_ROTATION]
+                };
+                actions_array.push(action_hash);
+            } catch (e) {
+                console.log(e);
             }
-            matched = status.match(/\((.+):(.+)LV(.+)\)/);
-            if (matched) {
-                user = matched[1];
-                skill_name = matched[2];
-                level = matched[3];
-            }
-            var type = null;
-            switch(action[IDX2_TYPE]) {
-            case "C":
-                type = 'building';
-                break;
-            case "D":
-                type = 'skill';
-                break;
-            default:
-                type = 'unknown';
-            }
-
-            var action_hash = {
-                action: act,
-                target: name,
-                level: level,
-                user: user,
-                skill_name: skill_name,
-                at: action[IDX2_TIME],
-                type: type,
-                alerted: action[IDX2_ALERTED],
-                delete: action[IDX2_DELETE],
-                rotation: action[IDX2_ROTATION]
-            };
-            actions_array.push(action_hash);
         }
         var position = villageData[IDX_XY];
         var matches = position.match(/(-?\d+)\s*,\s*(-?\d+)/);
