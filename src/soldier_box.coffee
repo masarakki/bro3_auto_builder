@@ -24,7 +24,7 @@ create_soldier_box = (soldiers)->
 
     ccreateCheckBox escape, "escape_mode", escape_mode, "退避モード", "", 0
     ccreateTextBox escape, "escape_x", escape_x, "x ", "", 4, 0
-    ccreateTextBox escape, "escape_y", escape_x, "y ", "", 4, 0
+    ccreateTextBox escape, "escape_y", escape_y, "y ", "", 4, 0
 
     controls.style.padding = '3px'
     controls.style.verticalAlign = 'bottom'
