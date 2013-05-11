@@ -1,0 +1,22 @@
+#bab-setting.bab
+  .header
+    %span.title ${village.name}
+    %span.version (${village.position.x},${village.position.y})
+  .button-box
+    %button#bab-setting-politics-button 内政
+    %button#bab-setting-skills-button スキル
+    %button#bab-setting-soldiers-button 兵士
+    %button#bab-setting-market-button 市場
+    %button#bab-setting-contribution-button 寄付
+
+  #bab-setting-main
+    #bab-setting-politics.bab-setting-tab
+      #building-template
+        %input(name="${building.name}_enabled" type="checkbox")
+        ${building.name}
+        %input(name="${building.name}_level" type="textbox")
+    #bab-setting-skills.bab-setting-tab
+    #bab-setting-soldiers.bab-setting-tab
+    #bab-setting-market.bab-setting-tab
+    #bab-seetting-contribution.bab-setting-tab
+

@@ -28,6 +28,12 @@ get '/village.html' do
   haml :village, layout: (mode != :partial)
 end
 
+get '/setting.html' do
+  @buildings = ['', '', '',]
+  mode = (params[:mode] || :html).to_sym
+  haml :setting, layout: (mode != :partial)
+end
+
 get '/village_row.html' do
   haml :village_row, layout: false
 end

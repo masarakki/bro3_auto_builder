@@ -11,6 +11,7 @@
 // @resource     village_template http://bro3-autobuilder.herokuapp.com/village.html?mode=partial
 // @resource     village_row http://bro3-autobuilder.herokuapp.com/village_row.html?mode=partial
 // @resource     village_updates http://bro3-autobuilder.herokuapp.com/village_updates.html?mode=partial
+// @resource     setting_template http://bro3-autobuilder.herokuapp.com/setting.html?mode=partial
 // @version      2013.05.12
 // ==/UserScript==
 ###
