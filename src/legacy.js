@@ -3176,9 +3176,9 @@ function Load_OPT(vId) {
         OPT_SHIGEN = forInt(Temp2[166]);
         OPT_SOUKO_MAX = forInt(Temp2[29]);
         
-        escape_mode = Temp2[167];
-        escape_x = Temp2[168];
-        escape_y = Temp2[169];
+        escape_mode = forInt(Temp2[167]);
+        escape_x = forInt(Temp2[168]);
+        escape_y = forInt(Temp2[169]);
         
         //自動寄付
         if (Temp2[30] == "") {return;}
