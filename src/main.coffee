@@ -99,7 +99,7 @@ main = ->
 
         check_skill = ->
             skill_info = get_using_skill_all()
-            nText = document.evaluate('//*[@class="base-skill"]/span/a', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            nText = $xpath('//*[@class="base-skill"]/span/a', document);
             nName = nText.snapshotItem(0).innerHTML.split ":"
             if skill_info.chara
                 # 内政武将がセットされている場合
