@@ -8,6 +8,7 @@ gem 'therubyracer'
 gem 'rake'
 
 group :development, :test do
+  gem 'shotgun'
   gem 'jasmine'
   gem 'tilt'
   gem 'guard'
