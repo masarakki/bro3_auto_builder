@@ -2,6 +2,17 @@ require 'sinatra'
 require 'haml'
 require 'sass'
 
+def version ; @_version ||= Time.now.to_i ; end
+
+get '/' do
+  @version = version
+  haml :index
+end
+
+get '/bro3_auto_builder.user.js' do
+  send_file 'bro3_auto_builder.user.js'
+end
+
 get '/style.css' do
   sass :style
 end
