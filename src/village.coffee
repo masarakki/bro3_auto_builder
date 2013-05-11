@@ -14,7 +14,7 @@ class Village
             '銅雀台': 216
         }
 
-        results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        results = $xpath('//area', document, true);
         len = results.snapshotLength
         @hash = {}
 

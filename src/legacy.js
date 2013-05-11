@@ -157,14 +157,31 @@ var $ = function(id) {
 var $x = function(xp, dc) {
     return d.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 };
+
+var $xpath = function(xpath, doc, reverse) {
+    if (doc === undefined) {
+        doc = document;
+    }
+    if (reverse === undefined) {
+        reverse = false;
+    }
+    
+    if (reverse) {
+        return document.evaluate(xpath, doc, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    } else {
+        return document.evaluate(xpath, doc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    }
+};
+
 var $a = function(xp, dc) {
-    var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var r = $xpath(xp, dc);
     var a = [];
     for (var i = 0; i < r.snapshotLength; i++) {
         a.push(r.snapshotItem(i));
     }
     return a;
 };
+
 var $e = function(e, t, f) {
     if (!e) return;
     e.addEventListener(t, f, false);
@@ -351,9 +368,6 @@ function checkVillageLength() {
         debugLog("=== Start checkVillageLengthDiff ===");
 
         var villages = loadVillages(HOST+PGNAME);
-        //      var villageLength = document.evaluate('//div[@id="lodgment"]/div/ul/li', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); //拠点数
-
-        // 2012.04.25 本鯖対応
         var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length + 1; //拠点数
 
         //if (villages.length != villageLength.snapshotLength) {
@@ -404,8 +418,7 @@ function cloadData(key, value, local, ev) {
 }
 
 function getAddingVillage(htmldoc) {
-    var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
-                                   htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var xyElem = $xpath('//*[@id="basepoint"]/span[@class="xy"]', htmldoc);
     var xy = xyElem.snapshotItem(0).innerHTML.match(/(-?\d+,-?\d+)/);
     var Temp = xy[0].split(",");
     var x = Temp[0];
@@ -451,8 +464,7 @@ function getAddingVillage(htmldoc) {
 
     function addLink() {
         //id="tMenu"にLinkを挿入
-        var tMenu = document.evaluate('//*[@id="tMenu"]',
-                                      htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var tMenu = $xpath('//*[@id="tMenu"]', htmldoc);
         if (tMenu.snapshotLength == 0) return;
 
         //村作成予約
@@ -480,11 +492,9 @@ function getAddingVillage(htmldoc) {
     function addLink2() {
 
         //id="tMenu"にLinkを挿入
-        var tMenu = document.evaluate('//div[@class="status"]',
-                                      document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var tMenu = $xpath('//div[@class="status"]', document);
         if (tMenu.snapshotLength == 0) {
-            var tMenu = document.evaluate('//div[@id="basepoint"]',
-                                          document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            var tMenu = $xpath('//div[@id="basepoint"]', document);
             if (tMenu.snapshotLength == 0) return;
         }
 
@@ -583,8 +593,7 @@ function getAddingVillage(htmldoc) {
 //拠点画面で建設予約受付
 function addLinkTondenVillage() {
 
-    var xyElem = document.evaluate('//span[@class="xy"]',
-                                   document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var xyElem = $xpath('//span[@class="xy"]', document);
     var xy = xyElem.snapshotItem(0).innerHTML.match(/(-?\d+,-?\d+)/);
     var Temp = xy[0].split(",");
     var x = Temp[0];
@@ -595,8 +604,7 @@ function addLinkTondenVillage() {
     function addLink() {
 
         //id="tMenu"にLinkを挿入
-        var tMenu = document.evaluate('//div[@class="status village-bottom"]',
-                                      document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var tMenu = $xpath('//div[@class="status village-bottom"]', document)
         if (tMenu.snapshotLength == 0) return;
 
         var villageLink = document.createElement("span");
@@ -682,9 +690,8 @@ function addLinkTondenVillage() {
 //拠点画面なら拠点削除データ取得
 function getDeletingVillage(htmldoc) {
     var xy = getMyXY();
-    var Temp = xy.split(",");
-    var x = Temp[0];
-    var y = Temp[1];
+    var x = xy[0];
+    var y = xy[1];
 
     var rmtime = htmldoc.innerHTML.match(/(村を削除中です。|砦を削除中です。)[^\d]*(\d+-\d+-\d+ \d+:\d+:\d+)に完了します。/);
     if (rmtime) {
@@ -1117,14 +1124,14 @@ function autoLvup() {
                                    reopen();
                                }
 
-                               var actionsElem  = document.evaluate('//th[@class="mainTtl6"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                               var actionsElem2 = document.evaluate('//b[contains(@class,"f14")]',       htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                               var actionsElem3 = document.evaluate('//td[@class="center"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                               var actionsElem4 = document.evaluate('//td[@class="cost"]'   ,htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               var actionsElem  = $xpath('//th[@class="mainTtl6"]', htmldoc);
+                               var actionsElem2 = $xpath('//b[contains(@class,"f14")]', htmldoc);
+                               var actionsElem3 = $xpath('//td[@class="center"]', htmldoc);
+                               var actionsElem4 = $xpath('//td[@class="cost"]', htmldoc);
 
                                var htmldoc2 = document.createElement("html");
 
-                               var actionsElem7  = document.evaluate('//*[@colspan="4"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                               var actionsElem7  = $xpath('//*[@colspan="4"]', htmldoc);
 
                                var Buki = Array();
                                var x = -1;
@@ -1208,17 +1215,17 @@ function setVillageFacility() {
     var delY = 0;
 
     //座標を取得
-    var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var xyElem = $xpath('//*[@id="basepoint"]/span[@class="xy"]', document);
     vId = trim(xyElem.snapshotItem(0).innerHTML);
 
     //建設情報を取得
-    var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var actionsElem = $xpath('//*[@id="actionLog"]/ul/li', document);
 
     // 削除施設情報の取得
     for (var i = 0; i < actionsElem.snapshotLength; i++) {
         var paItem = actionsElem.snapshotItem(i);
         //ステータス
-        var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var buildStatusElem = $xpath('./span[@class="buildStatus"]/a', paItem);
         if (buildStatusElem.snapshotLength > 0) {
             cnt++;
             if (buildStatusElem.snapshotItem(0).parentNode.parentNode.textContent.indexOf("削除") >= 0) {
@@ -1235,9 +1242,8 @@ function setVillageFacility() {
     for (var i = 0; i < actionsElem.snapshotLength; i++) {
         var paItem = actionsElem.snapshotItem(i);
         //ステータス
-        var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a', paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var buildStatusElem = $xpath('./span[@class="buildStatus"]/a', paItem);
         if (buildStatusElem.snapshotLength > 0) {
-            //建物削除等に対応 2010.10.25 byおぜがづ
             for (var j = 0; j < buildStatusElem.snapshotLength; j++) {
                 if (buildStatusElem.snapshotItem(j).parentNode.innerHTML.match(RegExp("(建設中|建設準備中)"))) {
                     //施設建設数
@@ -1384,19 +1390,16 @@ function setVillageFacility2() {
     var delY = 0;
     var vID = "";
     //座標を取得
-    var xyElem = document.evaluate('//*[@id="basepoint"]/span[@class="xy"]',
-                                   document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var xyElem = $xpath('//*[@id="basepoint"]/span[@class="xy"]', document);
     vId = trim(xyElem.snapshotItem(0).innerHTML);
 
     //建設情報を取得
-    var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li',
-                                        document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var actionsElem = $xpath('//*[@id="actionLog"]/ul/li', document);
 
     for (var i = 0; i < actionsElem.snapshotLength; i++) {
         var paItem = actionsElem.snapshotItem(i);
         //ステータス
-        var buildStatusElem = document.evaluate('./span[@class="buildStatus"]/a',
-                                                paItem, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var buildStatusElem = $xpath('./span[@class="buildStatus"]/a', paItem);
         if (buildStatusElem.snapshotLength > 0) {
             //施設建設数
             cnt++;
@@ -1412,7 +1415,7 @@ function setVillageFacility2() {
         }
     }
 
-    var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    var results = $xpath('//area', document, true);
     var area = new Array();
     for (var i = 0, n = 0; i < results.snapshotLength; i++) {
         if (results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)) {
@@ -1611,7 +1614,7 @@ function setVillageFacility2() {
 
 //施設一覧取得
 function get_area() {
-    var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    var results = $xpath('//area', document, true);
     var area = new Array();
     for (var i = 0, n = 0; i < results.snapshotLength; i++) {
         if (results.snapshotItem(i).alt.match(/(.*?)\s.*?(\d+)/)) {
@@ -1624,7 +1627,7 @@ function get_area() {
 }
 
 function get_area_all() {
-    var results = document.evaluate('//area', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    var results = $xpath('//area', document, true);
     var area = new Array();
     for (var i = 0, n = 0; i < results.snapshotLength; i++) {
         var strURL = results.snapshotItem(i).href;
@@ -1860,12 +1863,12 @@ function getURLxy(strURL) {
 //リンクHTML追加
 function addOpenLinkHtml() {
     if (location.hostname[0] == "s" || location.hostname[0] == "h" || location.hostname[0] == "p") {
-        var sidebar = d.evaluate('//*[@class="sideBoxHead"]/h3/strong',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var sidebar = $xpath('//*[@class="sideBoxHead"]/h3/strong', d);
     } else {
-        var sidebar = d.evaluate('//a[@title="拠点"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var sidebar = $xpath('//a[@title="拠点"]', d);
     }
     if (sidebar.snapshotLength == 0) {
-        sidebar = d.evaluate('//*[@class="xy"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        sidebar = $xpath('//*[@class="xy"]', d);
         if (sidebar.snapshotLength == 0) return;
         isMixi = false;
     }
@@ -3272,9 +3275,7 @@ function Load_OPT(vId) {
 function getUserProf(htmldoc) {
     var oldVillages = loadVillages(HOST+PGNAME);
     var newVillages = new Array();
-    var landElems = document.evaluate(
-        '//*[@id="gray02Wrapper"]//table/tbody/tr',
-        htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var landElems = $xpath('//*[@id="gray02Wrapper"]//table/tbody/tr',  htmldoc);
     var isLandList = false;
     for (var i = 0; i < landElems.snapshotLength; i++) {
         var item = landElems.snapshotItem(i);
@@ -3758,7 +3759,7 @@ function getSoldier() {
 
     debugLog("=== Start getSoldier ===");
 
-    var tables = document.evaluate('//*[@class="status village-bottom"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var tables = $xpath('//*[@class="status village-bottom"]', document);
     var Temp = tables.snapshotItem(0).innerHTML.substring(tables.snapshotItem(0).innerHTML.lastIndexOf(" ") + 1);
     aa = Temp.split("/");
     var now_Soldier = aa[0];
@@ -3794,7 +3795,7 @@ function sumMaxSoldier(type) {
         [   1,1501,1501,   1]   // 313 投石機
     ];
 
-    var tables = document.evaluate('//*[@class="status village-bottom"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var tables = $xpath('//*[@class="status village-bottom"]', document);
     var Temp = tables.snapshotItem(0).innerHTML.substring(tables.snapshotItem(0).innerHTML.lastIndexOf(" ")+1);
     temp0 = Temp.split("/");
     var now_Soldier = temp0[0];
@@ -4173,7 +4174,7 @@ function Auto_Domestic() {
                                  var htmldoc = document.createElement("html");
                                  htmldoc.innerHTML = x.responseText;
 
-                                 var skillElem = document.evaluate('//td[@class="skill"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                                 var skillElem = $xpath('//td[@class="skill"]', htmldoc);
                                  for (i = 0; i < skillElem.snapshotLength; i++) {
                                      var skillTag = trim(skillElem.snapshotItem(i).innerHTML);
                                      var AutoSkillFlg = 0;
@@ -4350,8 +4351,7 @@ function getVillageActions() {
     data[IDX_XY] = xy;
 
     //建設情報を取得
-    var actionsElem = document.evaluate('//*[@id="actionLog"]/ul/li',
-                                        document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var actionsElem = $xpath('//*[@id="actionLog"]/ul/li', document);
     var updates = [];
     var actions = null;
 
@@ -4646,22 +4646,18 @@ function getTrainingSoldier(htmldoc) {
     var tt = {};
     //施設名
     var facilityName = "";
-    var h2Elem = document.evaluate('//*[@id="gray02Wrapper"]/h2', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var h2Elem = $xpath('//*[@id="gray02Wrapper"]/h2', htmldoc);
     if (h2Elem.getSnapshotLength != 0) {
         facilityName = trim(h2Elem.snapshotItem(0).innerHTML);
     }
     // 作成数の兵数と兵種
-    var mSolName = document.evaluate('//th[@class="mainTtl"]',htmldoc, null,
-                                     XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    var mSolNum = document.evaluate('//*[@class="commonTables"]//td',htmldoc, null,
-                                    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var mSolName = $xpath('//th[@class="mainTtl"]',htmldoc);
+    var mSolNum = $xpath('//*[@class="commonTables"]//td', htmldoc);
     // 作成できる兵種の種類数
 
-    var mSolTypeT = document.evaluate('//table[@class="commonTables"]',htmldoc, null,
-                                      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var mSolTypeT = $xpath('//table[@class="commonTables"]',htmldoc);
     if (mSolTypeT.snapshotLength > 2) {
-        var mSolType = document.evaluate('//*[@class="mainTtl"]',mSolTypeT.snapshotItem(1), null,
-                                         XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var mSolType = $xpath('//*[@class="mainTtl"]', mSolTypeT.snapshotItem(1));
         for (var r = 1; r < mSolType.snapshotLength; r++) {
             tt[r-1] = new Array();
             tt[r-1] = mSolType.snapshotItem(r).innerHTML;
@@ -4681,8 +4677,7 @@ function getTrainingSoldier(htmldoc) {
         }
     }
     // 施設が最大レベルかの判断
-    var commentNum = document.evaluate('//*[@class="lvupFacility"]/*[@class="main"]', htmldoc, null,
-                                       XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var commentNum = $xpath('//*[@class="lvupFacility"]/*[@class="main"]', htmldoc);
     if (commentNum.snapshotItem(0).innerHTML.match("最大レベル")) {
         maxLv = 3;
     } else {
@@ -4692,15 +4687,13 @@ function getTrainingSoldier(htmldoc) {
     var idx = 0;
     while (1) {
         var actionType = TYPE_FACILITY + facilityName;
-        var clockElem = document.evaluate('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc,
-                                          null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
+        var clockElem = $xpath('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc);
         if (clockElem == undefined) {
             saveVillage(data, actionType);      // 研究所で未研究の場合過去の研究情報の削除
             break;
         }
 
-        var mainTtls = document.evaluate('../../../tr/th[@class="mainTtl"]', clockElem, null,
-                                         XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var mainTtls = $xpath('../../../tr/th[@class="mainTtl"]', clockElem);
         if (mainTtls.snapshotLength == 0) break;
         var clock = trim(clockElem.innerHTML);
         if (clock == "") break;
@@ -4744,7 +4737,7 @@ function getMyVillage() {
     var allData = loadVillages(location.hostname + PGNAME);
     for (var i = 0; i < allData.length; i++) {
         var villageData = allData[i];
-        if (villageData[IDX_XY] == "(" + xy + ")") {
+        if (villageData[IDX_XY] == "(" + xy[0] + "," + xy[1] + ")") {
             ret[IDX_XY] = villageData[IDX_XY];
             ret[IDX_BASE_NAME] = villageData[IDX_BASE_NAME];
             return ret;
@@ -4756,9 +4749,6 @@ function getMyVillage() {
 
 function getMyXY() {
     var d = document;
-    var $x = function(xp, dc) {
-        return document.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    };
 
     var gnaviorgNav = d.getElementById("gnavi");
     if (gnaviorgNav) {
@@ -4771,7 +4761,7 @@ function getMyXY() {
 
     var xy = nowLoc.href.match(/x=([\-0-9]+)&y=([\-0-9]+)/i);
     if (xy) {
-        return xy[1]+","+xy[2];
+        return [xy[1], xy[2]];
     }
 }
 
@@ -4825,13 +4815,13 @@ function getDomesticSkill(htmldoc) {
 
     // 回復中
     var dom = document.createElement("html");
-    var RecoveryCheck = document.evaluate('//table[@class="general"]', htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    var RecoveryCheck = $xpath('//table[@class="general"]', htmldoc);
     for (var z = 0; z < RecoveryCheck.snapshotLength; z++) {
         if (RecoveryCheck.snapshotItem(z).innerHTML.match("内政中")) {
             dom.innerHTML = "<table>" + RecoveryCheck.snapshotItem(z).innerHTML + "</table>";
             // 内政武将名
-            var Name = document.evaluate('//td/a[@class="thickbox"]', dom, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(1).innerHTML;
-            var RecoverySkill = document.evaluate('//td[@class="recovery"]', dom, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            var Name = $xpath('//td/a[@class="thickbox"]', dom);
+            var RecoverySkill = $xpath('//td[@class="recovery"]', dom);
             for (var x = 0; x < RecoverySkill.snapshotLength; x++) {
                 i += 1;
                 data[IDX_ACTIONS][i] = new Array();
@@ -4888,10 +4878,6 @@ function getNextTime(hostname, baseTime) {
     if (nextTime == startTime) nextTime = undefined;
 
     return nextTime;
-}
-
-function xpath(query,targetDoc) {
-    return document.evaluate(query, targetDoc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 }
 
 function escapeXPathExpr(text) {
