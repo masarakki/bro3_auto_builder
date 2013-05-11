@@ -1,5 +1,3 @@
-var DEBUG = false;
-
 var COLOR_FRAME = "#333333";    // 枠背景色
 var COLOR_BASE  = "#654634";    // 拠点リンク色
 var COLOR_TITLE = "#FFCC00";    // 各BOXタイトル背景色
@@ -240,12 +238,6 @@ function log() {
     unsafeWindow.console.log.apply(unsafeWindow.console, Array.slice(arguments));
 };
 
-function debugLog(mes) {
-    if (DEBUG) {
-        console.log(mes);
-    }
-};
-
 jQuery(document).ready(function () {
   var css = GM_getResourceText("style");
   GM_addStyle(css);
@@ -364,9 +356,6 @@ function checkVillageLength() {
 
     //拠点数が変わっていたら情報取得 @@1@@
     function checkVillageLengthDiff() {
-
-        debugLog("=== Start checkVillageLengthDiff ===");
-
         var villages = loadVillages(HOST+PGNAME);
         var villageLength = $a('//ul/li/a[contains(@href,"/village_change.php?village_id")]').length + 1; //拠点数
 
@@ -754,8 +743,6 @@ function DeleteFacility(x, y) {
 }
 
 function autoLvup() {
-    debugLog("=== Start autoLvup ===");
-
     var cost_bk_ken=[
         [ 165,  135,   0,  0, 6600],
         [ 251,  319,   0,  0, 8910],
@@ -1204,9 +1191,6 @@ function autoLvup() {
 
 function setVillageFacility() {
     var village = new Village();
-
-    debugLog("=== Start setVillageFacility ===");
-
     var cnt = 0;
     var vID = "";
 
@@ -1756,7 +1740,6 @@ function forwardNextVillage(vId) {
             }
         }
     }
-    debugLog("nTime:" + nTime / 1000 + "sec  RoundTime:" + (roundTime / 1000) + "sec  forwardNextVillage:" + vcURL + " " + roundTime);
 }
 
 //比較する関数
@@ -3074,11 +3057,8 @@ function SaveInifacBox(vId) {
 
 //拠点単位の設定の読み込み
 function Load_OPT(vId) {
-
-    debugLog("=== Start Load_OPT ===");
     var src = GM_getValue(HOST+PGNAME+vId, "");
     if (src == "") {
-        debugLog("拠点データなし");
         // 拠点データがない場合
 
         OPT_KATEMURA = 0;
@@ -3756,9 +3736,6 @@ function cgetComboBoxValue(id) {
 }
 
 function getSoldier() {
-
-    debugLog("=== Start getSoldier ===");
-
     var tables = $xpath('//*[@class="status village-bottom"]', document);
     var Temp = tables.snapshotItem(0).innerHTML.substring(tables.snapshotItem(0).innerHTML.lastIndexOf(" ") + 1);
     aa = Temp.split("/");
@@ -3943,9 +3920,6 @@ function OverFlowPrevention() {
 
 //市場変換処理
 function ichibaChange(vId) {
-
-    debugLog("=== Start ichibaChange ===");
-
     var ichiba_x = -1; //市場のX座標
     var ichiba_y = -1; //市場のY座標
     var ichiba_lv = -1; //市場のレベル
@@ -4124,9 +4098,6 @@ function changeResorceToResorce(from, tc, to, x, y) {
 
 //自動寄付処理
 function autoDonate() {
-
-    debugLog("=== Start autoDonate ===");
-
     if (OPT_KIFU != 1) {
         return;
     }
@@ -4157,9 +4128,6 @@ function sendDonate(rice) {
 
 //内政スキルの使用
 function Auto_Domestic() {
-
-    debugLog("=== Start Auto Domestic ===");
-
     DomesticFlg = false;
 
     var tid = $w(function() {
@@ -4195,7 +4163,6 @@ function Auto_Domestic() {
                                                      headers:{"Content-type":"text/html"},
                                                      overrideMimeType:'text/html; charset=utf-8',
                                                      onload: function(x) {
-                                                         debugLog("内政スキル使用");
                                                          if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
                                                          if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
 
@@ -4209,7 +4176,6 @@ function Auto_Domestic() {
                                                  });
                                              while(1) {
                                                  if (DomesticFlg == false) {
-                                                     debugLog("== END Auto_Domestic==");
                                                      break;
                                                  }
                                                  Thread.sleep(100);  // 100ms 停止
@@ -4218,7 +4184,6 @@ function Auto_Domestic() {
                                          }
                                      }
                                  }
-                                 debugLog("内政スキル未使用");
                                  if (OPT_BLD == "AC") {  setVillageFacility();   }   // 拠点建築チェック
                                  if (OPT_BLD == "BS") {  setVillageFacility2();  }   // 宿舎ビルド＆スクラッチ
 
