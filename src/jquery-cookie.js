@@ -46,6 +46,3 @@
          return null;
      };
  })(jQuery);
-
-jQuery.noConflict();
-j$ = jQuery;
