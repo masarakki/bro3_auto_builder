@@ -53,7 +53,7 @@ main = ->
     OPT_BUILD_VID = GM_getValue "#{HOST}#{PGNAME}OPT_BUILD_VID", ""
 
     if location.pathname == "/village.php"
-        vId = trim jQuery("#basepoint .xy").text()
+        vId = jQuery("#basepoint .xy").text().trim()
 
         Load_OPT vId
         if OPT_BUILD_VID != getVillageID(vId)
