@@ -4310,8 +4310,8 @@ function getVillageActions() {
     var data = new Array();
     //拠点名を取得
     var doc = jQuery(document);
-    var village_name = trim(jQuery("#basepoint .basename", doc).text());
-    var xy = trim(jQuery("#basepoint .xy", doc).text());
+    var village_name = jQuery("#basepoint .basename", doc).text().trim();
+    var xy = jQuery("#basepoint .xy", doc).text().trim();
     data[IDX_BASE_NAME] = village_name;
     data[IDX_XY] = xy;
 
@@ -4327,7 +4327,7 @@ function getVillageActions() {
         var newAction = new Array();
 
         //ステータス
-        var build_status = trim(jQuery(".buildStatus", action).text());
+        var build_status = jQuery(".buildStatus", action).text().trim();
         var build_str = "";
         var build_type = build_status.substr(0, 2);
 
@@ -4336,10 +4336,10 @@ function getVillageActions() {
         
         if (build_type === "建設") {
             newAction[IDX2_DELETE] = false;
-            build_str = "建設:" + trim(jQuery(".buildStatus a").text());
+            build_str = "建設:" + jQuery(".buildStatus a").text().trim();
         } else if (build_type === "削除") {
             newAction[IDX2_DELETE] = true;
-            build_str = "建設:" + trim(jQuery(".buildStatus a").text());
+            build_str = "建設:" + jQuery(".buildStatus a").text().trim();
         } else if (matched = build_status.match(/(.+)の(.+)を強化/)) {
             if (matched[2] === "武器") {
                 build_str = "鍛冶場";
@@ -4356,7 +4356,7 @@ function getVillageActions() {
         }
         
         newAction[IDX2_STATUS] = build_str;
-        newAction[IDX2_TIME] = generateDateString(computeTime(trim(jQuery(".buildClock", action).text())));
+        newAction[IDX2_TIME] = generateDateString(computeTime(jQuery(".buildClock", action).text().trim()));
         updates.push(newAction);
     }
 
@@ -4369,9 +4369,9 @@ function getVillageActions() {
         newAction[IDX2_ROTATION] = 0;
 
         //ステータス
-        var status = trim(jQuery("a", action).text());
+        var status = jQuery("a", action).text().trim();
         newAction[IDX2_STATUS] = "行軍:" + status;
-        newAction[IDX2_TIME] = generateDateString(computeTime(trim(jQuery('span', action).text())));
+        newAction[IDX2_TIME] = generateDateString(computeTime(jQuery('span', action).text().trim()));
 
         updates.push(newAction);
     }
@@ -4652,7 +4652,7 @@ function getTrainingSoldier(htmldoc) {
     var idx = 0;
     while (1) {
         var actionType = TYPE_FACILITY + facilityName;
-        var clockElem = $xpath('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc);
+        var clockElem = $xpath('//*[@id=' + escapeXPathExpr("area_timer" + idx) + ']', htmldoc).snapshotItem(0);
         if (clockElem == undefined) {
             saveVillage(data, actionType);      // 研究所で未研究の場合過去の研究情報の削除
             break;
@@ -4785,7 +4785,7 @@ function getDomesticSkill(htmldoc) {
         if (RecoveryCheck.snapshotItem(z).innerHTML.match("内政中")) {
             dom.innerHTML = "<table>" + RecoveryCheck.snapshotItem(z).innerHTML + "</table>";
             // 内政武将名
-            var Name = $xpath('//td/a[@class="thickbox"]', dom);
+            var Name = $xpath('//td/a[@class="thickbox"]', dom).snapshotItem(1).innerHTML;
             var RecoverySkill = $xpath('//td[@class="recovery"]', dom);
             for (var x = 0; x < RecoverySkill.snapshotLength; x++) {
                 i += 1;

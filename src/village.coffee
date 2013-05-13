@@ -1,6 +1,6 @@
 class Village
     constructor: ->
-        [_, @x, @y] = for num in trim(jQuery("#basepoint .xy").text()).match /\((-?\d+),(-?\d+)\)/
+        [_, @x, @y] = for num in jQuery("#basepoint .xy").text().trim().match /\((-?\d+),(-?\d+)\)/
             parseInt num
 
         @id = parseInt getVillageID("(#{@x},#{@y})")
