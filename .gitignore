@@ -4,3 +4,4 @@ vendor
 .bundle
 spec/javascripts/js
 bro3_auto_builder.user.js
+spec/javascripts/fixtures/resources

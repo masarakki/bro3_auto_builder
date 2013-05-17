@@ -18,3 +18,7 @@ function GM_setValue(key, value) {
     gm_values[key] = value;
     return value;
 }
+
+function GM_getResourceText(key) {
+    return readFixtures("resources/" + key);
+}
