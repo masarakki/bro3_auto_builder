@@ -12,9 +12,11 @@
   #bab-setting-main
     #bab-setting-politics.bab-setting-tab
       #building-template
-        %input(name="${building.name}_enabled" type="checkbox")
-        ${building.name}
-        %input(name="${building.name}_level" type="textbox")
+        .facility
+          %input(name="build_${name}_enabled" id="build_${name}_enabled" type="checkbox")
+          %label(for="build_${name}_enabled")
+            ${name}
+          %input(name="build_${name}_level" type="textbox")
     #bab-setting-skills.bab-setting-tab
     #bab-setting-soldiers.bab-setting-tab
     #bab-setting-market.bab-setting-tab
