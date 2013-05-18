@@ -2,6 +2,7 @@ class MainView
     constructor: (@left = 0, @top = 0) ->
         @config = new Config
         @visible = @config.stay_mode()
+        @setting_view = new SettingView(@left - 10, @top + 10)
         this.generate()
 
     toggle_reload_button: (button) ->
@@ -115,9 +116,11 @@ class MainView
             enable_checkbox.attr("checked", "checked") if GM_getValue("enable_auto_build_#{village.position.x}_#{village.position.y}", false)
             trigger_enable_checkbox(enable_checkbox, village.position.x, village.position.y)
             jQuery(".updates", village_info).append(updates)
+            setting_view = @setting_view
             ((village) ->
                 jQuery(".actions button:eq(0)", village_info).click (e) ->
-                    openInifacBox "(#{village.position.x},#{village.position.y})"
+#                    openInifacBox "(#{village.position.x},#{village.position.y})"
+                    setting_view.show(village)
             )(village)
             village_info.appendTo jQuery("#villages", main)
 
